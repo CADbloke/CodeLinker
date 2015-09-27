@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace CodeCloner
 {
-  static class Log
+  internal static class Log
   {
-    private static string logFile = Environment.CurrentDirectory + "CodeClonerLog.txt";
+    private static string logFile = Environment.CurrentDirectory + "\\CodeClonerLog.txt";
 
 
     static Log()
     {
       using (StreamWriter sw = File.AppendText(logFile))
       {
-        sw.WriteLine();
+        sw.WriteLine("==========================");
         sw.WriteLine("Code Cloner Log for " + DateTime.Now);
-        sw.WriteLine();
+        sw.WriteLine("--------------------------");
       }
     }
 
 
-    static void WriteLine(List<string> lines)
+    internal static void WriteLine(List<string> lines)
     { using (StreamWriter sw = File.AppendText(logFile))
     {
       foreach (string line in lines)
@@ -33,7 +33,7 @@ namespace CodeCloner
     }
     }
 
-    static void WriteLine(string line)
+    internal static void WriteLine(string line)
     {
       WriteLine(new List<string> {line});
     }
@@ -51,6 +51,7 @@ namespace CodeCloner
           sw.WriteLine();
           sw.WriteLine("Finished at" + DateTime.Now);
           sw.WriteLine("Closing Log.");
+          sw.WriteLine("==========================");
           sw.WriteLine();
         }
         

@@ -48,6 +48,7 @@ namespace CodeCloner
       Console.WriteLine("");
       Console.WriteLine("More Info & Source at " + SourceUrl);
       Console.WriteLine("Code Cloner by CADbloke");
+      Log.WriteLine("User asked For Help. Hope I helped.");
     }
   }
 }

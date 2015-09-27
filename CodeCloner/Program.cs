@@ -10,11 +10,15 @@ namespace CodeCloner
   {
     static void Main(string[] args)
     {
-      if (!args.Any()) { args = new[] {"/?"}; }
+      if (!args.Any())
+      {
+        args = new[] {"/?"};
+        Log.WriteLine("EROR: No Args given so Help Text Displayed.");
+      }
 
       string firstArg = args[0];
-
-      if (firstArg == "/?") { Help.Write(); Finish();       }
+      
+      if (firstArg == "/?") { Help.Write(); Finish(); }
 
       switch (firstArg) {
 
