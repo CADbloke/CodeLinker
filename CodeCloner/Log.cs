@@ -49,7 +49,7 @@ namespace CodeCloner
         using (StreamWriter sw = File.AppendText(logFile))
         {
           sw.WriteLine();
-          sw.WriteLine("Finished at" + DateTime.Now);
+          sw.WriteLine("Finished at " + DateTime.Now);
           sw.WriteLine("Closing Log.");
           sw.WriteLine("==========================");
           sw.WriteLine();

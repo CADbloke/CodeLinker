@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeCloner
 {
@@ -31,6 +30,7 @@ namespace CodeCloner
       parse source CSPROJ items in ItemGroups
        - Include = 
        - None = 
+        - any existing code that doesn't have a link attribute may be in error. Flag it.
       calculate new paths for destination CSPROJ
       Build XML to be inserted into destination CSPROJ
       
