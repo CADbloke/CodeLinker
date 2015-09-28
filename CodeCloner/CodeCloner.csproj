@@ -33,6 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build.Engine, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cloner.cs" />
-    <Compile Include="CsProjParser.cs" />
+    <Compile Include="CsProjItemsCloner.cs" />
     <Compile Include="Help.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="PathMaker.cs" />
