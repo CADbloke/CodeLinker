@@ -12,13 +12,36 @@ namespace CodeCloner
     {
       if (!args.Any())
       {
-        args = new[] {"/?"};
-        Log.WriteLine("EROR: No Args given so Help Text Displayed.");
+        Log.WriteLine("ERROR: No Args given so Help Text Displayed.");
+        Help.Write();
+        Finish();
       }
 
       string firstArg = args[0];
       
-      if (firstArg == "/?") { Help.Write(); Finish(); }
+      if (firstArg == "/?")
+      {
+        Help.Write();
+        Log.WriteLine("User asked For Help. Hope I helped.");
+        Finish();
+      }
+
+      /* todo: 
+      parse source CSPROJ ItemGroups
+      parse source CSPROJ items in ItemGroups
+       - Include = 
+       - None = 
+      calculate new paths for destination CSPROJ
+      Build XML to be inserted into destination CSPROJ
+      
+      write items 
+          Possible YAGNI: 
+          parse destination CSPROJ Cloned Code to check for changes
+          Add a comment to destination CSPROJ about the rewrite (meh - Git history will track this, as will the log)
+          ONLY if anything changed so source control doesn't get too many checkins
+          - test first because Git shouldn't try to check in code that has not actually changed.
+      Log it. Source control can be used to check the actual changes so just log that it actually changed.
+      */
 
       switch (firstArg) {
 

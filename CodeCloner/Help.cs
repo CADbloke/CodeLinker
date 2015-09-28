@@ -36,19 +36,22 @@ namespace CodeCloner
       Console.WriteLine("");
       Console.WriteLine("For Whole Folder Operations use this format for the placeholder...");
       Console.WriteLine("");
-      Console.WriteLine("<!-- CodeClonerSource: PathTo\\NameOfProject.csproj");
+      Console.WriteLine("<!-- CodeCloner");
+      Console.WriteLine("Source: PathTo\\NameOfProject.csproj");
       Console.WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
       Console.WriteLine("-->");
       Console.WriteLine("");
       Console.WriteLine("<!-- EndCodeCloner -->");
       Console.WriteLine("");
+      Console.WriteLine("You may specify multiple Source: projects. No wildcards.");
+      Console.WriteLine("You may specify multiple Exclude: items. These can be a wildcard, file or path.");
       Console.WriteLine("Every clone will re-clone the source CSPROJ");
       Console.WriteLine("into the space between the XML comment placeholders.");
-      Console.WriteLine("All code inside these placeholders is refreshed. OK?");
+      Console.WriteLine("All code inside these placeholders is refreshed every time. OK?");
       Console.WriteLine("");
       Console.WriteLine("More Info & Source at " + SourceUrl);
       Console.WriteLine("Code Cloner by CADbloke");
-      Log.WriteLine("User asked For Help. Hope I helped.");
+      
     }
   }
 }
