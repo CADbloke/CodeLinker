@@ -36,3 +36,5 @@ namespace CodeCloner
     }
   }
 }
+
+// note: Path.IsPathRooted to identify absolute paths

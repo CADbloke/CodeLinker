@@ -8,7 +8,7 @@ namespace CodeCloner
 {
   static class Help
   {
-    static string SourceUrl = "https://github.com/CADbloke/CodeCloner";
+    internal static string SourceUrl = "https://github.com/CADbloke/CodeCloner";
     public static void Write()
     {
       Console.WriteLine("Clones Source code between CSPROJ files");

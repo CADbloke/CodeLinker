@@ -17,7 +17,7 @@ namespace CodeCloner
       using (StreamWriter sw = File.AppendText(logFile))
       {
         sw.WriteLine("==========================");
-        sw.WriteLine("Code Cloner Log for " + DateTime.Now);
+        sw.WriteLine("Code Cloner Log: " + DateTime.Now);
         sw.WriteLine("--------------------------");
       }
     }
@@ -38,21 +38,20 @@ namespace CodeCloner
       WriteLine(new List<string> {line});
     }
 
-
-    private static readonly Destructor Finalise = new Destructor();
-
     // http://stackoverflow.com/a/18709110/492
+    private static readonly Destructor Finalise = new Destructor();
     private sealed class Destructor
     {
       ~Destructor() // One time only destructor.
       {
-        using (StreamWriter sw = File.AppendText(logFile))
+        using (StreamWriter logger = File.AppendText(logFile))
         {
-          sw.WriteLine();
-          sw.WriteLine("Finished at " + DateTime.Now);
-          sw.WriteLine("Closing Log.");
-          sw.WriteLine("==========================");
-          sw.WriteLine();
+          logger.WriteLine();
+          logger.WriteLine("Finished at " + DateTime.Now);
+          logger.WriteLine("More Info & Source at " + Help.SourceUrl);
+          logger.WriteLine("Closing Log. kthxbai.");
+          logger.WriteLine("==========================");
+          logger.WriteLine();
         }
         
       }

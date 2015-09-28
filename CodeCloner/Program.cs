@@ -25,8 +25,12 @@ namespace CodeCloner
         Finish();
       }
 
+      // https://msdn.microsoft.com/en-us/library/ms404278(v=vs.110).aspx  Common I/O Tasks
+      // 
       /* todo: 
-      parse source CSPROJ ItemGroups
+      Build list of Source / Dest CSPROJ - this may only be one depending on args syntax used.
+      foreach Source/Dest CSPROJ ...
+      parse source CSPROJ ItemGroups 
       parse source CSPROJ items in ItemGroups
        - Include = 
        - None = 
@@ -41,6 +45,7 @@ namespace CodeCloner
           ONLY if anything changed so source control doesn't get too many checkins
           - test first because Git shouldn't try to check in code that has not actually changed.
       Log it. Source control can be used to check the actual changes so just log that it actually changed.
+      diff: http://www.scootersoftware.com/v4help/index.html?scripting_reference.html load "session name" - save session in repo.
       */
 
       switch (firstArg) {
@@ -55,9 +60,8 @@ namespace CodeCloner
 
     private static void Finish()
     {
-      Console.WriteLine();
-      Console.WriteLine("Finished. Enter key to Exit.");
-      Console.ReadLine();
+      Console.WriteLine("Finished. Enter key to Exit."); // todo: delete this line when Logging is good.
+      Console.ReadLine(); // todo: delete this line when Logging is good so VS runs without stopping.
       Environment.Exit(0);
     }
   }
