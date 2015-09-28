@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -9,7 +11,8 @@ namespace CodeCloner
   {
     static void Main(string[] args)
     {
-      if (!args.Any())
+      int argsCount = args.Count();
+      if (argsCount == 0)
       {
         Log.WriteLine("ERROR: No Args given so Help Text Displayed.");
         Help.Write();
@@ -23,6 +26,12 @@ namespace CodeCloner
         Help.Write();
         Log.WriteLine("User asked For Help. Hope I helped.");
         Finish();
+      }
+
+      if (Directory.Exists(firstArg))
+      {
+        // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
+
       }
 
       // https://msdn.microsoft.com/en-us/library/ms404278(v=vs.110).aspx  Common I/O Tasks
@@ -46,7 +55,28 @@ namespace CodeCloner
           - test first because Git shouldn't try to check in code that has not actually changed.
       Log it. Source control can be used to check the actual changes so just log that it actually changed.
       diff: http://www.scootersoftware.com/v4help/index.html?scripting_reference.html load "session name" - save session in repo.
+
+
+      http://referencesource.microsoft.com/#XamlBuildTask/Microsoft/Build/Tasks/Xaml/GenerateTemporaryAssemblyTask.cs <== interesting
       */
+
+
+      /* 
+    note: Item Types:  
+    MATCH
+    Compile|None|Folder|EmbeddedResource|Resource|Res|AppDesigner|Page|Content|WCFMetadataStorage|Folder
+    
+    KEEP
+    Condition
+    
+    EXCLUDE
+    Reference|ProjectReference|BootstrapperPackage
+
+    Log anything that is not one of these because it's a bug - I missed it
+
+    cope with conditional inclusions
+    Cope with absolute paths, including $(EnvironmentVariables)
+    */
 
       switch (firstArg) {
 
