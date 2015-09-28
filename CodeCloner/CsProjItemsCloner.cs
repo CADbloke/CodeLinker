@@ -83,6 +83,10 @@ namespace CodeCloner
             continue;
           }
 
+          /* bug: actually, replacing the path is more complicated than that. 
+          <Compile Include="..\CADbloke\Find    won't combine with a prefix and spit out a relative path
+          maybe
+          */
           xml = filePathWithQuotesRegex.Replace(xml, relativePathPrefix + filePathWithQuotes.Value);
 
           /*
