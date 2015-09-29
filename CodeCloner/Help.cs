@@ -8,48 +8,48 @@ namespace CodeCloner
 {
   static class Help
   {
-    internal static string SourceUrl = "https://github.com/CADbloke/CodeCloner";
+    internal static string SourceCodeUrl = "https://github.com/CADbloke/CodeCloner";
     public static void Write()
     {
       Console.WriteLine("Clones Source code between CSPROJ files");
-      Console.WriteLine("Usage...");
+      Console.WriteLine("Usages...");
       Console.WriteLine("CODECLONER /? - This help text.");
-      Console.WriteLine("CODECLONER [Folder] [/s] [diff] [log]");
-      Console.WriteLine("CODECLONER [Source.csproj] [Destination.csproj] [diff] [log]");
-      Console.WriteLine("");
-      Console.WriteLine("Folder   Clones the source into all CSPROJ files in the folder");
-      Console.WriteLine("/s       Also iterates all subfolders");
+      Console.WriteLine("CODECLONER [Folder] [/s] [diff]");
+      Console.WriteLine("CODECLONER [Source.csproj] [Destination.csproj] [diff]");
       Console.WriteLine();
-      Console.WriteLine("Source.csproj        Whole Path to the CSPROJ with the source to be cloned");
-      Console.WriteLine("Destination.csproj   Whole path to ... duh");
-      Console.WriteLine("Wrap paths with spaces in double quotes. Paths can (should!) be relative.");
-      Console.WriteLine("");
-      Console.WriteLine("diff     Opens a BeyondCompare Session with diffs of the cloned CSPROJs");
-      Console.WriteLine("log      Append a log to CodeClonerLog.txt");
-      Console.WriteLine("");
-      Console.WriteLine("If you have specified the Source & Destination CSPROJ files");
-      Console.WriteLine("the Destination CSPROJ file is looking for this placeholder...");
-      Console.WriteLine("");
-      Console.WriteLine("<!-- CodeCloner -->");
-      Console.WriteLine("");
-      Console.WriteLine("<!-- EndCodeCloner -->");
-      Console.WriteLine("");
-      Console.WriteLine("For Whole Folder Operations use this format for the placeholder...");
-      Console.WriteLine("");
+      Console.WriteLine("Folder   Clones the source(s) into all CSPROJ files in the folder");
+      Console.WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
+      Console.WriteLine();
+      Console.WriteLine("Source.csproj        Path to the CSPROJ with the source to be cloned.");
+      Console.WriteLine("Destination.csproj   Path to ... duh.");
+      Console.WriteLine("diff                 Opens a diff Session with diffs of the cloned CSPROJs.");
+      Console.WriteLine();
+      Console.WriteLine("Supported diff apps are Beyond Compare & KDiff.");
+      Console.WriteLine("Wrap paths with spaces in double quotes.");
+      Console.WriteLine("Paths can (probably should!) be relative.");
+      Console.WriteLine("Source.csproj is optional.");
+      Console.WriteLine("If you specify one CSPROJ file it is the destination,");
+      Console.WriteLine("in which case it needs to have the source project in the placeholder...");
+      Console.WriteLine();
+      Console.WriteLine();
+      Console.WriteLine("The Destination CSPROJ file needs this XML comment placeholder...");
+      Console.WriteLine();
       Console.WriteLine("<!-- CodeCloner");
-      Console.WriteLine("Source: PathTo\\NameOfProject.csproj");
+      Console.WriteLine("Source: PathTo\\NameOfProject.csproj     <== this is optional");
       Console.WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
       Console.WriteLine("-->");
-      Console.WriteLine("");
+      Console.WriteLine();
       Console.WriteLine("<!-- EndCodeCloner -->");
-      Console.WriteLine("");
+      Console.WriteLine();
       Console.WriteLine("You may specify multiple Source: projects. No wildcards.");
-      Console.WriteLine("You may specify multiple Exclude: items. These can be a wildcard, file or path.");
-      Console.WriteLine("Every clone will re-clone the source CSPROJ");
+      Console.WriteLine("If you don't specify a source in the placeholder it better be here.");
+      Console.WriteLine("You may specify multiple Exclude: items. Can be a wildcard, file or path.");
+      Console.WriteLine("If you specify multiple items then they must be on separate lines.");
+      Console.WriteLine("Every Code Clone will re-clone the source CSPROJ");
       Console.WriteLine("into the space between the XML comment placeholders.");
-      Console.WriteLine("All code inside these placeholders is refreshed every time. OK?");
-      Console.WriteLine("");
-      Console.WriteLine("More Info & Source at " + SourceUrl);
+      Console.WriteLine("ALL code inside these placeholders is refreshed every time. OK?");
+      Console.WriteLine();
+      Console.WriteLine("More Info & Source at " + SourceCodeUrl);
       Console.WriteLine("Code Cloner by CADbloke");
       
     }

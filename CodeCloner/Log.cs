@@ -48,7 +48,7 @@ namespace CodeCloner
         {
           logger.WriteLine();
           logger.WriteLine("Finished at " + DateTime.Now);
-          logger.WriteLine("More Info & Source at " + Help.SourceUrl);
+          logger.WriteLine("More Info & Source at " + Help.SourceCodeUrl);
           logger.WriteLine("Closing Log. kthxbai.");
           logger.WriteLine("==========================");
           logger.WriteLine();
