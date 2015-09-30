@@ -103,14 +103,14 @@ namespace CodeCloner
       {
         
         string sourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath)) ? sourcePath : Path.Combine(DestCsProjDirectory, sourcePath);
-        string sourceCSProjDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
+        string SourceCsProjDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
 
         SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjAbsolutePath);
 
         endPlaceHolder.AddBeforeSelf(new XComment("Cloned from "+ sourcePath + " at " + DateTime.Now));
 
         // string destRelativePathPrefix = PathMaker.MakeRelativePath(sourceCSProjDirectory, DestCsProjDirectory);
-        string sourceRelativePathPrefix = PathMaker.MakeRelativePath(DestCsProjDirectory, sourceCSProjDirectory);
+        string sourceRelativePathPrefix = PathMaker.MakeRelativePath(DestCsProjDirectory, SourceCsProjDirectory);
         if (!sourceRelativePathPrefix.EndsWith("\\"))  sourceRelativePathPrefix += "\\";
 
 
@@ -135,7 +135,11 @@ namespace CodeCloner
                 continue;
               }
               if (!PathMaker.IsAbsolutePath(originalPath))
-                attrib.Value = Path.GetFullPath(sourceRelativePathPrefix + originalPath);
+              {
+                string sourceAbsolutePath = Path.GetFullPath(SourceCsProjDirectory+"\\" + originalPath);
+                string relativePathFromDestination = PathMaker.MakeRelativePath(DestCsProjDirectory +"\\", sourceAbsolutePath);
+                attrib.Value = relativePathFromDestination;
+              }
 
               IEnumerable<XElement> links = sourceItem.Descendants(MSBuild + "Link");
 
