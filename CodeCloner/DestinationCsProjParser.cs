@@ -17,10 +17,13 @@ namespace CodeCloner
   {
     private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
     static List<string> ItemElementsToSkip = new List<string> {"reference","projectreference","bootstrapperpackage"};
+    static List<string> ItemElementsDoNotLink = new List<string> {"folder"};
 
-    /// <summary> Absolute pathname of the destination <c>CSPROJ</c>. </summary>
-    internal  string DestCsProjPath { get; }
-    private XDocument csProjXml;
+    /// <summary> Absolute pathname of the destination <c>CSPROJ</c> including file name. </summary>
+    internal  string DestCsProjAbsolutePath { get; }
+    /// <summary> Absolute Directory of the destination <c>CSPROJ</c>. NO file name. </summary>
+    internal  string DestCsProjDirectory { get; }
+    private XDocument destCsProjXdoc;
     private XComment  startPlaceHolder;
     private XComment  endPlaceHolder;
     
@@ -32,21 +35,22 @@ namespace CodeCloner
     /// <param name="destCsProj"> Absolute path of destination <c>CSPROJ</c>. </param>
     internal  DestinationCsProjParser(string destCsProj)
     {
-      DestCsProjPath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
+      DestCsProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
+      DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath);
     
 
-      try { csProjXml = XDocument.Load(DestCsProjPath); }
+      try { destCsProjXdoc = XDocument.Load(DestCsProjAbsolutePath); }
       catch (Exception e) { Program.Crash(e); }
 
-      startPlaceHolder = FindComment("CodeCloner");
-      endPlaceHolder   = FindComment("EndCodeCloner");
+      startPlaceHolder = FindCommentOrCrash("CodeCloner");
+      endPlaceHolder   = FindCommentOrCrash("EndCodeCloner");
 
       SourceCsProjList.Clear();
 
       foreach (string line in startPlaceHolder.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList())
       {
         if (!line.ToLower().Trim().StartsWith("source:")) continue;
-        SourceCsProjList.Add(Path.Combine(DestCsProjPath, line.Replace("source:", "").Trim()));
+        SourceCsProjList.Add(Path.Combine(DestCsProjAbsolutePath, line.Replace("source:", "").Trim()));
       }
     }
 
@@ -56,7 +60,8 @@ namespace CodeCloner
     internal DestinationCsProjParser(string sourceCsProj, string destCsProj)
     {
       SourceCsProjList.Add(PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceCsProj));
-      DestCsProjPath     = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
+      DestCsProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
+      DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath);
     }
 
 
@@ -67,7 +72,7 @@ namespace CodeCloner
         XNode startNode = startPlaceHolder;
         while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
       }
-      else Program.Crash("Error: cannot remove old Cloned Code from " + DestCsProjPath);
+      else Program.Crash("Error: cannot remove old Cloned Code from " + DestCsProjAbsolutePath);
     }
    
 
@@ -78,78 +83,67 @@ namespace CodeCloner
     ///           Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
     internal void CloneCode()
     {
-      if (string.IsNullOrEmpty(DestCsProjPath)) Program.Crash("ERROR: No destCsProjFileAbsolutePath. That's a bug.");
+      if (string.IsNullOrEmpty(DestCsProjAbsolutePath)) Program.Crash("ERROR: No destCsProjFileAbsolutePath. That's a bug.");
+      if (!destCsProjXdoc.Root.Elements().Any()) Program.Crash("ERROR: No Destination CSPROJ file at " + DestCsProjAbsolutePath);
 
+      RemoveOldDestCsProjClonedCode();
+      XElement destinationInsertAfterHere = (XElement)startPlaceHolder.NextNode;
 
       foreach (string sourcePath in SourceCsProjList)
       {
-        string sourceProjPath = sourcePath;
-        if (!PathMaker.IsAbsolutePath(sourceProjPath)) sourceProjPath = Path.Combine(DestCsProjPath, sourceProjPath);
+        
+        string sourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath)) ? sourcePath : Path.Combine(DestCsProjDirectory, sourcePath);
+        string sourceProjAbsoluteDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
 
-        SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjPath);
+        SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjAbsolutePath);
 
-        string relativePathPrefix = PathMaker.MakeRelativePath(sourceProjParser.SourceCsProjPath, DestCsProjPath);
+        XElement commentAboutSourceProject =  XElement.Parse("<!-- Cloned from "+ sourcePath + "-->");
+        destinationInsertAfterHere.AddAfterSelf(commentAboutSourceProject);
+        destinationInsertAfterHere = commentAboutSourceProject;
 
-        IEnumerable<XElement> sourceItemGroups = sourceProjParser.ItemGroups;
+        string destRelativePathPrefix = PathMaker.MakeRelativePath(sourceProjAbsoluteDirectory, DestCsProjDirectory);
 
-        foreach (XElement sourceItemGroup in sourceItemGroups)
+        foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
         {
           XElement destItemGroup = new XElement(sourceItemGroup);
 
           foreach (XElement item in destItemGroup.Elements())
           {
             string elementName = item.Name.LocalName;
-            if (ItemElementsToSkip.Contains(elementName.ToLower())) { continue; }
+            if (ItemElementsToSkip.Contains(elementName.ToLower())) continue;
 
             XAttribute attrib = item.Attribute("Include") ?? item.Attribute("Exclude");
 
             if (attrib != null)
             {
               string originalPath = attrib.Value;
+              if (!PathMaker.IsAbsolutePath(originalPath)) attrib.Value = destRelativePathPrefix + originalPath;
 
-              if (!PathMaker.IsAbsolutePath(originalPath))
-              {
-                string originalAbsolutePath = PathMaker.
-                  MakeAbsolutePathFromPossibleRelativePathOrDieTrying(Path.GetDirectoryName(sourceProjPath), originalPath);
-                
-                attrib.Value = relativePathPrefix + attrib.Value; 
-              }
-
-
-
-              /* bug: actually, replacing the path is more complicated than that. 
-          <Compile Include="..\CADbloke\Find    won't combine with a prefix and spit out a relative path
-          maybe
-          
-          xml = itemFilePathWithQuotesRegex.Replace(xml, relativePathPrefix + filePathWithQuotes.Value);
-
-         
-          todo: add <Link> element before the closing tag of the item Closing tag. <Tag closes with </Tag> or />
-          If closing tag is /> then it will have to become a real tag if the <Link> element is embedded.
-          The link element is generally the SourcePath
-          No link needed if the relative path prefix is "" - ie. the projects are in the same folder.
-          */
-
-              destItemGroup.Append(xml);
+              if (!item.Elements("Link").Any() && !ItemElementsDoNotLink.Contains(elementName.ToLower()))
+                item.Add(XElement.Parse("<Link>" + originalPath + "</Link>"));
             }
           }
-          destXml.Append(destItemGroup);
+          destinationInsertAfterHere.AddAfterSelf(destItemGroup);
+          destinationInsertAfterHere = destItemGroup;
         }
+        XElement closingCommentAboutSourceProject =  XElement.Parse("<!-- End Clone from "+ sourcePath + "-->");
+        destinationInsertAfterHere.AddAfterSelf(closingCommentAboutSourceProject);
+        destinationInsertAfterHere = closingCommentAboutSourceProject;
       }
-
-      // return destXml.ToString();
-      // todo: replace the contents in the destinaton CSPROJ file and log it.
     }
-    private XComment FindComment(string commentStartsWith)
+
+
+
+    private XComment FindCommentOrCrash(string commentStartsWith)
     {
-      IEnumerable<XComment> comments = from node in csProjXml.Elements().DescendantNodesAndSelf()
+      IEnumerable<XComment> comments = from node in destCsProjXdoc.Elements().DescendantNodesAndSelf()
                                        where node.NodeType == XmlNodeType.Comment
                                        select node as XComment;
 
       List<XComment> placeholders  = comments.Where(c => c.Value.ToLower().StartsWith(commentStartsWith)).ToList();
 
       if (placeholders.Count != 1)
-        Program.Crash("ERROR: " +DestCsProjPath+ "has " +placeholders.Count+" XML comments with" + commentStartsWith);
+        Program.Crash("ERROR: " +DestCsProjAbsolutePath+ "has " +placeholders.Count+" XML comments with" + commentStartsWith);
 
       return placeholders.First();
     }
