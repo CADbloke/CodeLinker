@@ -28,7 +28,7 @@ namespace CodeCloner
         Finish();
       }
 
-      List<CsProjItemsCloner> cloners = new List<CsProjItemsCloner>();
+      List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
 
       if (!string.IsNullOrEmpty(argsList[0]))
       {
@@ -36,13 +36,12 @@ namespace CodeCloner
         {
           if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
           {
-            cloners.Add(new CsProjItemsCloner(sourceCsProj: argsList[0], destCsProj: argsList[1]));
-            Log.WriteLine("Starting Clone from: " + argsList[0] + "to :" + argsList[1]);
+            cloners.Add(new DestinationCsProjParser(sourceCsProj: argsList[0], destCsProj: argsList[1]));
             Log.WriteLine("Starting Clone from: " + argsList[0] + "to :" + argsList[1]);
           }
           else
           {
-            cloners.Add(new CsProjItemsCloner(destCsProj: argsList[0]));
+            cloners.Add(new DestinationCsProjParser(destCsProj: argsList[0]));
             Log.WriteLine("Starting Clone to :" + argsList[1] + ". Source TBA.");
           }
         }

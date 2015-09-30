@@ -12,14 +12,15 @@ namespace CodeCloner
   {
     private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
 
-    private string    sourceCsProjPath;
+    /// <summary> Gets the full pathname of the source create structure project file. </summary>
+    internal string SourceCsProjPath { get; }
     private XDocument csProjXml;
-    internal List<XNode> ItemGroups { get; }
+    internal List<XElement> ItemGroups { get; }
 
 
     internal SourceCsProjParser(string sourceCsProjAbsolutePath)
     {
-      sourceCsProjPath = sourceCsProjAbsolutePath;
+      SourceCsProjPath = sourceCsProjAbsolutePath;
       if (!File.Exists(sourceCsProjAbsolutePath)) { Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  does not exist."); }
       if (!sourceCsProjAbsolutePath.ToLower().EndsWith(".csproj")) {
         Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  is not a CSPROJ.");
@@ -30,11 +31,11 @@ namespace CodeCloner
         csProjXml = XDocument.Load(sourceCsProjAbsolutePath);
         ItemGroups.Clear();
         IEnumerable<XElement> itemGroups = from element in csProjXml.Root.Elements().DescendantsAndSelf()
-                                           where element.Attribute("name").Value == "Itemgroup"
+                                           where element.Name.LocalName == "Itemgroup" // .Attribute("name").Value
                                            select element;
         ItemGroups.AddRange(itemGroups);
 
-        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + sourceCsProjPath + " contains no ItemGroups. No Codez?"); }
+        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceCsProjPath + " contains no ItemGroups. No Codez?"); }
       }
       catch (Exception e) { Program.Crash(e); }
     }
