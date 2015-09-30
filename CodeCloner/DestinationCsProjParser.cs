@@ -17,7 +17,7 @@ namespace CodeCloner
   {
     static List<string> ItemElementsToSkip = new List<string> {"reference","projectreference","bootstrapperpackage"};
     static List<string> ItemElementsDoNotLink = new List<string> {"folder"};
-    
+    private static XNamespace   MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
 
     /// <summary> Absolute pathname of the destination <c>CSPROJ</c> including file name. </summary>
     internal  string DestCsProjAbsolutePath { get; }
@@ -103,17 +103,20 @@ namespace CodeCloner
       {
         
         string sourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath)) ? sourcePath : Path.Combine(DestCsProjDirectory, sourcePath);
-        string sourceProjAbsoluteDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
+        string sourceCSProjDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
 
         SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjAbsolutePath);
 
-        endPlaceHolder.AddBeforeSelf(new XComment("Cloned from "+ sourcePath));
+        endPlaceHolder.AddBeforeSelf(new XComment("Cloned from "+ sourcePath + " at " + DateTime.Now));
 
-        string destRelativePathPrefix = PathMaker.MakeRelativePath(sourceProjAbsoluteDirectory, DestCsProjDirectory);
+        // string destRelativePathPrefix = PathMaker.MakeRelativePath(sourceCSProjDirectory, DestCsProjDirectory);
+        string sourceRelativePathPrefix = PathMaker.MakeRelativePath(DestCsProjDirectory, sourceCSProjDirectory);
+        if (!sourceRelativePathPrefix.EndsWith("\\"))  sourceRelativePathPrefix += "\\";
+
 
         foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
         {
-          XElement destItemGroup = new XElement("ItemGroup");
+          XElement destItemGroup = new XElement(MSBuild +"ItemGroup");
 
           foreach (XElement sourceItem in sourceItemGroup.Elements())
           {
@@ -131,19 +134,26 @@ namespace CodeCloner
                   + " because you said Exclude: " + ExclusionsList.FirstOrDefault(x => originalPath.Contains(x)) );
                 continue;
               }
-              if (!PathMaker.IsAbsolutePath(originalPath)) { attrib.Value = destRelativePathPrefix + originalPath; }
+              if (!PathMaker.IsAbsolutePath(originalPath))
+                attrib.Value = Path.GetFullPath(sourceRelativePathPrefix + originalPath);
 
-              if (!sourceItem.Descendants("Link").Any() || !ItemElementsDoNotLink.Contains(elementName.ToLower())) {
-                sourceItem.Add(XElement.Parse("<Link>" + originalPath + "</Link>"));
+              IEnumerable<XElement> links = sourceItem.Descendants(MSBuild + "Link");
+
+              if (!(links.Any() || ItemElementsDoNotLink.Contains(elementName.ToLower())))
+              {
+                XElement xe = new XElement(MSBuild+ "Link", originalPath);
+                sourceItem.Add(xe);
               }
               destItemGroup.Add(sourceItem);
             }
           }
+          if (destItemGroup.HasElements) 
           endPlaceHolder.AddBeforeSelf(destItemGroup);
         }
         endPlaceHolder.AddBeforeSelf(new XComment("End Clone from "+ sourcePath));
         Log.WriteLine("End Clone from "+ sourcePath);
       }
+      destCsProjXdoc.Save(DestCsProjAbsolutePath);
     }
 
 
