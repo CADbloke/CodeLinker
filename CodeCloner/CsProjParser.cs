@@ -15,8 +15,13 @@ namespace CodeCloner
   {
     private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
     private XDocument csProjXml;
-    private XmlNode placeHolder;
+    private XComment startPlaceHolder;
+    private XComment endPlaceHolder;
     private string csProjPath;
+
+    /// <summary> Source <c>CSPROJ</c>s defined in the Destination <c>CSPROJ</c> placeholder. 
+    ///           Can be zero, can be lots.</summary>
+    internal List<string> SourceCsProjList { get; }
 
     public CsProjParser(string csProjAbsolutePath)
     {
@@ -27,21 +32,27 @@ namespace CodeCloner
 
       try { using (StreamReader reader = File.OpenText(csProjAbsolutePath)) { csProjXml = XDocument.Load(reader); } }
       catch (Exception e) { Program.Crash(e); }
+
+      startPlaceHolder = FindComment("CodeCloner");
+      endPlaceHolder   = FindComment("EndCodeCloner");
+
+      SourceCsProjList.Clear();
+
+      foreach (string line in startPlaceHolder.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList())
+      {
+        if (!line.ToLower().StartsWith("source:")) continue;
+        SourceCsProjList.Add(line.Replace("source:", "").Trim());
+      }
     }
 
-    internal List<string> SourceCsProjList()
+    internal void RemoveOldDestCsProjClonedCode()
     {
-      List<string> sources = new List<string>();
-
-
-      
-
-
-
-      return sources;
+      XNode startNode = startPlaceHolder;
+      while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
     }
+   
 
-    private XNode FindComment(string commentStartsWith)
+    private XComment FindComment(string commentStartsWith)
     {
       IEnumerable<XComment> comments = from node in csProjXml.Elements().DescendantNodesAndSelf()
                                        where node.NodeType == XmlNodeType.Comment
@@ -54,5 +65,6 @@ namespace CodeCloner
 
       return placeholders.First();
     }
+
   }
 }

@@ -12,7 +12,7 @@ namespace CodeCloner
   /// <summary> Parses the Source CSPROJ and gets the string blob to paste into the Destination CSPROJ </summary>
   internal class CsProjItemsCloner
   {
-    private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
+    // private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
 
     /// <summary> Absolute pathname of the source CSPROJ. </summary>
     internal string sourceCsProjFileAbsolutePath { get; set; }
@@ -52,10 +52,15 @@ namespace CodeCloner
     internal void Clone()
     {
       if (string.IsNullOrEmpty(destCsProjFileAbsolutePath)) Program.Crash("ERROR: No destCsProjFileAbsolutePath. That's a bug.");
-      
-      XDocument destProjectXml;
-      using (StreamReader reader = File.OpenText(destCsProjFileAbsolutePath)) { destProjectXml = XDocument.Load(reader); }
 
+      CsProjParser destProjParser = new CsProjParser(destCsProjFileAbsolutePath);
+
+      foreach (string sourceProjPath in destProjParser.SourceCsProjList)
+      {
+        
+      }
+      
+     
 
       if (string.IsNullOrEmpty(sourceCsProjFileAbsolutePath))
       {
@@ -64,7 +69,7 @@ namespace CodeCloner
 
 
 
-      string relativePathPrefix = PathMaker.MakeRelativePath(sourceCsProjFileAbsolutePath , destCsProjFile);
+      string relativePathPrefix = PathMaker.MakeRelativePath(sourceCsProjFileAbsolutePath , destCsProjFileAbsolutePath);
 
       StringBuilder destXml = new StringBuilder();
       IEnumerable<XElement> sourceItemGroups = sourceProjectDocument.Descendants(MSBuildNamespace + "ItemGroup");
