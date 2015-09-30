@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 
 
 namespace CodeCloner
@@ -60,7 +59,7 @@ namespace CodeCloner
       bool dir  = Directory.Exists(properAbsolutePath);
       bool file = File.Exists(properAbsolutePath);
 
-      if (!dir && !file) { Program.Crash("ERROR: Cannot Build Path: " + properAbsolutePath); }
+      if (!dir && !file) { Program.Crash("ERROR: Bad Path: " + properAbsolutePath); }
       return properAbsolutePath;
     }
 
@@ -73,7 +72,5 @@ namespace CodeCloner
       return false;
     }
   }
-
-
 }
 

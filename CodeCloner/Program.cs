@@ -1,17 +1,16 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace CodeCloner
 {
   class Program
   {
+    static List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
     static void Main(string[] args)
     {
-      System.Diagnostics.Debugger.Launch(); // note: to find teh bugs
+      // System.Diagnostics.Debugger.Launch(); // to find teh bugs
       int argsCount = args.Count();
       if (argsCount == 0)
       {
@@ -29,7 +28,7 @@ namespace CodeCloner
         Finish();
       }
 
-      List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
+      
 
       if (!string.IsNullOrEmpty(argsList[0]))
       {
@@ -37,12 +36,12 @@ namespace CodeCloner
         {
           if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
           {
-            Log.WriteLine("Starting Clone Code from: " + argsList[0] + " to " + argsList[1]);
+            Log.WriteLine("Queueing Clone Code from: " + argsList[0] + " to " + argsList[1]);
             cloners.Add(new DestinationCsProjParser(sourceCsProj: argsList[0], destCsProj: argsList[1]));
           }
           else
           {
-            Log.WriteLine("Starting Clone Code to: " + argsList[0] + ". Source TBA.");
+            Log.WriteLine("Queueing Clone Code to: " + argsList[0] + ". Source TBA.");
             cloners.Add(new DestinationCsProjParser(destCsProj: argsList[0]));
           }
         }
@@ -67,10 +66,6 @@ namespace CodeCloner
               Log.WriteLine("Starting Clone Code to: " + destCsprojFile + ". Source TBA.");
               cloners.Add(new DestinationCsProjParser(destCsprojFile));
             }
-
-
-            // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
-            // todo: Paths are relative to the destination csproj, not to the executing assembly.
           }
             catch (Exception e) { Crash(e); }
         }
@@ -84,19 +79,24 @@ namespace CodeCloner
         }
       }
 
-      // todo: diff: http://www.scootersoftware.com/v4help/index.html?scripting_reference.html load "session name" - save session in repo.
-
       Finish();
     }
 
 
 
-    internal static void Finish(string message = "", int exitCode = 0)
+    internal static void Finish(string message = "")
     {
-      if (!string.IsNullOrEmpty(message)) Console.WriteLine(message); // todo: delete this line when Logging is good.
-      Console.WriteLine("Finished. Enter key to Exit."); // todo: delete this line when Logging is good.
-      Console.ReadLine(); // todo: delete this line when Logging is good so VS runs without stopping.
-      Environment.Exit(exitCode);
+      message += Environment.NewLine + "Finished cloning " + cloners.Count + " Project"; // writes to VS window
+      if (cloners.Count != 1) { message += "s"; }
+      message += "." + Environment.NewLine;
+
+      foreach (DestinationCsProjParser cloner in cloners)
+      {
+        message += "from " + String.Join(",", cloner.SourceCsProjList);
+        message += " to " + cloner.DestCsProjAbsolutePath + Environment.NewLine;
+      }
+      Console.WriteLine(message);
+      Environment.Exit(0);
     }
 
     
@@ -105,14 +105,14 @@ namespace CodeCloner
       Log.WriteLine(e.ToString());
       Log.WriteLine(e.InnerException?.ToString());
       Console.WriteLine(e.ToString());
-      Finish("",1);
+      Environment.Exit(1);
     }
 
     public static void Crash(string errorMessage)
     {
       Log.WriteLine(errorMessage);
       Console.WriteLine(errorMessage);
-      Finish("",1);
+      Environment.Exit(1);
     }
   }
 }

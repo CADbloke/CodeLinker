@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeCloner
 {
@@ -14,17 +10,15 @@ namespace CodeCloner
       Console.WriteLine("Clones Source code between CSPROJ files");
       Console.WriteLine("Usages...");
       Console.WriteLine("CODECLONER /? - This help text.");
-      Console.WriteLine("CODECLONER [Folder] [/s] [diff]");
-      Console.WriteLine("CODECLONER [Source.csproj] [Destination.csproj] [diff]");
+      Console.WriteLine("CODECLONER [Folder] [/s]");
+      Console.WriteLine("CODECLONER [Source.csproj] [Destination.csproj]");
       Console.WriteLine();
       Console.WriteLine("Folder   Clones the source(s) into all CSPROJ files in the folder");
       Console.WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
       Console.WriteLine();
       Console.WriteLine("Source.csproj        Path to the CSPROJ with the source to be cloned.");
       Console.WriteLine("Destination.csproj   Path to ... duh.");
-      Console.WriteLine("diff                 Opens a diff Session with diffs of the cloned CSPROJs.");
       Console.WriteLine();
-      Console.WriteLine("Supported diff apps are Beyond Compare & KDiff.");
       Console.WriteLine("Wrap paths with spaces in double quotes.");
       Console.WriteLine("Paths can (probably should!) be relative.");
       Console.WriteLine("Source.csproj is optional.");
@@ -43,7 +37,7 @@ namespace CodeCloner
       Console.WriteLine();
       Console.WriteLine("You may specify multiple Source: projects. No wildcards.");
       Console.WriteLine("If you don't specify a source in the placeholder it better be here.");
-      Console.WriteLine("You may specify multiple Exclude: items. Can be a wildcard, file or path.");
+      Console.WriteLine("You may specify multiple Exclude: items, file or path. No wildcards.");
       Console.WriteLine("If you specify multiple items then they must be on separate lines.");
       Console.WriteLine("Every Code Clone will re-clone the source CSPROJ");
       Console.WriteLine("into the space between the XML comment placeholders.");
