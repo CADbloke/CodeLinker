@@ -34,7 +34,38 @@ namespace CodeCloner
 
       return relativePath;
     }
+
+    /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. </summary>
+    /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute. 
+    ///                                     In any case this always returns an Absolute Path. </param>
+    /// <param name="basePath">             Optional: Base Path if building an Absolute Path from a relative path.
+    ///                                     Defaults to the current execution folder if <c>null</c>. </param>
+    internal static string MakeAbsolutePathFromPossibleRelativePath(string basePath, string possibleRelativePath)
+    {
+      // bug: if the source is specified in hte destination csproj placeholder then the relative path is relative to the CSPROJ, not to the current Directory
+      if (Path.IsPathRooted(possibleRelativePath)) { return possibleRelativePath; }
+
+      if (basePath == null) { basePath = Environment.CurrentDirectory; }
+
+      string properAbsolutePath = "";
+
+      try
+      {
+        string absolutePath = Path.Combine(basePath, possibleRelativePath);
+        properAbsolutePath = Path.GetFullPath((new Uri(absolutePath)).LocalPath);
+      }
+      catch (Exception e) {
+        Program.Crash(e);
+      }
+
+      if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath)) { Program.Crash("ERROR: Cannot Build Path"); }
+      return properAbsolutePath;
+    }
+
+ 
   }
+
+
 }
 
 // note: Path.IsPathRooted to identify absolute paths

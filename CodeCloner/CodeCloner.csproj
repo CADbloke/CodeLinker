@@ -45,8 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cloner.cs" />
     <Compile Include="CsProjItemsCloner.cs" />
+    <Compile Include="CsProjParser.cs" />
     <Compile Include="Help.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="PathMaker.cs" />

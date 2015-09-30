@@ -19,21 +19,47 @@ namespace CodeCloner
         Finish();
       }
 
-      string firstArg = args[0];
-      
-      if (firstArg == "/?")
+      List<string> argsList = args.ToList();
+
+      if (argsList[0] == "/?")
       {
         Help.Write();
         Log.WriteLine("User asked For Help. Hope I helped.");
         Finish();
       }
 
-      if (Directory.Exists(firstArg))
-      {
-        // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
+      List<CsProjItemsCloner> cloners = new List<CsProjItemsCloner>();
 
+      if (!string.IsNullOrEmpty(argsList[0]))
+      {
+        if (argsList[0].ToLower().EndsWith(".csproj"))
+        {
+          if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
+          {
+            cloners.Add(new CsProjItemsCloner(sourceCsProj: argsList[0], destCsProj: argsList[1]));
+            Log.WriteLine("Starting Clone from: " + argsList[0] + "to :" + argsList[1]);
+            Log.WriteLine("Starting Clone from: " + argsList[0] + "to :" + argsList[1]);
+          }
+          else
+          {
+            cloners.Add(new CsProjItemsCloner(destCsProj: argsList[0]));
+            Log.WriteLine("Starting Clone to :" + argsList[1] + ". Source TBA.");
+          }
+        }
+
+
+
+
+
+        else if (Directory.Exists(argsList[0]))
+        {
+          // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
+          // todo: Paths are relative to the destination csproj, not to the executing assembly.
+          List<string> csprojList = new List<string>();
+        }
       }
 
+      
       // https://msdn.microsoft.com/en-us/library/ms404278(v=vs.110).aspx  Common I/O Tasks
       // 
       /* todo: 
@@ -78,21 +104,32 @@ namespace CodeCloner
     Cope with absolute paths, including $(EnvironmentVariables)
     */
 
-      switch (firstArg) {
-
-
-        case "/?":
-        default:
-          break;
-      }
+     
       Finish();
     }
 
-    private static void Finish()
+
+
+    internal static void Finish(int exitCode = 0)
     {
       Console.WriteLine("Finished. Enter key to Exit."); // todo: delete this line when Logging is good.
       Console.ReadLine(); // todo: delete this line when Logging is good so VS runs without stopping.
-      Environment.Exit(0);
+      Environment.Exit(exitCode);
+    }
+
+    
+    internal static void Crash(Exception e)
+    {
+      Log.WriteLine(e.ToString());
+      Console.WriteLine(e.ToString());
+      Finish(1);
+    }
+
+    public static void Crash(string errorMessage)
+    {
+      Log.WriteLine(errorMessage);
+      Console.WriteLine(errorMessage);
+      Finish(1);
     }
   }
 }

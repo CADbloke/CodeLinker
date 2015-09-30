@@ -12,51 +12,59 @@ namespace CodeCloner
   /// <summary> Parses the Source CSPROJ and gets the string blob to paste into the Destination CSPROJ </summary>
   internal class CsProjItemsCloner
   {
-    private const string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
+    private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
 
-    internal XDocument sourceProjectDocument { get; set; }
-    private string sourceCsProjFile;
+    /// <summary> Absolute pathname of the source CSPROJ. </summary>
+    internal string sourceCsProjFileAbsolutePath { get; set; }
+    /// <summary> Absolute pathname of the destination CSPROJ. </summary>
+    internal string destCsProjFileAbsolutePath { get; set; }
 
-    /// <summary> Constructor. </summary>
-    /// <param name="sourceCsProjFilePath"> Full pathname of the source <c>CSPROJ</c> project file. </param>
-    internal CsProjItemsCloner(string sourceCsProjFilePath = "Missing File Name")
-    {
-      if (!Path.IsPathRooted(sourceCsProjFilePath)) sourceCsProjFilePath = Path.Combine(Environment.CurrentDirectory, sourceCsProjFilePath);
-      sourceCsProjFile = sourceCsProjFilePath;
-      sourceProjectDocument = XDocument.Load(sourceCsProjFilePath);
-    }
-
-
+    private XDocument sourceProjectDocument;
+    private XDocument destProjectDocument;
 
     /// <summary> The ItemGroup Item elements to skip. </summary>
     static List<string> ItemElementsToSkip = new List<string> {"reference","projectreference","bootstrapperpackage"};
 
     /// <summary> It turns out file names with no quotes are of no interest to me. </summary>
-    private static Regex filePathWithQuotesRegex = new Regex(@"(?<=clude *?= *?"")(.+?)(?="")");
+    private static Regex itemFilePathWithQuotesRegex = new Regex(@"(?<=clude *?= *?"")(.+?)(?="")");
+
+    /// <summary> Constructor with Destination <c>CSPROJ</c>. 
+    ///           Source is either parsed from the desintation <c>CSPROJ</c> or specified later. </summary>
+    /// <param name="destCsProj">  Destination <c>CSPROJ</c> - relative or absolute path. </param>
+    public CsProjItemsCloner(string destCsProj)
+    {
+      destCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, destCsProj);
+    }
+
+    /// <summary> Constructor with Source and Destination <c>CSPROJ</c>s. </summary>
+    /// <param name="sourceCsProj">       Source <c>CSPROJ</c> - relative or absolute path. </param>
+    /// <param name="destCsProj">  Destination <c>CSPROJ</c> - relative or absolute path. </param>
+    public CsProjItemsCloner(string sourceCsProj, string destCsProj)
+    {
+      sourceCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, sourceCsProj);
+      destCsProjFileAbsolutePath   = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, destCsProj);
+    }
+
 
     /// <summary> Clones the source code from the source <c>CSPROJ</c> file to the destination <c>CSPROJ</c> file. 
-    ///           Tweaks the file paths so the project can find them. Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
-    /// <param name="destCsProjFilePath"> Full or relative pathname of the destination <c>CSPROJ</c> file. </param>
-    internal void Clone(string destCsProjFilePath)
+    ///           Tweaks the file paths so the project can find them. 
+    ///           Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
+    internal void Clone()
     {
-      string destCsProjFile = destCsProjFilePath;
-      if (sourceProjectDocument == null)
+      if (string.IsNullOrEmpty(destCsProjFileAbsolutePath)) Program.Crash("ERROR: No destCsProjFileAbsolutePath. That's a bug.");
+      
+      XDocument destProjectXml;
+      using (StreamReader reader = File.OpenText(destCsProjFileAbsolutePath)) { destProjectXml = XDocument.Load(reader); }
+
+
+      if (string.IsNullOrEmpty(sourceCsProjFileAbsolutePath))
       {
-        Log.WriteLine("ERROR: Source project:" + sourceCsProjFile + " is fricken NULL.");
-        return;
+        
       }
 
-      if (!Path.IsPathRooted(destCsProjFile)) { destCsProjFile = Path.Combine(Environment.CurrentDirectory, destCsProjFile); }
 
-      if (!File.Exists(destCsProjFile))
-      {
-        Log.WriteLine("ERROR: Destination project:" + destCsProjFile + " not found.");
-        Log.WriteLine("It was specified as :" + destCsProjFilePath + ".");
-        Log.WriteLine("Sad Trombone.");
-        return;
-      }
 
-      string relativePathPrefix = MakeRelativePath(sourceCsProjFile , destCsProjFile);
+      string relativePathPrefix = PathMaker.MakeRelativePath(sourceCsProjFileAbsolutePath , destCsProjFile);
 
       StringBuilder destXml = new StringBuilder();
       IEnumerable<XElement> sourceItemGroups = sourceProjectDocument.Descendants(MSBuildNamespace + "ItemGroup");
@@ -73,7 +81,7 @@ namespace CodeCloner
           reader.MoveToContent();
           string xml = reader.ReadInnerXml();
           
-          Match filePathWithQuotes  = filePathWithQuotesRegex.Match(xml);  
+          Match filePathWithQuotes  = itemFilePathWithQuotesRegex.Match(xml);  
 
           if (!filePathWithQuotes.Success)
           {
@@ -87,7 +95,7 @@ namespace CodeCloner
           <Compile Include="..\CADbloke\Find    won't combine with a prefix and spit out a relative path
           maybe
           */
-          xml = filePathWithQuotesRegex.Replace(xml, relativePathPrefix + filePathWithQuotes.Value);
+          xml = itemFilePathWithQuotesRegex.Replace(xml, relativePathPrefix + filePathWithQuotes.Value);
 
           /*
           todo: add <Link> element before the closing tag of the item Closing tag. <Tag closes with </Tag> or />
@@ -117,33 +125,6 @@ namespace CodeCloner
     }
 
 
-    // http://stackoverflow.com/questions/275689/how-to-get-relative-path-from-absolute-path/340454#340454
-    /// <summary> Creates a relative path from one file or folder to another. </summary>
-    /// <exception cref="ArgumentNullException">  . </exception>
-    /// <param name="fromPath"> Contains the directory that defines the start of the relative path. </param>
-    /// <param name="toPath">   Contains the path that defines the endpoint of the relative path. </param>
-    /// <returns> The relative path from the start directory to the end path or <c>toPath</c> if the paths are not
-    ///           related. </returns>
-    /// ### <exception cref="UriFormatException">         . </exception>
-    /// ### <exception cref="InvalidOperationException">  . </exception>
-    private static String MakeRelativePath(String fromPath, String toPath)
-    {
-      if (String.IsNullOrEmpty(fromPath)) { throw new ArgumentNullException("fromPath"); }
-      if (String.IsNullOrEmpty(toPath)) { throw new ArgumentNullException("toPath"); }
 
-      Uri fromUri = new Uri(fromPath);
-      Uri toUri = new Uri(toPath);
-
-      if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
-
-      Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-      String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-      if (toUri.Scheme.ToUpperInvariant() == "FILE") {
-        relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-      }
-
-      return relativePath;
-    }
   }
 }
