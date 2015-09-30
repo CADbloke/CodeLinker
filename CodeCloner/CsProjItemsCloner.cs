@@ -33,7 +33,7 @@ namespace CodeCloner
     /// <param name="destCsProj">  Destination <c>CSPROJ</c> - relative or absolute path. </param>
     public CsProjItemsCloner(string destCsProj)
     {
-      destCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, destCsProj);
+      destCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
     }
 
     /// <summary> Constructor with Source and Destination <c>CSPROJ</c>s. </summary>
@@ -41,8 +41,8 @@ namespace CodeCloner
     /// <param name="destCsProj">  Destination <c>CSPROJ</c> - relative or absolute path. </param>
     public CsProjItemsCloner(string sourceCsProj, string destCsProj)
     {
-      sourceCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, sourceCsProj);
-      destCsProjFileAbsolutePath   = PathMaker.MakeAbsolutePathFromPossibleRelativePath(null, destCsProj);
+      sourceCsProjFileAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceCsProj);
+      destCsProjFileAbsolutePath   = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
     }
 
 
@@ -53,20 +53,22 @@ namespace CodeCloner
     {
       if (string.IsNullOrEmpty(destCsProjFileAbsolutePath)) Program.Crash("ERROR: No destCsProjFileAbsolutePath. That's a bug.");
 
-      CsProjParser destProjParser = new CsProjParser(destCsProjFileAbsolutePath);
+      DestinationCsProjParser destProjParser = new DestinationCsProjParser(destCsProjFileAbsolutePath);
 
-      foreach (string sourceProjPath in destProjParser.SourceCsProjList)
+      List<string> sourceProjPaths = new List<string>();
+
+      if (!string.IsNullOrEmpty(sourceCsProjFileAbsolutePath)) {sourceProjPaths.Add(sourceCsProjFileAbsolutePath); }
+      sourceProjPaths.AddRange(destProjParser.SourceCsProjList);
+
+      foreach (string sourceProjPath in sourceProjPaths)
       {
+        SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjPath);
         
       }
       
      
 
-      if (string.IsNullOrEmpty(sourceCsProjFileAbsolutePath))
-      {
-        
-      }
-
+      
 
 
       string relativePathPrefix = PathMaker.MakeRelativePath(sourceCsProjFileAbsolutePath , destCsProjFileAbsolutePath);

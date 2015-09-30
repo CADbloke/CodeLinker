@@ -40,7 +40,7 @@ namespace CodeCloner
     ///                                     In any case this always returns an Absolute Path. </param>
     /// <param name="basePath">             Optional: Base Path if building an Absolute Path from a relative path.
     ///                                     Defaults to the current execution folder if <c>null</c>. </param>
-    internal static string MakeAbsolutePathFromPossibleRelativePath(string basePath, string possibleRelativePath)
+    internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
     {
       // bug: if the source is specified in hte destination csproj placeholder then the relative path is relative to the CSPROJ, not to the current Directory
       if (Path.IsPathRooted(possibleRelativePath)) { return possibleRelativePath; }
