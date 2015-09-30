@@ -45,7 +45,7 @@ namespace CodeCloner
       startPlaceHolder = FindCommentOrCrash("CodeCloner");
       endPlaceHolder   = FindCommentOrCrash("EndCodeCloner");
 
-      SourceCsProjList.Clear();
+      SourceCsProjList = new List<string>();
 
       foreach (string line in startPlaceHolder.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList())
       {
@@ -140,10 +140,10 @@ namespace CodeCloner
                                        where node.NodeType == XmlNodeType.Comment
                                        select node as XComment;
 
-      List<XComment> placeholders  = comments.Where(c => c.Value.ToLower().StartsWith(commentStartsWith)).ToList();
+      List<XComment> placeholders  = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count != 1)
-        Program.Crash("ERROR: " +DestCsProjAbsolutePath+ "has " +placeholders.Count+" XML comments with" + commentStartsWith);
+        Program.Crash("ERROR: " +DestCsProjAbsolutePath+ " has " +placeholders.Count+" XML comments with " + commentStartsWith);
 
       return placeholders.First();
     }

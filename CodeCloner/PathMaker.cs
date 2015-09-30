@@ -47,7 +47,7 @@ namespace CodeCloner
       if (possibleRelativePath.StartsWith("$("))   { return possibleRelativePath; } // starts with Environment Variable
       if (Path.IsPathRooted(possibleRelativePath)) { return possibleRelativePath; }
 
-      if (basePath == null) { basePath = Environment.CurrentDirectory; }
+      if (basePath == null) { basePath = AppDomain.CurrentDomain.BaseDirectory; } // bug: wrong 
 
       string properAbsolutePath = "";
 
@@ -58,7 +58,7 @@ namespace CodeCloner
       }
       catch (Exception e) { Program.Crash(e); }
 
-      if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath)) { Program.Crash("ERROR: Cannot Build Path"); }
+      if (!(Directory.Exists(properAbsolutePath) || File.Exists(properAbsolutePath))) { Program.Crash("ERROR: Cannot Build Path: " + properAbsolutePath); }
       return properAbsolutePath;
     }
 

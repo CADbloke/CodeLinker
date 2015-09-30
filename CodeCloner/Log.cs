@@ -9,7 +9,7 @@ namespace CodeCloner
 {
   internal static class Log
   {
-    private static string logFile = Environment.CurrentDirectory + "\\CodeClonerLog.txt";
+    private static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeClonerLog.txt";
 
 
     static Log()

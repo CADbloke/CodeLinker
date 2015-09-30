@@ -11,6 +11,7 @@ namespace CodeCloner
   {
     static void Main(string[] args)
     {
+      System.Diagnostics.Debugger.Launch(); // note: to find teh bugs
       int argsCount = args.Count();
       if (argsCount == 0)
       {
@@ -42,7 +43,7 @@ namespace CodeCloner
           else
           {
             cloners.Add(new DestinationCsProjParser(destCsProj: argsList[0]));
-            Log.WriteLine("Starting Clone to :" + argsList[1] + ". Source TBA.");
+            Log.WriteLine("Starting Clone to :" + argsList[0] + ". Source TBA.");
           }
         }
 
@@ -55,6 +56,12 @@ namespace CodeCloner
           // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
           // todo: Paths are relative to the destination csproj, not to the executing assembly.
           List<string> csprojList = new List<string>();
+        }
+        else
+        {
+          string errorMessage = "Your Args made no sense to me." + Environment.NewLine;
+          foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
+          Crash(errorMessage);
         }
       }
 
