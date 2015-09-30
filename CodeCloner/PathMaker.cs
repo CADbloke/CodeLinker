@@ -37,6 +37,7 @@ namespace CodeCloner
       return relativePath;
     }
 
+
     /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. </summary>
     /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute. 
     ///                                     In any case this always returns an Absolute Path. </param>
@@ -44,36 +45,35 @@ namespace CodeCloner
     ///                                     Defaults to the current execution folder if <c>null</c>. </param>
     internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
     {
-      if (possibleRelativePath.StartsWith("$("))   { return possibleRelativePath; } // starts with Environment Variable
-      if (Path.IsPathRooted(possibleRelativePath)) { return possibleRelativePath; }
+      if (IsAbsolutePath(possibleRelativePath) )  { return possibleRelativePath; }
 
-      if (basePath == null) { basePath = AppDomain.CurrentDomain.BaseDirectory; } // bug: wrong 
-
+      if (string.IsNullOrEmpty(basePath)) basePath = AppDomain.CurrentDomain.BaseDirectory;
+      if (!basePath.EndsWith("\\"))       basePath += "\\";
       string properAbsolutePath = "";
 
       try
       {
-        string absolutePath = Path.Combine(basePath, possibleRelativePath);
-        properAbsolutePath = Path.GetFullPath((new Uri(absolutePath)).LocalPath);
+        properAbsolutePath = Path.GetFullPath(basePath + possibleRelativePath); // http://stackoverflow.com/a/1299356/492
       }
       catch (Exception e) { Program.Crash(e); }
 
-      if (!(Directory.Exists(properAbsolutePath) || File.Exists(properAbsolutePath))) { Program.Crash("ERROR: Cannot Build Path: " + properAbsolutePath); }
+      bool dir  = Directory.Exists(properAbsolutePath);
+      bool file = File.Exists(properAbsolutePath);
+
+      if (!dir && !file) { Program.Crash("ERROR: Cannot Build Path: " + properAbsolutePath); }
       return properAbsolutePath;
     }
 
     internal static bool IsAbsolutePath(string possibleRelativePath)
     {
-      if (possibleRelativePath.StartsWith("$("))   { return true; } // starts with Environment Variable
-      if (Path.IsPathRooted(possibleRelativePath)) { return true; }
+      if (possibleRelativePath.StartsWith("$("))   { return true; } // starts with Environment Variable - don't break it.
+      if (Directory.Exists(possibleRelativePath))  { return true; }
+      if (File.Exists(possibleRelativePath))       { return true; }
+      //if (Path.IsPathRooted(possibleRelativePath)) { return true; }
       return false;
     }
-    
-
- 
   }
 
 
 }
 
-// note: Path.IsPathRooted to identify absolute paths

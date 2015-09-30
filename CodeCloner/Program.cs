@@ -37,87 +37,63 @@ namespace CodeCloner
         {
           if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
           {
+            Log.WriteLine("Starting Clone Code from: " + argsList[0] + " to " + argsList[1]);
             cloners.Add(new DestinationCsProjParser(sourceCsProj: argsList[0], destCsProj: argsList[1]));
-            Log.WriteLine("Starting Clone from: " + argsList[0] + "to :" + argsList[1]);
           }
           else
           {
+            Log.WriteLine("Starting Clone Code to: " + argsList[0] + ". Source TBA.");
             cloners.Add(new DestinationCsProjParser(destCsProj: argsList[0]));
-            Log.WriteLine("Starting Clone to :" + argsList[0] + ". Source TBA.");
           }
         }
 
-
-
-
-
-        else if (Directory.Exists(argsList[0]))
-        {
-          // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
-          // todo: Paths are relative to the destination csproj, not to the executing assembly.
-          List<string> csprojList = new List<string>();
-        }
         else
         {
-          string errorMessage = "Your Args made no sense to me." + Environment.NewLine;
+          string destinationsDirectory = argsList[0];
+          if (!PathMaker.IsAbsolutePath(destinationsDirectory))
+            destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destinationsDirectory);
+
+          if (Directory.Exists(destinationsDirectory))
+          try
+          {
+            List<string> destCsprojFiles = new List<string>();
+
+            bool subDirectories = args.Contains("/s");
+            SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            destCsprojFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
+
+            foreach (string destCsprojFile in destCsprojFiles)
+            {
+              Log.WriteLine("Starting Clone Code to: " + destCsprojFile + ". Source TBA.");
+              cloners.Add(new DestinationCsProjParser(destCsprojFile));
+            }
+
+
+            // todo: Build a list of Cloners by finding all the CSPROJ Files in the folder.
+            // todo: Paths are relative to the destination csproj, not to the executing assembly.
+          }
+            catch (Exception e) { Crash(e); }
+        }
+
+
+        if (!cloners.Any()) 
+        {
+          string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
           foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
           Crash(errorMessage);
         }
       }
 
-      
-      // https://msdn.microsoft.com/en-us/library/ms404278(v=vs.110).aspx  Common I/O Tasks
-      // 
-      /* todo: 
-      Build list of Source / Dest CSPROJ - this may only be one depending on args syntax used.
-      foreach Source/Dest CSPROJ ...
-      parse source CSPROJ ItemGroups 
-      parse source CSPROJ items in ItemGroups
-       - Include = 
-       - None = 
-        - any existing code that doesn't have a link attribute may be in error. Flag it.
-      calculate new paths for destination CSPROJ
-      Build XML to be inserted into destination CSPROJ
-      
-      write items 
-          Possible YAGNI: 
-          parse destination CSPROJ Cloned Code to check for changes
-          Add a comment to destination CSPROJ about the rewrite (meh - Git history will track this, as will the log)
-          ONLY if anything changed so source control doesn't get too many checkins
-          - test first because Git shouldn't try to check in code that has not actually changed.
-      Log it. Source control can be used to check the actual changes so just log that it actually changed.
-      diff: http://www.scootersoftware.com/v4help/index.html?scripting_reference.html load "session name" - save session in repo.
+      // todo: diff: http://www.scootersoftware.com/v4help/index.html?scripting_reference.html load "session name" - save session in repo.
 
-
-      http://referencesource.microsoft.com/#XamlBuildTask/Microsoft/Build/Tasks/Xaml/GenerateTemporaryAssemblyTask.cs <== interesting
-      */
-
-
-      /* 
-    note: Item Types:  
-    MATCH
-    Compile|None|Folder|EmbeddedResource|Resource|Res|AppDesigner|Page|Content|WCFMetadataStorage|Folder
-    
-    KEEP
-    Condition
-    
-    EXCLUDE
-    Reference|ProjectReference|BootstrapperPackage
-
-    Log anything that is not one of these because it's a bug - I missed it
-
-    cope with conditional inclusions
-    Cope with absolute paths, including $(EnvironmentVariables)
-    */
-
-     
       Finish();
     }
 
 
 
-    internal static void Finish(int exitCode = 0)
+    internal static void Finish(string message = "", int exitCode = 0)
     {
+      if (!string.IsNullOrEmpty(message)) Console.WriteLine(message); // todo: delete this line when Logging is good.
       Console.WriteLine("Finished. Enter key to Exit."); // todo: delete this line when Logging is good.
       Console.ReadLine(); // todo: delete this line when Logging is good so VS runs without stopping.
       Environment.Exit(exitCode);
@@ -127,15 +103,16 @@ namespace CodeCloner
     internal static void Crash(Exception e)
     {
       Log.WriteLine(e.ToString());
+      Log.WriteLine(e.InnerException?.ToString());
       Console.WriteLine(e.ToString());
-      Finish(1);
+      Finish("",1);
     }
 
     public static void Crash(string errorMessage)
     {
       Log.WriteLine(errorMessage);
       Console.WriteLine(errorMessage);
-      Finish(1);
+      Finish("",1);
     }
   }
 }

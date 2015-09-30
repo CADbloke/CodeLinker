@@ -24,19 +24,27 @@ namespace CodeCloner
 
 
     internal static void WriteLine(List<string> lines)
-    { using (StreamWriter sw = File.AppendText(logFile))
     {
-      foreach (string line in lines)
+      using (StreamWriter sw = File.AppendText(logFile))
       {
-        sw.WriteLine(line);
+        foreach (string line in lines) { sw.WriteLine(line); }
       }
-    }
     }
 
     internal static void WriteLine(string line)
     {
       WriteLine(new List<string> {line});
     }
+
+
+
+    internal static void WriteLine(Exception e)
+    {
+      WriteLine(e.ToString());
+      WriteLine(e.InnerException?.ToString());
+      Console.WriteLine(e.ToString());
+    }
+
 
     // http://stackoverflow.com/a/18709110/492
     private static readonly Destructor Finalise = new Destructor();

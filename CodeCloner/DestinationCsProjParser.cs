@@ -15,9 +15,9 @@ namespace CodeCloner
   /// <summary> Destination <c>CSPROJ</c> Parser and Cloner. </summary>
   internal class DestinationCsProjParser
   {
-    private static string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
     static List<string> ItemElementsToSkip = new List<string> {"reference","projectreference","bootstrapperpackage"};
     static List<string> ItemElementsDoNotLink = new List<string> {"folder"};
+    
 
     /// <summary> Absolute pathname of the destination <c>CSPROJ</c> including file name. </summary>
     internal  string DestCsProjAbsolutePath { get; }
@@ -31,27 +31,39 @@ namespace CodeCloner
     ///           Can be zero, can be lots.</summary>
     internal List<string> SourceCsProjList { get; }
 
+    /// <summary> Code Files to be excluded from the clone. </summary>
+    internal List<string> ExclusionsList { get; }
+
     /// <summary> Source <c>CSPROJ</c> is specified in the destination <c>CSPROJ</c> XML comment placeholder. </summary>
     /// <param name="destCsProj"> Absolute path of destination <c>CSPROJ</c>. </param>
     internal  DestinationCsProjParser(string destCsProj)
     {
       DestCsProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
-      DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath);
-    
+      DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath)?? "";
 
       try { destCsProjXdoc = XDocument.Load(DestCsProjAbsolutePath); }
       catch (Exception e) { Program.Crash(e); }
 
+      
+      SourceCsProjList = new List<string>();
+      ExclusionsList   = new List<string>();
       startPlaceHolder = FindCommentOrCrash("CodeCloner");
       endPlaceHolder   = FindCommentOrCrash("EndCodeCloner");
-
-      SourceCsProjList = new List<string>();
-
-      foreach (string line in startPlaceHolder.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList())
+      foreach (string line in startPlaceHolder.Value.Split(new[] { "\r\n", "\n", Environment.NewLine }, StringSplitOptions.None).ToList())
       {
-        if (!line.ToLower().Trim().StartsWith("source:")) continue;
-        SourceCsProjList.Add(Path.Combine(DestCsProjAbsolutePath, line.Replace("source:", "").Trim()));
+        
+        if (line.ToLower().Trim().StartsWith("source:"))
+        {
+          string sourceInXml = line.ToLower().Replace("source:", "").Trim();
+          string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestCsProjDirectory, sourceInXml);
+          SourceCsProjList.Add(absoluteSource);
+        }
+
+        if (line.ToLower().Trim().StartsWith("exclude:"))
+          ExclusionsList.Add(line.Replace("exclude:", "").Trim());
       }
+
+      CloneCode();
     }
 
     /// <summary> Source <c>CSPROJ</c> and destination <c>CSPROJ</c> specified here. </summary>
@@ -59,22 +71,21 @@ namespace CodeCloner
     /// <param name="destCsProj"> Absolute or Relative path of Destination <c>CSPROJ</c>. </param>
     internal DestinationCsProjParser(string sourceCsProj, string destCsProj)
     {
-      SourceCsProjList.Add(PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceCsProj));
+      SourceCsProjList = new List<string> {PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceCsProj)};
+      ExclusionsList   = new List<string>();
+      
       DestCsProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
       DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath);
+
+      try { destCsProjXdoc = XDocument.Load(DestCsProjAbsolutePath); }
+      catch (Exception e) { Program.Crash(e); }
+
+      startPlaceHolder = FindCommentOrCrash("CodeCloner");
+      endPlaceHolder   = FindCommentOrCrash("EndCodeCloner");
+
+      CloneCode();
     }
 
-
-    internal void RemoveOldDestCsProjClonedCode()
-    {
-      if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
-      {
-        XNode startNode = startPlaceHolder;
-        while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
-      }
-      else Program.Crash("Error: cannot remove old Cloned Code from " + DestCsProjAbsolutePath);
-    }
-   
 
 
 
@@ -87,7 +98,6 @@ namespace CodeCloner
       if (!destCsProjXdoc.Root.Elements().Any()) Program.Crash("ERROR: No Destination CSPROJ file at " + DestCsProjAbsolutePath);
 
       RemoveOldDestCsProjClonedCode();
-      XElement destinationInsertAfterHere = (XElement)startPlaceHolder.NextNode;
 
       foreach (string sourcePath in SourceCsProjList)
       {
@@ -97,38 +107,42 @@ namespace CodeCloner
 
         SourceCsProjParser sourceProjParser = new SourceCsProjParser(sourceProjAbsolutePath);
 
-        XElement commentAboutSourceProject =  XElement.Parse("<!-- Cloned from "+ sourcePath + "-->");
-        destinationInsertAfterHere.AddAfterSelf(commentAboutSourceProject);
-        destinationInsertAfterHere = commentAboutSourceProject;
+        endPlaceHolder.AddBeforeSelf(new XComment("Cloned from "+ sourcePath));
 
         string destRelativePathPrefix = PathMaker.MakeRelativePath(sourceProjAbsoluteDirectory, DestCsProjDirectory);
 
         foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
         {
-          XElement destItemGroup = new XElement(sourceItemGroup);
+          XElement destItemGroup = new XElement("ItemGroup");
 
-          foreach (XElement item in destItemGroup.Elements())
+          foreach (XElement sourceItem in sourceItemGroup.Elements())
           {
-            string elementName = item.Name.LocalName;
+            string elementName = sourceItem.Name.LocalName;
             if (ItemElementsToSkip.Contains(elementName.ToLower())) continue;
 
-            XAttribute attrib = item.Attribute("Include") ?? item.Attribute("Exclude");
+            XAttribute attrib = sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude");
 
             if (attrib != null)
             {
               string originalPath = attrib.Value;
-              if (!PathMaker.IsAbsolutePath(originalPath)) attrib.Value = destRelativePathPrefix + originalPath;
+              if (ExclusionsList.Any(x => originalPath.Contains(x)))
+              {
+                Log.WriteLine("Excluded " + originalPath + " from " + sourceProjAbsolutePath + " clone to " + DestCsProjAbsolutePath
+                  + " because you said Exclude: " + ExclusionsList.FirstOrDefault(x => originalPath.Contains(x)) );
+                continue;
+              }
+              if (!PathMaker.IsAbsolutePath(originalPath)) { attrib.Value = destRelativePathPrefix + originalPath; }
 
-              if (!item.Elements("Link").Any() && !ItemElementsDoNotLink.Contains(elementName.ToLower()))
-                item.Add(XElement.Parse("<Link>" + originalPath + "</Link>"));
+              if (!sourceItem.Descendants("Link").Any() || !ItemElementsDoNotLink.Contains(elementName.ToLower())) {
+                sourceItem.Add(XElement.Parse("<Link>" + originalPath + "</Link>"));
+              }
+              destItemGroup.Add(sourceItem);
             }
           }
-          destinationInsertAfterHere.AddAfterSelf(destItemGroup);
-          destinationInsertAfterHere = destItemGroup;
+          endPlaceHolder.AddBeforeSelf(destItemGroup);
         }
-        XElement closingCommentAboutSourceProject =  XElement.Parse("<!-- End Clone from "+ sourcePath + "-->");
-        destinationInsertAfterHere.AddAfterSelf(closingCommentAboutSourceProject);
-        destinationInsertAfterHere = closingCommentAboutSourceProject;
+        endPlaceHolder.AddBeforeSelf(new XComment("End Clone from "+ sourcePath));
+        Log.WriteLine("End Clone from "+ sourcePath);
       }
     }
 
@@ -147,6 +161,19 @@ namespace CodeCloner
 
       return placeholders.First();
     }
+
+    
+    private void RemoveOldDestCsProjClonedCode()
+    {
+      if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
+      {
+        XNode startNode = startPlaceHolder;
+        while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
+      }
+      else Program.Crash("Error: cannot remove old Cloned Code from " + DestCsProjAbsolutePath);
+    }
+   
+
 
   }
 }
