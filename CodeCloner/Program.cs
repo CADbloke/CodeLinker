@@ -10,7 +10,7 @@ namespace CodeCloner
     static List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
     static void Main(string[] args)
     {
-      // System.Diagnostics.Debugger.Launch(); // to find teh bugs
+        System.Diagnostics.Debugger.Launch(); // to find teh bugs
       int argsCount = args.Count();
       if (argsCount == 0)
       {
@@ -36,12 +36,12 @@ namespace CodeCloner
         {
           if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
           {
-            Log.WriteLine("Queueing Clone Code from: " + argsList[0] + " to " + argsList[1]);
+            Log.WriteLine("Queueing Code Clone from: " + argsList[0] + " to " + argsList[1]);
             cloners.Add(new DestinationCsProjParser(sourceCsProj: argsList[0], destCsProj: argsList[1]));
           }
           else
           {
-            Log.WriteLine("Queueing Clone Code to: " + argsList[0] + ". Source TBA.");
+            Log.WriteLine("Queueing Code Clone to: " + argsList[0] + ". Source TBA.");
             cloners.Add(new DestinationCsProjParser(destCsProj: argsList[0]));
           }
         }
@@ -63,11 +63,11 @@ namespace CodeCloner
 
             foreach (string destCsprojFile in destCsprojFiles)
             {
-              Log.WriteLine("Starting Clone Code to: " + destCsprojFile + ". Source TBA.");
+              Log.WriteLine("Queueing Code Clone to: " + destCsprojFile + ". Source TBA.");
               cloners.Add(new DestinationCsProjParser(destCsprojFile));
             }
           }
-            catch (Exception e) { Crash(e); }
+            catch (Exception e) { Crash(e, "Queueing Code Clone didn't work. Bad file name?"); }
         }
 
 
@@ -100,10 +100,13 @@ namespace CodeCloner
     }
 
     
-    internal static void Crash(Exception e)
+    internal static void Crash(Exception e, string crashedAt = "")
     {
+      Log.WriteLine("");
+      Log.WriteLine("I crashed at "+crashedAt+". Whups.");
       Log.WriteLine(e.ToString());
       Log.WriteLine(e.InnerException?.ToString());
+      Log.WriteLine(e.StackTrace);
       Console.WriteLine(e.ToString());
       Environment.Exit(1);
     }
@@ -116,3 +119,10 @@ namespace CodeCloner
     }
   }
 }
+
+/* todo: <ApplicationIcon>Resources\CADbloke favicon.ico</ApplicationIcon>
+this may be a case of using a delmited list of strings to choose which XML elements need to come across
+in this case "PropertyGroup, ApplicationIcon"
+"Reference,HintPath" <== if relative but this may actually break more than it fixes because it depends on build settings - perhaps remove all the hint paths so it generates a real error if it needs Nugetting. Report in the Log file that you did this.
+
+  */

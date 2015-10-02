@@ -54,7 +54,7 @@ namespace CodeCloner
       {
         properAbsolutePath = Path.GetFullPath(basePath + possibleRelativePath); // http://stackoverflow.com/a/1299356/492
       }
-      catch (Exception e) { Program.Crash(e); }
+      catch (Exception e) { Program.Crash(e, "PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath); }
 
       bool dir  = Directory.Exists(properAbsolutePath);
       bool file = File.Exists(properAbsolutePath);

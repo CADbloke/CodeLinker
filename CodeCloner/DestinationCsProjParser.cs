@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -39,7 +40,7 @@ namespace CodeCloner
       DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath)?? "";
 
       try { destCsProjXdoc = XDocument.Load(DestCsProjAbsolutePath); }
-      catch (Exception e) { Program.Crash(e); }
+      catch (Exception e) { Program.Crash(e, "DestinationCsProjParser CTOR (1 param) loading destination XML from " + DestCsProjAbsolutePath); }
 
       
       SourceCsProjList = new List<string>();
@@ -50,7 +51,7 @@ namespace CodeCloner
       {
         if (line.ToLower().Trim().StartsWith("source:"))
         {
-          string sourceInXml = line.ToLower().Replace("source:", "").Trim();
+          string sourceInXml = line.ToLower().Replace("source:", "").Replace("-->", "").Trim();
           string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestCsProjDirectory, sourceInXml);
           SourceCsProjList.Add(absoluteSource);
         }
@@ -68,13 +69,14 @@ namespace CodeCloner
     internal DestinationCsProjParser(string sourceCsProj, string destCsProj)
     {
       SourceCsProjList = new List<string> {PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceCsProj)};
+      // bug: whut ?
       ExclusionsList   = new List<string>();
       
       DestCsProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destCsProj);
       DestCsProjDirectory = Path.GetDirectoryName(DestCsProjAbsolutePath);
 
       try { destCsProjXdoc = XDocument.Load(DestCsProjAbsolutePath); }
-      catch (Exception e) { Program.Crash(e); }
+      catch (Exception e) { Program.Crash(e , "DestinationCsProjParser CTOR (2 params) loading destination XML from " + DestCsProjAbsolutePath); }
 
       startPlaceHolder = FindCommentOrCrash("CodeCloner");
       endPlaceHolder   = FindCommentOrCrash("EndCodeCloner");
@@ -95,9 +97,11 @@ namespace CodeCloner
         Program.Crash("ERROR: No Destination CSPROJ file at " + DestCsProjAbsolutePath);
 
       RemoveOldDestCsProjClonedCode();
+      int codezCloned = 0;
 
       foreach (string sourcePath in SourceCsProjList)
       {
+        try {
         string SourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath)) ? sourcePath : Path.Combine(DestCsProjDirectory, sourcePath);
         string SourceCsProjDirectory = Path.GetDirectoryName(SourceProjAbsolutePath);
         string cloneRelativeSource = PathMaker.MakeRelativePath(DestCsProjDirectory +"\\", SourceProjAbsolutePath);
@@ -105,7 +109,7 @@ namespace CodeCloner
         SourceCsProjParser sourceProjParser = new SourceCsProjParser(SourceProjAbsolutePath);
 
         endPlaceHolder.AddBeforeSelf(new XComment("Cloned from "+ cloneRelativeSource));
-        Log.WriteLine("Cloned from "+ sourcePath.Replace(SourceCsProjDirectory, "") + " to " + DestCsProjAbsolutePath );
+        Log.WriteLine("Cloning from "+ SourceProjAbsolutePath + " to " + DestCsProjAbsolutePath );
 
 
         foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
@@ -130,8 +134,17 @@ namespace CodeCloner
               }
               if (!PathMaker.IsAbsolutePath(originalPath) && !ItemElementsDoNotBreakLink.Contains(elementName.ToLower())) // Folders, mostly
               {
-                string sourceAbsolutePath = Path.GetFullPath(SourceCsProjDirectory+"\\" + originalPath);
-                string relativePathFromDestination = PathMaker.MakeRelativePath(DestCsProjDirectory +"\\", sourceAbsolutePath);
+                string sourceAbsolutePath = "";
+                try
+                {
+                  string fileName = Path.GetFileName(originalPath); // wildcards blow up Path.GetFullPath()
+                  string originalFolder = originalPath.Replace(fileName, "");
+                  sourceAbsolutePath = Path.GetFullPath(SourceCsProjDirectory + "\\" + originalFolder) + fileName;
+                }
+                catch (Exception e) {
+                  Program.Crash(e, "Cloning. GetFullPath: " + SourceCsProjDirectory + "\\" + originalPath);
+                }
+                string relativePathFromDestination = PathMaker.MakeRelativePath(DestCsProjDirectory + "\\", sourceAbsolutePath);
                 attrib.Value = relativePathFromDestination;
               }
 
@@ -141,6 +154,7 @@ namespace CodeCloner
               {
                 XElement xe = new XElement(MSBuild+ "Link", originalPath);
                 sourceItem.Add(xe);
+                codezCloned++;
               }
               destItemGroup.Add(sourceItem);
             }
@@ -150,9 +164,14 @@ namespace CodeCloner
         }
         endPlaceHolder.AddBeforeSelf(new XComment("End Clone from "+ cloneRelativeSource + 
           Environment.NewLine+ "See CodeClonerLog.txt for details. CodeCloner by "+ Help.SourceCodeUrl +" "));
-        Log.WriteLine("End Clone from "+ sourcePath);
+        Log.WriteLine("Cloned "+ codezCloned+" codez from "+ sourcePath);
+        Log.WriteLine("--------------");
       }
+        catch(Exception e) {Program.Crash(e , "Cloning " + sourcePath +" to " + DestCsProjAbsolutePath); }
+        }
+      
       destCsProjXdoc.Save(DestCsProjAbsolutePath);
+      
     }
 
 

@@ -13,7 +13,7 @@ namespace CodeCloner
 
     /// <summary> Gets the full pathname of the source create structure project file. </summary>
     internal string SourceCsProjPath { get; }
-    private XDocument csProjXml;
+
     internal List<XElement> ItemGroups { get; }
 
 
@@ -26,7 +26,7 @@ namespace CodeCloner
 
       try
       {
-        csProjXml = XDocument.Load(sourceCsProjAbsolutePath);
+        XDocument csProjXml = XDocument.Load(sourceCsProjAbsolutePath);
         ItemGroups = new List<XElement>();
 
         //IEnumerable<XElement> itemGroups = from element in csProjXml.Root.Elements().DescendantsAndSelf()
@@ -46,7 +46,7 @@ namespace CodeCloner
 
         if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceCsProjPath + " contains no ItemGroups. No Codez?"); }
       }
-      catch (Exception e) { Program.Crash(e); }
+      catch (Exception e) { Program.Crash(e, "source CSPROJ: "+ sourceCsProjAbsolutePath); }
     }
   }
 }
