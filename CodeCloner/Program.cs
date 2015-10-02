@@ -10,7 +10,7 @@ namespace CodeCloner
     static List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
     static void Main(string[] args)
     {
-        System.Diagnostics.Debugger.Launch(); // to find teh bugs
+       // System.Diagnostics.Debugger.Launch(); // to find teh bugs
       int argsCount = args.Count();
       if (argsCount == 0)
       {
@@ -86,7 +86,7 @@ namespace CodeCloner
 
     internal static void Finish(string message = "")
     {
-      message += Environment.NewLine + "Finished cloning " + cloners.Count + " Project"; // writes to VS window
+      message += "Finished cloning " + cloners.Count + " Project"; // writes to VS window
       if (cloners.Count != 1) { message += "s"; }
       message += "." + Environment.NewLine;
 
@@ -124,5 +124,7 @@ namespace CodeCloner
 this may be a case of using a delmited list of strings to choose which XML elements need to come across
 in this case "PropertyGroup, ApplicationIcon"
 "Reference,HintPath" <== if relative but this may actually break more than it fixes because it depends on build settings - perhaps remove all the hint paths so it generates a real error if it needs Nugetting. Report in the Log file that you did this.
+
+  Relative Project References break.
 
   */
