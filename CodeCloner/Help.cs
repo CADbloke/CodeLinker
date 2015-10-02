@@ -7,45 +7,52 @@ namespace CodeCloner
     internal static string SourceCodeUrl = "https://github.com/CADbloke/CodeCloner";
     public static void Write()
     {
-      Console.WriteLine("Clones Source code between CSPROJ files");
-      Console.WriteLine("Usages...");
-      Console.WriteLine("CODECLONER /? - This help text.");
-      Console.WriteLine("CODECLONER [Folder] [/s]");
-      Console.WriteLine("CODECLONER [Source.csproj] [Destination.csproj]");
-      Console.WriteLine();
-      Console.WriteLine("Folder   Clones the source(s) into all CSPROJ files in the folder");
-      Console.WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
-      Console.WriteLine();
-      Console.WriteLine("Source.csproj        Path to the CSPROJ with the source to be cloned.");
-      Console.WriteLine("Destination.csproj   Path to ... duh.");
-      Console.WriteLine();
-      Console.WriteLine("Wrap paths with spaces in double quotes.");
-      Console.WriteLine("Paths can (probably should!) be relative.");
-      Console.WriteLine("Source.csproj is optional.");
-      Console.WriteLine("If you specify one CSPROJ file it is the destination,");
-      Console.WriteLine("in which case it needs to have the source project in the placeholder...");
-      Console.WriteLine();
-      Console.WriteLine();
-      Console.WriteLine("The Destination CSPROJ file needs this XML comment placeholder...");
-      Console.WriteLine();
-      Console.WriteLine("<!-- CodeCloner");
-      Console.WriteLine("Source: PathTo\\NameOfProject.csproj     <== this is optional");
-      Console.WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
-      Console.WriteLine("-->");
-      Console.WriteLine();
-      Console.WriteLine("<!-- EndCodeCloner -->");
-      Console.WriteLine();
-      Console.WriteLine("You may specify multiple Source: projects. No wildcards.");
-      Console.WriteLine("If you don't specify a source in the placeholder it better be here.");
-      Console.WriteLine("You may specify multiple Exclude: items, file or path. No wildcards.");
-      Console.WriteLine("If you specify multiple items then they must be on separate lines.");
-      Console.WriteLine("Every Code Clone will re-clone the source CSPROJ");
-      Console.WriteLine("into the space between the XML comment placeholders.");
-      Console.WriteLine("ALL code inside these placeholders is refreshed every time. OK?");
-      Console.WriteLine();
-      Console.WriteLine("More Info & Source at " + SourceCodeUrl);
-      Console.WriteLine("Code Cloner by CADbloke");
-      
+      WriteLine("Clones Source code between CSPROJ files");
+      WriteLine("Usages...");
+      WriteLine("CODECLONER /? - This help text.");
+      WriteLine("CODECLONER [Folder] [/s]");
+      WriteLine("CODECLONER [Source.csproj] [Destination.csproj]");
+      WriteLine();
+      WriteLine("Folder   Clones the source(s) into all CSPROJ files in the folder");
+      WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
+      WriteLine();
+      WriteLine("Source.csproj        Path to the CSPROJ with the source to be cloned.");
+      WriteLine("Destination.csproj   Path to ... duh.");
+      WriteLine();
+      WriteLine("Wrap paths with spaces in double quotes.");
+      WriteLine("Paths can (probably should!) be relative.");
+      WriteLine("Source.csproj is optional.");
+      WriteLine("If you specify one CSPROJ file it is the destination,");
+      WriteLine("in which case it needs to have the source project in the placeholder...");
+      WriteLine();
+      WriteLine();
+      WriteLine("The Destination CSPROJ file needs this XML comment placeholder...");
+      WriteLine();
+      WriteLine("<!-- CodeCloner");
+      WriteLine("Source: PathTo\\NameOfProject.csproj     <== this is optional");
+      WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
+      WriteLine("-->");
+      WriteLine();
+      WriteLine("<!-- EndCodeCloner -->");
+      WriteLine();
+      WriteLine("You may specify multiple Source: projects. No wildcards.");
+      WriteLine("If you don't specify a source in the placeholder it better be here.");
+      WriteLine("You may specify multiple Exclude: items, file or path. No wildcards.");
+      WriteLine("If you specify multiple items then they must be on separate lines.");
+      WriteLine("Every Code Clone will re-clone the source CSPROJ");
+      WriteLine("into the space between the XML comment placeholders.");
+      WriteLine("ALL code inside these placeholders is refreshed every time. OK?");
+      WriteLine();
+      WriteLine("More Info & Source at " + SourceCodeUrl);
+      WriteLine("Code Cloner by CADbloke");
+      WriteLine();
+    }
+
+
+    private static void WriteLine(string line = "")
+    {
+      Console.WriteLine(line);
+      Log.WriteLine(line);
     }
   }
 }
