@@ -66,9 +66,10 @@ namespace CodeCloner
     internal static bool IsAbsolutePath(string possibleRelativePath)
     {
       if (possibleRelativePath.StartsWith("$("))   { return true; } // starts with Environment Variable - don't break it.
+      if (possibleRelativePath.StartsWith(".."))   { return false; } 
       if (Directory.Exists(possibleRelativePath))  { return true; }
       if (File.Exists(possibleRelativePath))       { return true; }
-      //if (Path.IsPathRooted(possibleRelativePath)) { return true; }
+      if (Path.IsPathRooted(possibleRelativePath)) { return true; }
       return false;
     }
   }
