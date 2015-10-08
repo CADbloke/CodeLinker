@@ -199,8 +199,7 @@ namespace CodeCloner
       if (oldXML != GetOrRemoveDestCsProjClonedCode())
       {
         destCsProjXdoc.Save(DestCsProjAbsolutePath);
-        if (SourceCsProjList.Count > 1)
-          Log.WriteLine("Cloned " + totalCodezCloned + " codez from " + SourceCsProjList.Count + " source Projects");
+        Log.WriteLine("Cloned " + totalCodezCloned + " codez from " + SourceCsProjList.Count + " source Project(s).");
       }
       else Log.WriteLine("No changes to save so nothing cloned.");
 
