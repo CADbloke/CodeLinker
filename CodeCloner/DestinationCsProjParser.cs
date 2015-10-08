@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -103,7 +104,7 @@ namespace CodeCloner
         Program.Crash("ERROR: No Destination CSPROJ file at " + DestCsProjAbsolutePath);
       }
 
-      RemoveOldDestCsProjClonedCode();
+      string oldXML = GetOrRemoveDestCsProjClonedCode(remove:true);
       int totalCodezCloned = 0;
 
       foreach (string sourcePath in SourceCsProjList)
@@ -199,7 +200,10 @@ namespace CodeCloner
       endPlaceHolder.AddBeforeSelf(new XComment("End of Cloned Code" + Environment.NewLine + 
         "See CodeClonerLog.txt for details. CodeCloner by " + Help.SourceCodeUrl + " "));
 
-      destCsProjXdoc.Save(DestCsProjAbsolutePath);
+      if (oldXML != GetOrRemoveDestCsProjClonedCode()) 
+      {
+        destCsProjXdoc.Save(DestCsProjAbsolutePath);
+      }
     }
 
 
@@ -219,17 +223,22 @@ namespace CodeCloner
     }
 
 
-    private void RemoveOldDestCsProjClonedCode()
+    private string GetOrRemoveDestCsProjClonedCode(bool remove = false)
     {
+      StringBuilder oldXmlBuilder = new StringBuilder();
       if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
       {
         XNode startNode = startPlaceHolder;
-        while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
+        while (startNode.NextNode != endPlaceHolder)
+        {
+          oldXmlBuilder.Append(startNode.NextNode.ToString());
+          if (remove) startNode.NextNode.Remove();
+          else startNode = startNode.NextNode;
+        }
+        return oldXmlBuilder.ToString();
       }
-      else
-      {
-        Program.Crash("Error: cannot remove old Cloned Code from " + DestCsProjAbsolutePath);
-      }
+      Program.Crash("Error: cannot get old Cloned Code from " + DestCsProjAbsolutePath);
+      return "you'll never get this";
     }
   }
 }

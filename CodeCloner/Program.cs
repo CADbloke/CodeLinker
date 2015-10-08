@@ -10,7 +10,7 @@ namespace CodeCloner
     static List<DestinationCsProjParser> cloners = new List<DestinationCsProjParser>();
     static void Main(string[] args)
     {
-      // System.Diagnostics.Debugger.Launch(); // to find teh bugs
+      System.Diagnostics.Debugger.Launch(); // to find teh bugs
       int argsCount = args.Count();
       if (argsCount == 0)
       {
