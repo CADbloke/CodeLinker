@@ -182,8 +182,8 @@ namespace CodeCloner
             }
             if (destItemGroup.HasElements) { endPlaceHolder.AddBeforeSelf(destItemGroup); }
           }
-          endPlaceHolder.AddBeforeSelf(new XComment("End Clone from " + cloneRelativeSource));
-          Log.WriteLine("Cloned " + codezCloned + " codez.");
+          endPlaceHolder.AddBeforeSelf(new XComment("End Clone from " + cloneRelativeSource+ Environment.NewLine + 
+            "Cloned " + codezCloned + " codez."));
           totalCodezCloned += codezCloned;
         }
         catch (Exception e) {
@@ -191,19 +191,21 @@ namespace CodeCloner
         }
       }
 
-      if (SourceCsProjList.Count > 1)
-        Log.WriteLine("Cloned " + totalCodezCloned + " codez from " + SourceCsProjList.Count + " source Projects");
-
-      Log.WriteLine("----------------------------");
-      Log.WriteLine("");
+      
 
       endPlaceHolder.AddBeforeSelf(new XComment("End of Cloned Code" + Environment.NewLine + 
         "See CodeClonerLog.txt for details. CodeCloner by " + Help.SourceCodeUrl + " "));
 
-      if (oldXML != GetOrRemoveDestCsProjClonedCode()) 
+      if (oldXML != GetOrRemoveDestCsProjClonedCode())
       {
         destCsProjXdoc.Save(DestCsProjAbsolutePath);
+        if (SourceCsProjList.Count > 1)
+          Log.WriteLine("Cloned " + totalCodezCloned + " codez from " + SourceCsProjList.Count + " source Projects");
       }
+      else Log.WriteLine("No changes to save so nothing cloned.");
+
+      Log.WriteLine("----------------------------");
+      Log.WriteLine("");
     }
 
 

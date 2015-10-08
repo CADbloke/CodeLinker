@@ -45,38 +45,8 @@
   <!-- CodeCloner
 Source: ..\..\CodeCloner\CodeCloner.csproj
 -->
-  <!--Cloned from ..\..\codecloner\codecloner.csproj-->
-  <ItemGroup>
-    <Compile Include="..\..\codecloner\DestinationCsProjParser.cs">
-      <Link>DestinationCsProjParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\Help.cs">
-      <Link>Help.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\Log.cs">
-      <Link>Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\PathMaker.cs">
-      <Link>PathMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\Program.cs">
-      <Link>Program.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codecloner\SourceCsProjParser.cs">
-      <Link>SourceCsProjParser.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\codecloner\App.config">
-      <Link>App.config</Link>
-    </None>
-  </ItemGroup>
-  <!--End Clone from ..\..\codecloner\codecloner.csproj-->
-  <!--End of Cloned Code
-See CodeClonerLog.txt for details. CodeCloner by https://github.com/CADbloke/CodeCloner -->
+
+
   <!-- EndCodeCloner -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
