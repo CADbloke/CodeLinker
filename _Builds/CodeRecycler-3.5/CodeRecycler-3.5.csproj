@@ -43,42 +43,8 @@
   <!-- CodeRecycler
 Source: ..\..\CodeRecycler\CodeRecycler.csproj
 -->
-  <!--Recycled from ..\..\coderecycler\coderecycler.csproj-->
-  <ItemGroup>
-    <Compile Include="..\..\coderecycler\DestinationProjParser.cs">
-      <Link>DestinationProjParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\Help.cs">
-      <Link>Help.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\IsaCsOrVbProjectFile.cs">
-      <Link>IsaCsOrVbProjectFile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\Log.cs">
-      <Link>Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\PathMaker.cs">
-      <Link>PathMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\Program.cs">
-      <Link>Program.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\coderecycler\SourceProjParser.cs">
-      <Link>SourceProjParser.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\coderecycler\App.config">
-      <Link>App.config</Link>
-    </None>
-  </ItemGroup>
-  <!--End Recycle from ..\..\coderecycler\coderecycler.csproj
-Recycled 9 codez.-->
-  <!--End of Recycled Code
-See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke/CodeRecycler -->
+
+
   <!-- EndCodeRecycler -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
