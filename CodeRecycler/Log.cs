@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CodeCloner
+namespace CodeRecycler
 {
   internal static class Log
   {
-    internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeClonerLog.txt";
+    internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeRecyclerLog.txt";
 
     static Log()
     {
       using (StreamWriter sw = File.AppendText(logFile))
       {
         sw.WriteLine("==========================");
-        sw.WriteLine("Code Cloner Log: " + DateTime.Now);
+        sw.WriteLine("Code Recycler Log: " + DateTime.Now);
         sw.WriteLine("--------------------------");
       }
     }

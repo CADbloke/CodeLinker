@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CodeCloner
+namespace CodeRecycler
 {
   class Program
   {
-    static List<DestinationProjParser> cloners = new List<DestinationProjParser>();
+    static List<DestinationProjParser> recyclers = new List<DestinationProjParser>();
     static void Main(string[] args)
     {
       // System.Diagnostics.Debugger.Launch(); // to find teh bugs
@@ -36,13 +36,13 @@ namespace CodeCloner
         {
           if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
           {
-            Log.WriteLine("Queueing Code Clone from: " + argsList[0] + " to " + argsList[1]);
-            cloners.Add(new DestinationProjParser(sourceProj: argsList[0], destProj: argsList[1]));
+            Log.WriteLine("Queueing Code Recycle from: " + argsList[0] + " to " + argsList[1]);
+            recyclers.Add(new DestinationProjParser(sourceProj: argsList[0], destProj: argsList[1]));
           }
           else
           {
-            Log.WriteLine("Queueing Code Clone to: " + argsList[0] + ". Source TBA.");
-            cloners.Add(new DestinationProjParser(destProj: argsList[0]));
+            Log.WriteLine("Queueing Code Recycle to: " + argsList[0] + ". Source TBA.");
+            recyclers.Add(new DestinationProjParser(destProj: argsList[0]));
           }
         }
 
@@ -64,15 +64,15 @@ namespace CodeCloner
 			destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
             foreach (string destProjFile in destProjFiles)
             {
-              Log.WriteLine("Queueing Code Clone to: " + destProjFile + ". Source TBA.");
-              cloners.Add(new DestinationProjParser(destProjFile));
+              Log.WriteLine("Queueing Code Recycle to: " + destProjFile + ". Source TBA.");
+              recyclers.Add(new DestinationProjParser(destProjFile));
             }
           }
-            catch (Exception e) { Crash(e, "Queueing Code Clone didn't work. Bad file name?"); }
+            catch (Exception e) { Crash(e, "Queueing Code Recycle didn't work. Bad file name?"); }
         }
 
 
-        if (!cloners.Any()) 
+        if (!recyclers.Any()) 
         {
           string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
           foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
@@ -87,14 +87,14 @@ namespace CodeCloner
 
     internal static void Finish(string message = "")
     {
-      message += "Finished cloning " + cloners.Count + " Project"; // writes to VS window
-      if (cloners.Count != 1) { message += "s"; }
+      message += "Finished cloning " + recyclers.Count + " Project"; // writes to VS window
+      if (recyclers.Count != 1) { message += "s"; }
       message += "." + Environment.NewLine;
 
-      foreach (DestinationProjParser cloner in cloners)
+      foreach (DestinationProjParser recycler in recyclers)
       {
-        message += "from " + String.Join(",", cloner.SourceProjList.ToArray());
-        message += " to " + cloner.DestProjAbsolutePath + Environment.NewLine;
+        message += "from " + String.Join(",", recycler.SourceProjList.ToArray());
+        message += " to " + recycler.DestProjAbsolutePath + Environment.NewLine;
       }
       Console.WriteLine(message);
       Environment.Exit(0);

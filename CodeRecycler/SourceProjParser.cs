@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 
 
-namespace CodeCloner
+namespace CodeRecycler
 {
   internal class SourceProjParser
   {

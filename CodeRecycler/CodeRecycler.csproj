@@ -7,8 +7,8 @@
     <ProjectGuid>{1BC2D099-0296-474B-B8F3-7A5C77E30919}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeCloner</RootNamespace>
-    <AssemblyName>CodeCloner</AssemblyName>
+    <RootNamespace>CodeRecycler</RootNamespace>
+    <AssemblyName>CodeRecycler</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -57,7 +57,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(TargetPath) ..\..\..\_Builds\CodeCloner-3.5\CodeCloner-3.5.csproj</PostBuildEvent>
+    <PostBuildEvent>$(TargetPath) ..\..\..\_Builds\CodeRecycler-3.5\CodeRecycler-3.5.csproj</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

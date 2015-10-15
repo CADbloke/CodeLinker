@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace CodeCloner
+namespace CodeRecycler
 {
   static class Help
   {
-    internal static string SourceCodeUrl = "https://github.com/CADbloke/CodeCloner";
+    internal static string SourceCodeUrl = "https://github.com/CADbloke/CodeRecycler";
     public static void Write()
     {
-      WriteLine("Clones Source code between CSPROJ files");
+      WriteLine("Recycles Source code between CSPROJ files");
       WriteLine("Usages...");
       WriteLine("CODECLONER /?");
       WriteLine("CODECLONER [Folder [/s]]");
@@ -16,21 +16,21 @@ namespace CodeCloner
       WriteLine();
       WriteLine("/?       This help text.");
       WriteLine();
-      WriteLine("Folder   Clones the source(s) into all CSPROJ files in the folder");
-      WriteLine("         This is the dsetination folder that has cloned projects.");
-      WriteLine("         The cloned projects need to have the source in their placeholder.");
+      WriteLine("Folder   Recycles the source(s) into all CSPROJ files in the folder");
+      WriteLine("         This is the destination folder that has recycled projects.");
+      WriteLine("         The recycled projects need to have the source in their placeholder.");
       WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
       WriteLine();
-      WriteLine("Source.csproj        Path to the CSPROJ with the source to be cloned.");
+      WriteLine("Source.csproj        Path to the CSPROJ with the source to be recycled.");
       WriteLine("Destination.csproj   Path to the existing Destination project.");
       WriteLine();
-      WriteLine("init     Creates new cloned projects from all CSPROJ in the Solution folders");
-      WriteLine("         Iterates all subfolders by default. Skips destination cloned projects.");
+      WriteLine("init     Creates new recycled projects from all CSPROJ in the Solution folders");
+      WriteLine("         Iterates all subfolders by default. Skips destination recycled projects.");
       WriteLine("Source Solution Root  (optional)");
-      WriteLine("         The root of the solution containing the projects to clone.");
+      WriteLine("         The root of the solution containing the projects to recycle.");
       WriteLine("         Default is the current directory.");
       WriteLine("Destination Solution Folder  (optional)");
-      WriteLine("         The new Folder Name for the cloned projects. Default is \"_Builds\".");
+      WriteLine("         The new Folder Name for the recycled projects. Default is \"_Builds\".");
       WriteLine("         If only one Folder is specifed then it is the destination folder.");
       WriteLine();
       WriteLine("Wrap paths with spaces in double quotes.");
@@ -42,24 +42,24 @@ namespace CodeCloner
       WriteLine();
       WriteLine("The Destination CSPROJ file needs this XML comment placeholder...");
       WriteLine();
-      WriteLine("<!-- CodeCloner");
+      WriteLine("<!-- CodeRecycler");
       WriteLine("Source: PathTo\\NameOfProject.csproj     <== this is optional");
       WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
       WriteLine("-->");
       WriteLine();
-      WriteLine("<!-- EndCodeCloner -->");
+      WriteLine("<!-- EndCodeRecycler -->");
       WriteLine();
       WriteLine("You may specify multiple Source: projects. No wildcards.");
       WriteLine("If you don't specify a source in the command call it better be here.");
       WriteLine("You may specify multiple Exclude: items, file or path. No wildcards.");
       WriteLine("Exclusions are a simple String.Contains() filter list.");
       WriteLine("If you specify multiple items then they must be on separate lines.");
-      WriteLine("Every Code Clone will re-clone the source CSPROJ");
+      WriteLine("Every Code Recycle will re-recycle the source CSPROJ");
       WriteLine("into the space between the XML comment placeholders.");
       WriteLine("ALL code inside these placeholders is refreshed every time. OK?");
       WriteLine();
       WriteLine("More Info & Source at " + SourceCodeUrl);
-      WriteLine("Code Cloner by CADbloke");
+      WriteLine("Code Recycler by CADbloke");
       WriteLine();
     }
 

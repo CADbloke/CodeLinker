@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
 
-namespace CodeCloner
+namespace CodeRecycler
 {
-  /// <summary> Destination <c>Proj</c> Parser and Cloner. </summary>
+  /// <summary> Destination <c>Proj</c> Parser and Recycler. </summary>
   internal class DestinationProjParser
   {
     private static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage", "import"}; 
@@ -31,7 +30,7 @@ namespace CodeCloner
     ///           Can be zero, can be lots.</summary>
     internal List<string> SourceProjList { get; }
 
-    /// <summary> Code Files to be excluded from the clone. </summary>
+    /// <summary> Code Files to be excluded from the recycle. </summary>
     internal List<string> ExclusionsList { get; }
 
 
@@ -51,8 +50,8 @@ namespace CodeCloner
 
       SourceProjList = new List<string>();
       ExclusionsList = new List<string>();
-      startPlaceHolder = FindCommentOrCrash("CodeCloner");
-      endPlaceHolder = FindCommentOrCrash("EndCodeCloner");
+      startPlaceHolder = FindCommentOrCrash("CodeRecycler");
+      endPlaceHolder = FindCommentOrCrash("EndCodeRecycler");
 
       foreach (string line in startPlaceHolder.Value.Split(new[] {"\r\n", "\n", Environment.NewLine}, StringSplitOptions.None).ToList())
       {
@@ -66,7 +65,7 @@ namespace CodeCloner
         if (line.ToLower().Trim().StartsWith("exclude:")) { ExclusionsList.Add(line.Replace("exclude:", "").Trim()); }
       }
 
-      CloneCode();
+      RecycleCode();
     }
 
 
@@ -88,29 +87,29 @@ namespace CodeCloner
         Program.Crash(e, "DestinationProjParser CTOR (2 params) loading destination XML from " + DestProjAbsolutePath);
       }
 
-      startPlaceHolder = FindCommentOrCrash("CodeCloner");
-      endPlaceHolder = FindCommentOrCrash("EndCodeCloner");
+      startPlaceHolder = FindCommentOrCrash("CodeRecycler");
+      endPlaceHolder = FindCommentOrCrash("EndCodeRecycler");
 
-      CloneCode();
+      RecycleCode();
     }
 
 
-    /// <summary> Clones the source code from the source <c>Proj</c> file to the destination <c>Proj</c> file. 
+    /// <summary> Recycles the source code from the source <c>Proj</c> file to the destination <c>Proj</c> file. 
     ///           Tweaks relative file paths so the project can find them. 
     ///           Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
-    internal void CloneCode()
+    internal void RecycleCode()
     {
       if (string.IsNullOrEmpty(DestProjAbsolutePath)) { Program.Crash("ERROR: No destProjFileAbsolutePath. That's a bug."); }
       if (destProjXdoc.Root == null || !destProjXdoc.Root.Elements().Any()) {
         Program.Crash("ERROR: No Destination Proj file at " + DestProjAbsolutePath);
       }
 
-      string oldXML = GetOrRemoveDestProjClonedCode(remove:true);
-      int totalCodezCloned = 0;
+      string oldXML = GetOrRemoveDestProjRecycledCode(remove:true);
+      int totalCodezRecycled = 0;
 
       foreach (string sourcePath in SourceProjList)
       {
-        int codezCloned = 0;
+        int codezRecycled = 0;
 
         try
         {
@@ -122,11 +121,11 @@ namespace CodeCloner
           string destDirectoryForRelativePath = DestProjDirectory.EndsWith("\\")
             ? DestProjDirectory
             : DestProjDirectory + "\\";
-          string cloneRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , SourceProjAbsolutePath);
+          string recycleRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , SourceProjAbsolutePath);
 
           SourceProjParser sourceProjParser = new SourceProjParser(SourceProjAbsolutePath);
 
-          endPlaceHolder.AddBeforeSelf(new XComment("Cloned from " + cloneRelativeSource));
+          endPlaceHolder.AddBeforeSelf(new XComment("Recycled from " + recycleRelativeSource));
           Log.WriteLine("Cloning from " + SourceProjAbsolutePath + Environment.NewLine + "to           " + DestProjAbsolutePath);
 
 
@@ -179,14 +178,14 @@ namespace CodeCloner
                   sourceItem.Add(linkElement);
                 }
                 destItemGroup.Add(sourceItem);
-                codezCloned++;
+                codezRecycled++;
               }
             }
             if (destItemGroup.HasElements) { endPlaceHolder.AddBeforeSelf(destItemGroup); }
           }
-          endPlaceHolder.AddBeforeSelf(new XComment("End Clone from " + cloneRelativeSource+ Environment.NewLine + 
-            "Cloned " + codezCloned + " codez."));
-          totalCodezCloned += codezCloned;
+          endPlaceHolder.AddBeforeSelf(new XComment("End Recycle from " + recycleRelativeSource+ Environment.NewLine + 
+            "Recycled " + codezRecycled + " codez."));
+          totalCodezRecycled += codezRecycled;
         }
         catch (Exception e) {
           Program.Crash(e, "Cloning " + sourcePath + " to " + DestProjAbsolutePath);
@@ -195,15 +194,15 @@ namespace CodeCloner
 
       
 
-      endPlaceHolder.AddBeforeSelf(new XComment("End of Cloned Code" + Environment.NewLine + 
-        "See CodeClonerLog.txt for details. CodeCloner by " + Help.SourceCodeUrl + " "));
+      endPlaceHolder.AddBeforeSelf(new XComment("End of Recycled Code" + Environment.NewLine + 
+        "See CodeRecyclerLog.txt for details. CodeRecycler by " + Help.SourceCodeUrl + " "));
 
-      if (oldXML != GetOrRemoveDestProjClonedCode())
+      if (oldXML != GetOrRemoveDestProjRecycledCode())
       {
         destProjXdoc.Save(DestProjAbsolutePath);
-        Log.WriteLine("Cloned " + totalCodezCloned + " codez from " + SourceProjList.Count + " source Project(s).");
+        Log.WriteLine("Recycled " + totalCodezRecycled + " codez from " + SourceProjList.Count + " source Project(s).");
       }
-      else Log.WriteLine("No changes to save so nothing cloned.");
+      else Log.WriteLine("No changes to save so nothing recycled.");
 
       Log.WriteLine("----------------------------");
       Log.WriteLine("");
@@ -226,7 +225,7 @@ namespace CodeCloner
     }
 
 
-    private string GetOrRemoveDestProjClonedCode(bool remove = false)
+    private string GetOrRemoveDestProjRecycledCode(bool remove = false)
     {
       StringBuilder oldXmlBuilder = new StringBuilder();
       if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
@@ -240,7 +239,7 @@ namespace CodeCloner
         }
         return oldXmlBuilder.ToString();
       }
-      Program.Crash("Error: cannot get old Cloned Code from " + DestProjAbsolutePath);
+      Program.Crash("Error: cannot get old Recycled Code from " + DestProjAbsolutePath);
       return "you'll never get this";
     }
   }

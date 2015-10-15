@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace CodeCloner
+namespace CodeRecycler
 {
   internal static class PathMaker
   {
