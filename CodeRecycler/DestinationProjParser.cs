@@ -12,9 +12,13 @@ namespace CodeRecycler
   /// <summary> Destination <c>Proj</c> Parser and Recycler. </summary>
   internal class DestinationProjParser
   {
-    private static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage", "import"}; 
-    private static List<string> ItemElementsDoNotBreakLink = new List<string> {"folder", "projectreference"};
-    private static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
+    internal static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage", "import"}; 
+    internal static List<string> ItemElementsDoNotBreakLink = new List<string> {"folder", "projectreference"};
+    internal static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
+    internal static string StartPlaceholderComment   = "CodeRecycler";
+    internal static string EndPlaceholderComment     = "EndCodeRecycler";
+    internal static string SourcePlaceholderLowerCase  = "source:";
+    internal static string ExcludePlaceholderLowerCase = "exclude:";
 
     /// <summary> Absolute pathname of the destination <c>Proj</c> including file name. </summary>
     internal string DestProjAbsolutePath { get; }
@@ -50,19 +54,20 @@ namespace CodeRecycler
 
       SourceProjList = new List<string>();
       ExclusionsList = new List<string>();
-      startPlaceHolder = FindCommentOrCrash("CodeRecycler");
-      endPlaceHolder = FindCommentOrCrash("EndCodeRecycler");
+      startPlaceHolder = FindCommentOrCrash(StartPlaceholderComment);
+      endPlaceHolder   = FindCommentOrCrash(EndPlaceholderComment);
 
       foreach (string line in startPlaceHolder.Value.Split(new[] {"\r\n", "\n", Environment.NewLine}, StringSplitOptions.None).ToList())
       {
-        if (line.ToLower().Trim().StartsWith("source:"))
+        if (line.ToLower().Trim().StartsWith(SourcePlaceholderLowerCase))
         {
-          string sourceInXml = line.ToLower().Replace("source:", "").Replace("-->", "").Trim();
+          string sourceInXml = line.ToLower().Replace(SourcePlaceholderLowerCase, "").Replace("-->", "").Trim();
           string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestProjDirectory, sourceInXml);
           SourceProjList.Add(absoluteSource);
         }
 
-        if (line.ToLower().Trim().StartsWith("exclude:")) { ExclusionsList.Add(line.Replace("exclude:", "").Trim().ToLower()); }
+        if (line.ToLower().Trim().StartsWith(ExcludePlaceholderLowerCase))
+        { ExclusionsList.Add(line.ToLower().Replace(ExcludePlaceholderLowerCase, "").Trim().ToLower()); }
       }
 
       RecycleCode();
@@ -87,8 +92,8 @@ namespace CodeRecycler
         Program.Crash(e, "DestinationProjParser CTOR (2 params) loading destination XML from " + DestProjAbsolutePath);
       }
 
-      startPlaceHolder = FindCommentOrCrash("CodeRecycler");
-      endPlaceHolder = FindCommentOrCrash("EndCodeRecycler");
+      startPlaceHolder = FindCommentOrCrash(StartPlaceholderComment);  
+      endPlaceHolder   = FindCommentOrCrash(EndPlaceholderComment);   
 
       RecycleCode();
     }

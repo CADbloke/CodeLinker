@@ -9,8 +9,6 @@ namespace CodeRecycler
 {
   internal class SourceProjParser
   {
-    private static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-
     /// <summary> Gets the full pathname of the source create structure project file. </summary>
     internal string SourceProjPath { get; }
 
@@ -29,24 +27,20 @@ namespace CodeRecycler
         XDocument ProjXml = XDocument.Load(sourceProjAbsolutePath);
         ItemGroups = new List<XElement>();
 
-        //IEnumerable<XElement> itemGroups = from element in ProjXml.Root.Elements().DescendantsAndSelf()
-        //                                   where element.Name.LocalName == "Itemgroup" // .Attribute("name").Value
-        //                                   select element;
-
-        XElement xElement = ProjXml
-          .Element(MSBuild + "Project");
+        XElement xElement = ProjXml.Element(DestinationProjParser.MSBuild + "Project");
         if (xElement != null)
         {
-            IEnumerable<XElement> itemGroups = xElement
-              .Elements(MSBuild + "ItemGroup")
-              .Select(elements => elements);
+          IEnumerable<XElement> itemGroups = xElement.Elements(DestinationProjParser.MSBuild + "ItemGroup").Select(elements => elements);
 
-            ItemGroups.AddRange(itemGroups);
-          }
+          ItemGroups.AddRange(itemGroups);
+        }
 
         if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?"); }
       }
-      catch (Exception e) { Program.Crash(e, "source Proj: "+ sourceProjAbsolutePath); }
+      catch (Exception e)
+      {
+        Program.Crash(e, "source Proj: " + sourceProjAbsolutePath);
+      }
     }
   }
 }

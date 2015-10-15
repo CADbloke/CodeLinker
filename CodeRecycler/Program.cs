@@ -47,22 +47,42 @@ namespace CodeRecycler
           }
         }
 
+        else if (argsList[0].ToLower() == "strip")
+        {
+          if (argsCount > 1)
+          {
+            if (args[1].IsaCsOrVbProjFile())
+            {
+              ProjectStripper projectStripper = new ProjectStripper(args[1]);
+              projectStripper.Strip();
+              Finish("Stripped all code from " + args[1]);
+            }
+
+            else
+            {
+              try
+              {
+                List<string> destProjFiles = GetProjectsFromFolders(argsList[1]);
+
+                foreach (string destProjFile in destProjFiles)
+                {
+                  Log.WriteLine("Stripping Code from: " + destProjFile + ". ");
+                  ProjectStripper projectStripper = new ProjectStripper(destProjFile);
+                  projectStripper.Strip();
+                }
+              }
+              catch (Exception e) { Crash(e, "Stripping Code from  didn't work. Bad file name?"); }
+              Finish("Stripped all code");
+            }
+          }
+        }
+
         else
         {
-          string destinationsDirectory = argsList[0];
-          if (!PathMaker.IsAbsolutePath(destinationsDirectory))
-            destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destinationsDirectory);
-
-          if (Directory.Exists(destinationsDirectory))
           try
           {
-            List<string> destProjFiles = new List<string>();
+            List<string> destProjFiles = GetProjectsFromFolders(argsList[0]);
 
-            bool subDirectories = args.Contains("/s");
-            SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
-
-			destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
             foreach (string destProjFile in destProjFiles)
             {
               Log.WriteLine("Queueing Code Recycle to: " + destProjFile + ". Source TBA.");
@@ -84,6 +104,28 @@ namespace CodeRecycler
       Finish();
     }
 
+
+    private static List<string> GetProjectsFromFolders(string rootFolder, bool subDirectories = false)
+    {
+      string destinationsDirectory = rootFolder;
+          if (!PathMaker.IsAbsolutePath(rootFolder))
+            destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, rootFolder);
+
+          if (Directory.Exists(destinationsDirectory))
+          try
+          {
+            List<string> destProjFiles = new List<string>();
+
+            SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
+			      destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
+
+            return destProjFiles;
+          }
+        catch (Exception e) { Crash(e, "Queueing Code Recycle in " + rootFolder+ " didn't work. Bad file name?"); }
+
+        return new List<string>();
+        }
 
 
     internal static void Finish(string message = "")
