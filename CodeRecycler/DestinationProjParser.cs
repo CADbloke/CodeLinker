@@ -62,7 +62,7 @@ namespace CodeRecycler
           SourceProjList.Add(absoluteSource);
         }
 
-        if (line.ToLower().Trim().StartsWith("exclude:")) { ExclusionsList.Add(line.Replace("exclude:", "").Trim()); }
+        if (line.ToLower().Trim().StartsWith("exclude:")) { ExclusionsList.Add(line.Replace("exclude:", "").Trim().ToLower()); }
       }
 
       RecycleCode();
@@ -126,7 +126,7 @@ namespace CodeRecycler
           SourceProjParser sourceProjParser = new SourceProjParser(SourceProjAbsolutePath);
 
           endPlaceHolder.AddBeforeSelf(new XComment("Recycled from " + recycleRelativeSource));
-          Log.WriteLine("Cloning from " + SourceProjAbsolutePath + Environment.NewLine + "to           " + DestProjAbsolutePath);
+          Log.WriteLine("Recycling from " + SourceProjAbsolutePath + Environment.NewLine + "to           " + DestProjAbsolutePath);
 
 
           foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
@@ -143,12 +143,12 @@ namespace CodeRecycler
               if (attrib != null)
               {
                 string originalPath = attrib.Value;
-                if (ExclusionsList.Any(x => originalPath.Contains(x)))
+                if (ExclusionsList.Any(x => originalPath.ToLower().Contains(x)))
                 {
                   Log.WriteLine( 
                     "Excluded :" + originalPath  +Environment.NewLine + 
                     "     from " + SourceProjAbsolutePath + Environment.NewLine + 
-                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => originalPath.Contains(x)));
+                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => originalPath.ToLower().Contains(x)));
                   continue;
                 }
                 if (!PathMaker.IsAbsolutePath(originalPath))
@@ -164,7 +164,7 @@ namespace CodeRecycler
                   }
                   catch (Exception e)
                   {
-                    Program.Crash(e, "Cloning. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
+                    Program.Crash(e, "Recycling. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
                   }
                   string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
                   attrib.Value = relativePathFromDestination;
@@ -188,7 +188,7 @@ namespace CodeRecycler
           totalCodezRecycled += codezRecycled;
         }
         catch (Exception e) {
-          Program.Crash(e, "Cloning " + sourcePath + " to " + DestProjAbsolutePath);
+          Program.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
         }
       }
 
