@@ -21,7 +21,7 @@ namespace CodeCloner
     {
       SourceCsProjPath = sourceCsProjAbsolutePath;
       if (!File.Exists(sourceCsProjAbsolutePath)) { Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  does not exist."); }
-      if (!sourceCsProjAbsolutePath.ToLower().EndsWith(".csproj"))
+      if (!sourceCsProjAbsolutePath.IsaCsOrVbProjFile())
         Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  is not a CSPROJ.");
 
       try

@@ -13,7 +13,7 @@ namespace CodeCloner
   /// <summary> Destination <c>CSPROJ</c> Parser and Cloner. </summary>
   internal class DestinationCsProjParser
   {
-    private static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage"}; 
+    private static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage", "import"}; 
     private static List<string> ItemElementsDoNotBreakLink = new List<string> {"folder", "projectreference"};
     private static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
 

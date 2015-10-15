@@ -32,9 +32,9 @@ namespace CodeCloner
 
       if (!string.IsNullOrEmpty(argsList[0]))
       {
-        if (argsList[0].ToLower().EndsWith(".csproj"))
+        if (argsList[0].IsaCsOrVbProjFile())
         {
-          if (argsCount > 1 && args[1].ToLower().EndsWith(".csproj"))
+          if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
           {
             Log.WriteLine("Queueing Code Clone from: " + argsList[0] + " to " + argsList[1]);
             cloners.Add(new DestinationCsProjParser(sourceCsProj: argsList[0], destCsProj: argsList[1]));
