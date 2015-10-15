@@ -26,6 +26,7 @@ namespace CodeRecycler
       WriteLine("         This is the destination folder that has recycled projects.");
       WriteLine("         The Destination projects need to have the source in their placeholder.");
       WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
+      WriteLine("         use . for the current folder, add /s for all subfolders.");
       WriteLine();
       WriteLine("Source.csproj        Path to the CSPROJ with the source to be recycled.");
       WriteLine("Destination.csproj   Path to the existing Destination project.");
