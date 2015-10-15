@@ -14,7 +14,8 @@ namespace CodeRecycler
       int argsCount = args.Count();
       if (argsCount == 0)
       {
-        Log.WriteLine("ERROR: No Args given so Help Text Displayed.");
+        Log.WriteLine("No Args given so Help Text Displayed.");
+        Log.WriteLine();
         Help.Write();
         Finish();
       }
@@ -87,7 +88,7 @@ namespace CodeRecycler
 
     internal static void Finish(string message = "")
     {
-      message += "Finished cloning " + recyclers.Count + " Project"; // writes to VS window
+      message += "Finished recycling " + recyclers.Count + " Project"; // writes to VS window
       if (recyclers.Count != 1) { message += "s"; }
       message += "." + Environment.NewLine;
 

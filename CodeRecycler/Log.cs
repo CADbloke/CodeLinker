@@ -27,7 +27,7 @@ namespace CodeRecycler
       }
     }
 
-    internal static void WriteLine(string line)
+    internal static void WriteLine(string line = "")
     {
       WriteLine(new List<string> {line});
     }
