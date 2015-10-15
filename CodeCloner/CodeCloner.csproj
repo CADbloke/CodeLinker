@@ -43,14 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DestinationCsProjParser.cs" />
+    <Compile Include="DestinationProjParser.cs" />
     <Compile Include="Help.cs" />
     <Compile Include="IsaCsOrVbProjectFile.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="PathMaker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SourceCsProjParser.cs" />
+    <Compile Include="SourceProjParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -7,33 +7,33 @@ using System.Xml.Linq;
 
 namespace CodeCloner
 {
-  internal class SourceCsProjParser
+  internal class SourceProjParser
   {
     private static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
 
     /// <summary> Gets the full pathname of the source create structure project file. </summary>
-    internal string SourceCsProjPath { get; }
+    internal string SourceProjPath { get; }
 
     internal List<XElement> ItemGroups { get; }
 
 
-    internal SourceCsProjParser(string sourceCsProjAbsolutePath)
+    internal SourceProjParser(string sourceProjAbsolutePath)
     {
-      SourceCsProjPath = sourceCsProjAbsolutePath;
-      if (!File.Exists(sourceCsProjAbsolutePath)) { Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  does not exist."); }
-      if (!sourceCsProjAbsolutePath.IsaCsOrVbProjFile())
-        Program.Crash("ERROR: " + sourceCsProjAbsolutePath + "  is not a CSPROJ.");
+      SourceProjPath = sourceProjAbsolutePath;
+      if (!File.Exists(sourceProjAbsolutePath)) { Program.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist."); }
+      if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
+        Program.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
 
       try
       {
-        XDocument csProjXml = XDocument.Load(sourceCsProjAbsolutePath);
+        XDocument ProjXml = XDocument.Load(sourceProjAbsolutePath);
         ItemGroups = new List<XElement>();
 
-        //IEnumerable<XElement> itemGroups = from element in csProjXml.Root.Elements().DescendantsAndSelf()
+        //IEnumerable<XElement> itemGroups = from element in ProjXml.Root.Elements().DescendantsAndSelf()
         //                                   where element.Name.LocalName == "Itemgroup" // .Attribute("name").Value
         //                                   select element;
 
-        XElement xElement = csProjXml
+        XElement xElement = ProjXml
           .Element(MSBuild + "Project");
         if (xElement != null)
         {
@@ -44,9 +44,9 @@ namespace CodeCloner
             ItemGroups.AddRange(itemGroups);
           }
 
-        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceCsProjPath + " contains no ItemGroups. No Codez?"); }
+        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?"); }
       }
-      catch (Exception e) { Program.Crash(e, "source CSPROJ: "+ sourceCsProjAbsolutePath); }
+      catch (Exception e) { Program.Crash(e, "source Proj: "+ sourceProjAbsolutePath); }
     }
   }
 }
