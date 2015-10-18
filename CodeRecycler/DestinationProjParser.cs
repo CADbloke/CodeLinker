@@ -12,14 +12,6 @@ namespace CodeRecycler
   /// <summary> Destination <c>Proj</c> Parser and Recycler. </summary>
   internal class DestinationProjParser
   {
-    internal static List<string> ItemElementsToSkip = new List<string> {"reference", "projectreference", "bootstrapperpackage", "import"}; 
-    internal static List<string> ItemElementsDoNotBreakLink = new List<string> {"folder", "projectreference"};
-    internal static XNamespace MSBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-    internal static string StartPlaceholderComment   = "CodeRecycler";
-    internal static string EndPlaceholderComment     = "EndCodeRecycler";
-    internal static string SourcePlaceholderLowerCase  = "source:";
-    internal static string ExcludePlaceholderLowerCase = "exclude:";
-
     /// <summary> Absolute pathname of the destination <c>Proj</c> including file name. </summary>
     internal string DestProjAbsolutePath { get; }
 
@@ -54,20 +46,20 @@ namespace CodeRecycler
 
       SourceProjList = new List<string>();
       ExclusionsList = new List<string>();
-      startPlaceHolder = FindCommentOrCrash(StartPlaceholderComment);
-      endPlaceHolder   = FindCommentOrCrash(EndPlaceholderComment);
+      startPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);
+      endPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);
 
       foreach (string line in startPlaceHolder.Value.Split(new[] {"\r\n", "\n", Environment.NewLine}, StringSplitOptions.None).ToList())
       {
-        if (line.ToLower().Trim().StartsWith(SourcePlaceholderLowerCase))
+        if (line.ToLower().Trim().StartsWith(Settings.SourcePlaceholderLowerCase))
         {
-          string sourceInXml = line.ToLower().Replace(SourcePlaceholderLowerCase, "").Replace("-->", "").Trim();
+          string sourceInXml = line.ToLower().Replace(Settings.SourcePlaceholderLowerCase, "").Replace("-->", "").Trim();
           string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestProjDirectory, sourceInXml);
           SourceProjList.Add(absoluteSource);
         }
 
-        if (line.ToLower().Trim().StartsWith(ExcludePlaceholderLowerCase))
-        { ExclusionsList.Add(line.ToLower().Replace(ExcludePlaceholderLowerCase, "").Trim().ToLower()); }
+        if (line.ToLower().Trim().StartsWith(Settings.ExcludePlaceholderLowerCase))
+        { ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim().ToLower()); }
       }
 
       RecycleCode();
@@ -92,8 +84,8 @@ namespace CodeRecycler
         Program.Crash(e, "DestinationProjParser CTOR (2 params) loading destination XML from " + DestProjAbsolutePath);
       }
 
-      startPlaceHolder = FindCommentOrCrash(StartPlaceholderComment);  
-      endPlaceHolder   = FindCommentOrCrash(EndPlaceholderComment);   
+      startPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);  
+      endPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);   
 
       RecycleCode();
     }
@@ -136,12 +128,12 @@ namespace CodeRecycler
 
           foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
           {
-            XElement destItemGroup = new XElement(MSBuild + "ItemGroup");
+            XElement destItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
 
             foreach (XElement sourceItem in sourceItemGroup.Elements())
             {
               string elementName = sourceItem.Name.LocalName;
-              if (ItemElementsToSkip.Contains(elementName.ToLower())) { continue; }
+              if (Settings.ItemElementsToSkip.Contains(elementName.ToLower())) { continue; }
 
               XAttribute attrib = sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude");
 
@@ -175,11 +167,11 @@ namespace CodeRecycler
                   attrib.Value = relativePathFromDestination;
                 }
 
-                IEnumerable<XElement> links = sourceItem.Descendants(MSBuild + "Link");
+                IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
 
-                if (!(links.Any() || ItemElementsDoNotBreakLink.Contains(elementName.ToLower())))  // Folders, mostly
+                if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(elementName.ToLower())))  // Folders, mostly
                 {
-                  XElement linkElement = new XElement(MSBuild + "Link", originalPath);
+                  XElement linkElement = new XElement(Settings.MSBuild + "Link", originalPath);
                   sourceItem.Add(linkElement);
                 }
                 destItemGroup.Add(sourceItem);

@@ -18,7 +18,9 @@ namespace CodeRecycler
     internal SourceProjParser(string sourceProjAbsolutePath)
     {
       SourceProjPath = sourceProjAbsolutePath;
-      if (!File.Exists(sourceProjAbsolutePath)) { Program.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist."); }
+      if (!File.Exists(sourceProjAbsolutePath))
+        Program.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
+
       if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
         Program.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
 
@@ -27,15 +29,12 @@ namespace CodeRecycler
         XDocument ProjXml = XDocument.Load(sourceProjAbsolutePath);
         ItemGroups = new List<XElement>();
 
-        XElement xElement = ProjXml.Element(DestinationProjParser.MSBuild + "Project");
+        XElement xElement = ProjXml.Element(Settings.MSBuild + "Project");
         if (xElement != null)
-        {
-          IEnumerable<XElement> itemGroups = xElement.Elements(DestinationProjParser.MSBuild + "ItemGroup").Select(elements => elements);
+          ItemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
 
-          ItemGroups.AddRange(itemGroups);
-        }
-
-        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?"); }
+        if (ItemGroups.Count == 0)
+          Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?");
       }
       catch (Exception e)
       {

@@ -10,8 +10,8 @@ namespace CodeRecycler
     static List<DestinationProjParser> recyclers = new List<DestinationProjParser>();
     static void Main(string[] args)
     {
-      // System.Diagnostics.Debugger.Launch(); // to find teh bugs
-      int argsCount = args.Count();
+      // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
+      int argsCount = args.Length;
       if (argsCount == 0)
       {
         Log.WriteLine("No Args given so Help Text Displayed.");
@@ -163,12 +163,3 @@ namespace CodeRecycler
     }
   }
 }
-
-/* todo: <ApplicationIcon>Resources\CADbloke favicon.ico</ApplicationIcon>
-this may be a case of using a delmited list of strings to choose which XML elements need to come across
-in this case "PropertyGroup, ApplicationIcon"
-"Reference,HintPath" <== if relative but this may actually break more than it fixes because it depends on build settings - perhaps remove all the hint paths so it generates a real error if it needs Nugetting. Report in the Log file that you did this.
-
-  Relative Project References break.
-
-  */

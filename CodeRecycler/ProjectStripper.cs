@@ -20,8 +20,7 @@ namespace CodeRecycler
     private XDocument destProjXdoc;
     private XComment  startPlaceHolder;
     private XComment  endPlaceHolder;
-
-    private  List<XElement> ItemGroups;
+    private  List<XElement> itemGroups;
 
 
     internal ProjectStripper(string destProj)
@@ -31,68 +30,60 @@ namespace CodeRecycler
 
       try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
-      {
-        Program.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
-      }
+      { Program.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath); }
 
-      startPlaceHolder = FindComment(DestinationProjParser.StartPlaceholderComment);
-      endPlaceHolder   = FindComment(DestinationProjParser.EndPlaceholderComment);
+      startPlaceHolder = FindComment(Settings.StartPlaceholderComment);
+      endPlaceHolder   = FindComment(Settings.EndPlaceholderComment);
     }
 
 
     internal void Strip()
     {
-      XElement xElement = destProjXdoc.Element(DestinationProjParser.MSBuild + "Project");
-      try
-      {
-        if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder)) // previously recycled
-        {
-          XNode startNode = startPlaceHolder;
-          while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
+      XElement xElement = destProjXdoc.Element(Settings.MSBuild + "Project");
 
-          Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
+      if (xElement != null)
+      {
+        try
+        {
+          if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder)) // previously recycled
+          {
+            XNode startNode = startPlaceHolder;
+            while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
+
+            Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
+          }
+
+          itemGroups = new List<XElement>();
+
+          itemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
+
+          if (itemGroups.Count == 0)
+            Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+        }
+        catch (Exception e) { Program.Crash(e, "Bad Proj No ItemGroups: " + DestProjDirectory); }
+
+
+        foreach (XElement itemGroup in itemGroups)
+        {
+          itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
+                                          (i.Attribute("Include") != null || i.Attribute("Exclude") != null)).Remove();
+
+          if (itemGroup.IsEmpty) itemGroup.Remove();
         }
 
-
-        ItemGroups = new List<XElement>();
-
-        
-        if (xElement != null)
+        if (startPlaceHolder == null)
         {
-          ItemGroups.AddRange(xElement.Elements(DestinationProjParser.MSBuild + "ItemGroup").Select(elements => elements));
+          XElement lastItemGroup =xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements).Last();
+          lastItemGroup.AddAfterSelf(new XComment(Settings.EndPlaceholderComment));
+
+          lastItemGroup.AddAfterSelf(new XComment(
+                                       Settings.StartPlaceholderComment     + Environment.NewLine +
+                                       Settings.SourcePlaceholderLowerCase  + "Source Project(s) here, one per line"     + Environment.NewLine +
+                                       Settings.ExcludePlaceholderLowerCase + "Optional Exclusion(s) here, one per line" + Environment.NewLine ));
         }
 
-        if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + DestProjDirectory + " contains no ItemGroups. No Codez?"); }
+        destProjXdoc.Save(DestProjAbsolutePath);
       }
-      catch (Exception e) { Program.Crash(e, "Bad Proj No ItemGroups: " + DestProjDirectory); }
-
-      // Log.WriteLine("Strip: Parsing " + ItemGroups.Count + " ItemGroups");
-
-      foreach (XElement itemGroup in ItemGroups)
-      {
-        itemGroup.Elements().Where(i => !DestinationProjParser.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
-        (i.Attribute("Include") != null || i.Attribute("Exclude") != null)).Remove();
-
-        if (itemGroup.IsEmpty) itemGroup.Remove();
-      }
-
-      // xElement?.Elements(DestinationProjParser.MSBuild + "ItemGroup")?.Where(element => element.IsEmpty)?.Remove();
-
-      // ItemGroups.Where(i => i.IsEmpty).Remove();
-      // if (ItemGroups.Count <1 ) {ItemGroups.Add(new XElement( DestinationProjParser.MSBuild + "ItemGroup")); }
-
-      if (startPlaceHolder == null)
-      {
-        XElement lastItemGroup =xElement.Elements(DestinationProjParser.MSBuild + "ItemGroup").Select(elements => elements).Last();
-      lastItemGroup.AddAfterSelf(new XComment(DestinationProjParser.EndPlaceholderComment));
-
-      lastItemGroup.AddAfterSelf(new XComment(
-        DestinationProjParser.StartPlaceholderComment     + Environment.NewLine +
-        DestinationProjParser.SourcePlaceholderLowerCase  + "Source Project(s) here, one per line"     + Environment.NewLine +
-        DestinationProjParser.ExcludePlaceholderLowerCase + "Optional Exclusion(s) here, one per line" + Environment.NewLine ));
-      }
-
-      destProjXdoc.Save(DestProjAbsolutePath);
     }
 
 
@@ -105,9 +96,7 @@ namespace CodeRecycler
       List<XComment> placeholders = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count > 1)
-      {
         Program.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
-      }
 
       return placeholders.FirstOrDefault();
     }
