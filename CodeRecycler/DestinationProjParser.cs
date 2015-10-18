@@ -6,6 +6,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
+using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.CompilerServices;
+
 
 namespace CodeRecycler
 {
@@ -142,12 +145,12 @@ namespace CodeRecycler
                 string originalPath = attrib.Value;
                 string trimmedOriginalPath = originalPath.Trim().ToLower();
 
-                if ( ExclusionsList.Any(x => trimmedOriginalPath == x) )
+                if ( ExclusionsList.Any(x => Operators.LikeString(trimmedOriginalPath, x, CompareMethod.Text))) // OW my eyes!
                 {
                   Log.WriteLine( 
                     "Excluded : " + originalPath  +Environment.NewLine + 
                     "     from " + SourceProjAbsolutePath + Environment.NewLine + 
-                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => trimmedOriginalPath == x));
+                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => Operators.LikeString(trimmedOriginalPath, x, CompareMethod.Text)));
                   continue;
                 }
                 if (!PathMaker.IsAbsolutePath(originalPath))
