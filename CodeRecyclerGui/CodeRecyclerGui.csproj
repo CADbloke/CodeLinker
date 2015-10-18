@@ -45,7 +45,7 @@
   <!-- CodeRecycler
 Source: ..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config
-Exclude: AssemblyInfo.cs
+Exclude: properties\assemblyinfo.cs
 Exclude: Program.cs
 -->
   <!--Recycled from ..\coderecycler\coderecycler.csproj-->
@@ -71,6 +71,9 @@ Exclude: Program.cs
     <Compile Include="..\coderecycler\ProjectStripper.cs">
       <Link>ProjectStripper.cs</Link>
     </Compile>
+    <Compile Include="..\coderecycler\Properties\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\coderecycler\Settings.cs">
       <Link>Settings.cs</Link>
     </Compile>
@@ -79,7 +82,7 @@ Exclude: Program.cs
     </Compile>
   </ItemGroup>
   <!--End Recycle from ..\coderecycler\coderecycler.csproj
-Recycled 9 codez.-->
+Recycled 10 codez.-->
   <!--End of Recycled Code
 See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke/CodeRecycler -->
   <!-- EndCodeRecycler -->

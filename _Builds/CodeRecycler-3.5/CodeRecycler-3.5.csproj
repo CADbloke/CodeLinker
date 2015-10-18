@@ -43,9 +43,8 @@
   <!-- CodeRecycler
 Source: ..\..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config
-Exclude: AssemblyInfo.cs
+Exclude: properties\assemblyinfo.cs
 -->
-
 
   <!-- EndCodeRecycler -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

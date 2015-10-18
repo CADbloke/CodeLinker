@@ -140,12 +140,14 @@ namespace CodeRecycler
               if (attrib != null)
               {
                 string originalPath = attrib.Value;
-                if (ExclusionsList.Any(x => originalPath.ToLower().Contains(x)))
+                string trimmedOriginalPath = originalPath.Trim().ToLower();
+
+                if ( ExclusionsList.Any(x => trimmedOriginalPath == x) )
                 {
                   Log.WriteLine( 
-                    "Excluded :" + originalPath  +Environment.NewLine + 
+                    "Excluded : " + originalPath  +Environment.NewLine + 
                     "     from " + SourceProjAbsolutePath + Environment.NewLine + 
-                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => originalPath.ToLower().Contains(x)));
+                    "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => trimmedOriginalPath == x));
                   continue;
                 }
                 if (!PathMaker.IsAbsolutePath(originalPath))
@@ -163,6 +165,7 @@ namespace CodeRecycler
                   {
                     Recycler.Crash(e, "Recycling. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
                   }
+
                   string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
                   attrib.Value = relativePathFromDestination;
                 }
