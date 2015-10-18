@@ -45,6 +45,8 @@
   <!-- CodeRecycler
 Source: ..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config
+Exclude: AssemblyInfo.cs
+Exclude: Program.cs
 -->
   <!--Recycled from ..\coderecycler\coderecycler.csproj-->
   <ItemGroup>
@@ -63,14 +65,11 @@ Exclude: app.config
     <Compile Include="..\coderecycler\PathMaker.cs">
       <Link>PathMaker.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Program.cs">
-      <Link>Program.cs</Link>
+    <Compile Include="..\coderecycler\Recycler.cs">
+      <Link>Recycler.cs</Link>
     </Compile>
     <Compile Include="..\coderecycler\ProjectStripper.cs">
       <Link>ProjectStripper.cs</Link>
-    </Compile>
-    <Compile Include="..\coderecycler\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\coderecycler\Settings.cs">
       <Link>Settings.cs</Link>
@@ -80,7 +79,7 @@ Exclude: app.config
     </Compile>
   </ItemGroup>
   <!--End Recycle from ..\coderecycler\coderecycler.csproj
-Recycled 10 codez.-->
+Recycled 9 codez.-->
   <!--End of Recycled Code
 See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke/CodeRecycler -->
   <!-- EndCodeRecycler -->

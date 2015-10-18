@@ -30,7 +30,7 @@ namespace CodeRecycler
 
       try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
-      { Program.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath); }
+      { Recycler.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath); }
 
       startPlaceHolder = FindComment(Settings.StartPlaceholderComment);
       endPlaceHolder   = FindComment(Settings.EndPlaceholderComment);
@@ -60,7 +60,7 @@ namespace CodeRecycler
           if (itemGroups.Count == 0)
             Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
         }
-        catch (Exception e) { Program.Crash(e, "Bad Proj No ItemGroups: " + DestProjDirectory); }
+        catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjDirectory); }
 
 
         foreach (XElement itemGroup in itemGroups)
@@ -96,7 +96,7 @@ namespace CodeRecycler
       List<XComment> placeholders = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count > 1)
-        Program.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
+        Recycler.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
 
       return placeholders.FirstOrDefault();
     }

@@ -43,6 +43,7 @@
   <!-- CodeRecycler
 Source: ..\..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config
+Exclude: AssemblyInfo.cs
 -->
 
 

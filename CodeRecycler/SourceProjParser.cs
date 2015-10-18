@@ -19,10 +19,10 @@ namespace CodeRecycler
     {
       SourceProjPath = sourceProjAbsolutePath;
       if (!File.Exists(sourceProjAbsolutePath))
-        Program.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
+        Recycler.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
 
       if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
-        Program.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
+        Recycler.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
 
       try
       {
@@ -38,7 +38,7 @@ namespace CodeRecycler
       }
       catch (Exception e)
       {
-        Program.Crash(e, "source Proj: " + sourceProjAbsolutePath);
+        Recycler.Crash(e, "source Proj: " + sourceProjAbsolutePath);
       }
     }
   }

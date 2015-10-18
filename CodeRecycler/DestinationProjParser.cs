@@ -40,7 +40,7 @@ namespace CodeRecycler
       try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
       {
-        Program.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
+        Recycler.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
       }
 
 
@@ -81,7 +81,7 @@ namespace CodeRecycler
       try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
       {
-        Program.Crash(e, "DestinationProjParser CTOR (2 params) loading destination XML from " + DestProjAbsolutePath);
+        Recycler.Crash(e, "DestinationProjParser CTOR (2 params) loading destination XML from " + DestProjAbsolutePath);
       }
 
       startPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);  
@@ -96,9 +96,9 @@ namespace CodeRecycler
     ///           Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
     internal void RecycleCode()
     {
-      if (string.IsNullOrEmpty(DestProjAbsolutePath)) { Program.Crash("ERROR: No destProjFileAbsolutePath. That's a bug."); }
+      if (string.IsNullOrEmpty(DestProjAbsolutePath)) { Recycler.Crash("ERROR: No destProjFileAbsolutePath. That's a bug."); }
       if (destProjXdoc.Root == null || !destProjXdoc.Root.Elements().Any()) {
-        Program.Crash("ERROR: No Destination Proj file at " + DestProjAbsolutePath);
+        Recycler.Crash("ERROR: No Destination Proj file at " + DestProjAbsolutePath);
       }
 
       string oldXML = GetOrRemoveDestProjRecycledCode(remove:true);
@@ -161,7 +161,7 @@ namespace CodeRecycler
                   }
                   catch (Exception e)
                   {
-                    Program.Crash(e, "Recycling. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
+                    Recycler.Crash(e, "Recycling. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
                   }
                   string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
                   attrib.Value = relativePathFromDestination;
@@ -185,7 +185,7 @@ namespace CodeRecycler
           totalCodezRecycled += codezRecycled;
         }
         catch (Exception e) {
-          Program.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
+          Recycler.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
         }
       }
 
@@ -215,7 +215,7 @@ namespace CodeRecycler
       List<XComment> placeholders = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count != 1) {
-        Program.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
+        Recycler.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
       }
 
       return placeholders.First();
@@ -236,7 +236,7 @@ namespace CodeRecycler
         }
         return oldXmlBuilder.ToString();
       }
-      Program.Crash("Error: cannot get old Recycled Code from " + DestProjAbsolutePath);
+      Recycler.Crash("Error: cannot get old Recycled Code from " + DestProjAbsolutePath);
       return "you'll never get this";
     }
   }
