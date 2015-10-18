@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Builds", "_Builds", "{3BE7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRecycler-3.5", "_Builds\CodeRecycler-3.5\CodeRecycler-3.5.csproj", "{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRecyclerGui", "CodeRecyclerGui\CodeRecyclerGui.csproj", "{396125C3-F024-463E-B512-93F9401152C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{396125C3-F024-463E-B512-93F9401152C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{396125C3-F024-463E-B512-93F9401152C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{396125C3-F024-463E-B512-93F9401152C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{396125C3-F024-463E-B512-93F9401152C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
