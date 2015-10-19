@@ -31,16 +31,15 @@ namespace CodeRecyclerGui
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.sourceFolderButton = new System.Windows.Forms.Button();
       this.SourceProjectFolderTextBox = new System.Windows.Forms.TextBox();
       this.destinationFolderButton = new System.Windows.Forms.Button();
       this.DestinationProjectFolderTextBox = new System.Windows.Forms.TextBox();
       this.projectListDataGridView = new System.Windows.Forms.DataGridView();
       this.recycleButton = new System.Windows.Forms.Button();
-      this.settingsBindingSource = new System.Windows.Forms.BindingSource(this.components);
       this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.settingsBindingSource)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
       this.SuspendLayout();
       // 
@@ -62,9 +61,9 @@ namespace CodeRecyclerGui
             | System.Windows.Forms.AnchorStyles.Right)));
       this.SourceProjectFolderTextBox.Location = new System.Drawing.Point(120, 9);
       this.SourceProjectFolderTextBox.Name = "SourceProjectFolderTextBox";
-      this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(746, 20);
+      this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(749, 20);
       this.SourceProjectFolderTextBox.TabIndex = 2;
-      this.SourceProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckIfDestinationProjectsAlreadyExist);
+      this.SourceProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckDestinationProjects);
       this.SourceProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.SourceFolderTextBox_DragDrop);
       this.SourceProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
@@ -86,15 +85,17 @@ namespace CodeRecyclerGui
             | System.Windows.Forms.AnchorStyles.Right)));
       this.DestinationProjectFolderTextBox.Location = new System.Drawing.Point(120, 36);
       this.DestinationProjectFolderTextBox.Name = "DestinationProjectFolderTextBox";
-      this.DestinationProjectFolderTextBox.Size = new System.Drawing.Size(746, 20);
+      this.DestinationProjectFolderTextBox.Size = new System.Drawing.Size(749, 20);
       this.DestinationProjectFolderTextBox.TabIndex = 4;
-      this.DestinationProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckIfDestinationProjectsAlreadyExist);
+      this.DestinationProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckDestinationProjects);
       this.DestinationProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.ProjectFolderTextBox_DragDrop);
       this.DestinationProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
       // projectListDataGridView
       // 
       this.projectListDataGridView.AllowDrop = true;
+      dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+      this.projectListDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
       this.projectListDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -102,24 +103,25 @@ namespace CodeRecyclerGui
       this.projectListDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.projectListDataGridView.Location = new System.Drawing.Point(12, 71);
       this.projectListDataGridView.Name = "projectListDataGridView";
-      this.projectListDataGridView.Size = new System.Drawing.Size(854, 249);
+      this.projectListDataGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.projectListDataGridView.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.projectListDataGridView.Size = new System.Drawing.Size(857, 349);
       this.projectListDataGridView.TabIndex = 5;
+      this.projectListDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckDestinationProjects);
+      this.projectListDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckDestinationProjects);
+      this.projectListDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.CheckDestinationProjects);
       this.projectListDataGridView.DragDrop += new System.Windows.Forms.DragEventHandler(this.Sources_DragDrop);
       this.projectListDataGridView.DragEnter += new System.Windows.Forms.DragEventHandler(this.projectListDataGridView_DragEnter);
       // 
       // recycleButton
       // 
       this.recycleButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.recycleButton.Location = new System.Drawing.Point(794, 326);
+      this.recycleButton.Location = new System.Drawing.Point(797, 426);
       this.recycleButton.Name = "recycleButton";
       this.recycleButton.Size = new System.Drawing.Size(75, 23);
       this.recycleButton.TabIndex = 6;
       this.recycleButton.Text = "Recycle";
       this.recycleButton.UseVisualStyleBackColor = true;
-      // 
-      // settingsBindingSource
-      // 
-      this.settingsBindingSource.DataSource = typeof(CodeRecycler.Settings);
       // 
       // guiBindingSource
       // 
@@ -129,7 +131,7 @@ namespace CodeRecyclerGui
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(881, 361);
+      this.ClientSize = new System.Drawing.Size(884, 461);
       this.Controls.Add(this.recycleButton);
       this.Controls.Add(this.projectListDataGridView);
       this.Controls.Add(this.DestinationProjectFolderTextBox);
@@ -139,7 +141,6 @@ namespace CodeRecyclerGui
       this.Name = "Gui";
       this.Text = "Code Recycler by CADbloke";
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.settingsBindingSource)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -154,7 +155,6 @@ namespace CodeRecyclerGui
     private System.Windows.Forms.TextBox DestinationProjectFolderTextBox;
     private System.Windows.Forms.DataGridView projectListDataGridView;
     private System.Windows.Forms.Button recycleButton;
-    private System.Windows.Forms.BindingSource settingsBindingSource;
     private System.Windows.Forms.BindingSource guiBindingSource;
   }
 }

@@ -55,7 +55,7 @@ namespace CodeRecyclerGui
         if (!(projectsList.Any(p => p.SourceProject == filePath)))
           projectsList.Add(new BeforeAfter {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
-       CheckIfDestinationProjectsAlreadyExist();
+       CheckDestinationProjects();
        projectListDataGridView.Refresh();
     }
 
@@ -93,7 +93,7 @@ namespace CodeRecyclerGui
         TextBox tb = (TextBox) sender;
         tb.Text = drops[0];
       }
-      CheckIfDestinationProjectsAlreadyExist();
+      CheckDestinationProjects();
     }
 
 
@@ -125,20 +125,47 @@ namespace CodeRecyclerGui
       if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
-      CheckIfDestinationProjectsAlreadyExist();
+      CheckDestinationProjects();
     }
 
-    private void CheckIfDestinationProjectsAlreadyExist(object sender = null, EventArgs e = null)
+    private void CheckDestinationProjects(object sender = null, EventArgs e = null)
     {
-
       foreach (DataGridViewRow row in projectListDataGridView.Rows)
       {
-        if (row.Cells[1] != null && row.Cells[1].Value != null)
+        if (row.Cells[1]?.Value != null)
         {
-          string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text?? "" , row.Cells[1].Value.ToString()??"");
-          row.Cells[1].Style.BackColor = File.Exists(pathToCheck) ? Color.LightSalmon : row.Cells[0].Style.BackColor;
+          if (projectsList.Count(destination => destination.DestinationProjectName == row.Cells[1].Value.ToString()) > 1)
+          {
+            row.Cells[1].Style.BackColor = Color.BlanchedAlmond;
+            row.Cells[1].ToolTipText = "Destination is listed more than once. ";
+          }
+          else
+          {
+            row.Cells[1].Style.BackColor = row.Cells[0].Style.BackColor;
+            row.Cells[1].ToolTipText ="";
+          }
+
+          string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text?? "" , row.Cells[1].Value.ToString());
+          if (File.Exists(pathToCheck))
+          {
+            row.Cells[1].Style.ForeColor = Color.OrangeRed;
+            row.Cells[1].Style.Font = new Font(projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Bold);
+            row.Cells[1].ToolTipText += "Destination Project already exists on disk.";
+          }
+          else
+          {
+            row.Cells[1].Style.ForeColor = row.Cells[0].Style.ForeColor; 
+            row.Cells[1].Style.Font = new Font( projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Regular);
+          }
         }
       }
+    }
+
+    private void CheckDestinationProjects(object sender, DataGridViewCellEventArgs e) { CheckDestinationProjects(sender, (EventArgs) e); }
+
+    private void CheckDestinationProjects(object sender, DataGridViewRowsRemovedEventArgs e)
+    {
+      CheckDestinationProjects(sender, (EventArgs) e);
     }
   }
 }
