@@ -62,8 +62,9 @@ namespace CodeRecyclerGui
             | System.Windows.Forms.AnchorStyles.Right)));
       this.SourceProjectFolderTextBox.Location = new System.Drawing.Point(120, 9);
       this.SourceProjectFolderTextBox.Name = "SourceProjectFolderTextBox";
-      this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(282, 20);
+      this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(746, 20);
       this.SourceProjectFolderTextBox.TabIndex = 2;
+      this.SourceProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckIfDestinationProjectsAlreadyExist);
       this.SourceProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.SourceFolderTextBox_DragDrop);
       this.SourceProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
@@ -85,8 +86,9 @@ namespace CodeRecyclerGui
             | System.Windows.Forms.AnchorStyles.Right)));
       this.DestinationProjectFolderTextBox.Location = new System.Drawing.Point(120, 36);
       this.DestinationProjectFolderTextBox.Name = "DestinationProjectFolderTextBox";
-      this.DestinationProjectFolderTextBox.Size = new System.Drawing.Size(282, 20);
+      this.DestinationProjectFolderTextBox.Size = new System.Drawing.Size(746, 20);
       this.DestinationProjectFolderTextBox.TabIndex = 4;
+      this.DestinationProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckIfDestinationProjectsAlreadyExist);
       this.DestinationProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.ProjectFolderTextBox_DragDrop);
       this.DestinationProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 

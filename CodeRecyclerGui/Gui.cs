@@ -55,6 +55,7 @@ namespace CodeRecyclerGui
         if (!(projectsList.Any(p => p.SourceProject == filePath)))
           projectsList.Add(new BeforeAfter {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
+       CheckIfDestinationProjectsAlreadyExist();
        projectListDataGridView.Refresh();
     }
 
@@ -92,6 +93,7 @@ namespace CodeRecyclerGui
         TextBox tb = (TextBox) sender;
         tb.Text = drops[0];
       }
+      CheckIfDestinationProjectsAlreadyExist();
     }
 
 
@@ -123,6 +125,20 @@ namespace CodeRecyclerGui
       if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
+      CheckIfDestinationProjectsAlreadyExist();
+    }
+
+    private void CheckIfDestinationProjectsAlreadyExist(object sender = null, EventArgs e = null)
+    {
+
+      foreach (DataGridViewRow row in projectListDataGridView.Rows)
+      {
+        if (row.Cells[1] != null && row.Cells[1].Value != null)
+        {
+          string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text?? "" , row.Cells[1].Value.ToString()??"");
+          row.Cells[1].Style.BackColor = File.Exists(pathToCheck) ? Color.LightSalmon : row.Cells[0].Style.BackColor;
+        }
+      }
     }
   }
 }
