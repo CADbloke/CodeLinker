@@ -19,11 +19,12 @@ namespace CodeRecyclerGui
       BindingSource source = new BindingSource(projectsList, null);
       projectListDataGridView.DataSource = source;
       projectListDataGridView.AutoGenerateColumns = true;
+      projectListDataGridView.Columns[0].FillWeight = 5;
+      projectListDataGridView.Columns[1].FillWeight = 2;
     }
      class BeforeAfter
     {
       public string SourceProject { get; set; } 
-      public string DestinationProjectPath { get; set; } 
       public string DestinationProjectName { get; set; } 
     }
     
@@ -49,10 +50,10 @@ namespace CodeRecyclerGui
         }
         else if (s.IsaCsOrVbProjFile()) { filepaths.Add(s); }
       }
-      foreach (string filepath in filepaths)
+      foreach (string filePath in filepaths)
       {
-        if (!(projectsList.Any(p => p.SourceProject == filepath)))
-          projectsList.Add(new BeforeAfter() {SourceProject = filepath, DestinationProjectName = ""});
+        if (!(projectsList.Any(p => p.SourceProject == filePath)))
+          projectsList.Add(new BeforeAfter {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
        projectListDataGridView.Refresh();
     }
@@ -60,7 +61,7 @@ namespace CodeRecyclerGui
     private void FolderTextBox_DragEnter(object sender, DragEventArgs e)
     {
       string[] drops = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
-      if (!drops.Any())
+      if (drops.Any())
       {
        if (Directory.Exists(drops[0]))
        {
@@ -72,7 +73,13 @@ namespace CodeRecyclerGui
 
     }
 
-    private void FolderTextBox_DragDrop(object sender, DragEventArgs e)
+    private void SourceFolderTextBox_DragDrop(object sender, DragEventArgs e)
+    {
+      ProjectFolderTextBox_DragDrop(sender, e);
+      Sources_DragDrop(sender, e);
+    }
+
+    private void ProjectFolderTextBox_DragDrop(object sender, DragEventArgs e)
     {
       string[] drops = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
       if (!drops.Any())
@@ -85,8 +92,6 @@ namespace CodeRecyclerGui
         TextBox tb = (TextBox) sender;
         tb.Text = drops[0];
       }
-     
     }
-
   }
 }
