@@ -256,7 +256,7 @@ namespace CodeRecycler
 
           if (remove && keepers.Any())
           {
-            XElement newItemGroup = new XElement("ItemGroup");
+            XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
             foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
             endPlaceHolder.AddAfterSelf(newItemGroup);
           }
