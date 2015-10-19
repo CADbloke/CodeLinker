@@ -45,20 +45,42 @@ namespace CodeRecycler
       {
         try
         {
-          if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder)) // previously recycled
+          StringBuilder oldXmlBuilder = new StringBuilder();
+          XNode startNode = StartPlaceHolder;
+          while (startNode.NextNode != EndPlaceHolder)
           {
-            XNode startNode = StartPlaceHolder;
-            while (startNode.NextNode != EndPlaceHolder) { startNode.NextNode.Remove(); }
-
-            Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
+            oldXmlBuilder.Append(startNode.NextNode.ToString());
+            startNode.NextNode.Remove();
           }
+          string oldXml = oldXmlBuilder.ToString();
+
+          List<XElement> keepers = new List<XElement>();
+          Log.WriteLine(oldXml);
+
+          if (oldXml.Contains("ItemGroup"))
+          {
+            XElement keeperElements = XElement.Parse(oldXml);
+
+            foreach (XElement descendant in keeperElements.Elements().Where(e => e.Attribute("Include") != null))
+            {
+              if (!descendant.Attribute("Include").Value.StartsWith("..")) { keepers.Add(descendant); }
+            }
+
+            if (keepers.Any())
+            {
+              XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
+              foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
+              EndPlaceHolder.AddAfterSelf(newItemGroup);
+            }
+          }
+
+          Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
 
           itemGroups = new List<XElement>();
 
           itemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
 
-          if (itemGroups.Count == 0)
-            Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+          if (itemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
         }
         catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
 
