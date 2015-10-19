@@ -124,6 +124,7 @@ namespace CodeRecyclerGui
 
     private void CheckDestinationProjects(object sender = null, EventArgs e = null)
     {
+      // todo: check source projects too - they may have been deleted etc
       foreach (DataGridViewRow row in projectListDataGridView.Rows)
       {
         if (row.Cells[1]?.Value != null)

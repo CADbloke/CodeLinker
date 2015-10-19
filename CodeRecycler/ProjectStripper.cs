@@ -43,56 +43,61 @@ namespace CodeRecycler
 
       if (xElement != null)
       {
-        try
+        if (StartPlaceHolder != null && EndPlaceHolder != null)
         {
-          StringBuilder oldXmlBuilder = new StringBuilder();
-          XNode startNode = StartPlaceHolder;
-          while (startNode.NextNode != EndPlaceHolder)
+          try
           {
-            oldXmlBuilder.Append(startNode.NextNode.ToString());
-            startNode.NextNode.Remove();
-          }
-          string oldXml = oldXmlBuilder.ToString();
-
-          List<XElement> keepers = new List<XElement>();
-          Log.WriteLine(oldXml);
-
-          if (oldXml.Contains("ItemGroup"))
-          {
-            XElement keeperElements = XElement.Parse(oldXml);
-
-            foreach (XElement descendant in keeperElements.Elements().Where(e => e.Attribute("Include") != null))
+            StringBuilder oldXmlBuilder = new StringBuilder();
+            XNode startNode = StartPlaceHolder;
+            while (startNode.NextNode != EndPlaceHolder)
             {
-              if (!descendant.Attribute("Include").Value.StartsWith("..")) { keepers.Add(descendant); }
+              oldXmlBuilder.Append(startNode.NextNode.ToString());
+              startNode.NextNode.Remove();
+            }
+            string oldXml = oldXmlBuilder.ToString();
+
+            List<XElement> keepers = new List<XElement>();
+
+            if (oldXml.Contains("ItemGroup"))
+            {
+              XElement keeperElements = XElement.Parse(oldXml);
+
+              foreach (XElement descendant in keeperElements.Elements().Where(e => e.Attribute("Include") != null))
+              {
+                if (!descendant.Attribute("Include").Value.StartsWith("..")) { keepers.Add(descendant); }
+              }
+
+              if (keepers.Any())
+              {
+                XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
+                foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
+                EndPlaceHolder.AddAfterSelf(newItemGroup);
+              }
             }
 
-            if (keepers.Any())
-            {
-              XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
-              foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
-              EndPlaceHolder.AddAfterSelf(newItemGroup);
-            }
+            Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
+
+            itemGroups = new List<XElement>();
+
+            itemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
+
+            if (itemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
           }
-
-          Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
-
-          itemGroups = new List<XElement>();
-
-          itemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
-
-          if (itemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+          catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
         }
-        catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
 
 
-        foreach (XElement itemGroup in itemGroups)
+        if (itemGroups != null)
         {
-          itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
-                                          (i.Attribute("Include") != null) && 
-                                           i.Attribute("Link")    != null &&
-                                           i.Attribute("Include")?.Value.Replace("..\\", "") != i.Attribute("Link")?.Value ).Remove();
+          foreach (XElement itemGroup in itemGroups)
+          {
+            itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
+                                            (i.Attribute("Include") != null) && 
+                                            i.Attribute("Link")    != null &&
+                                            i.Attribute("Include")?.Value.Replace("..\\", "") != i.Attribute("Link")?.Value ).Remove();
 
-          if (itemGroup.IsEmpty) itemGroup.Remove();
+            if (itemGroup.IsEmpty) itemGroup.Remove();
+          }
         }
 
         if (StartPlaceHolder == null)

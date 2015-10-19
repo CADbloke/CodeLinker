@@ -126,7 +126,8 @@ namespace CodeRecycler
           SourceProjParser sourceProjParser = new SourceProjParser(SourceProjAbsolutePath);
 
           endPlaceHolder.AddBeforeSelf(new XComment("Recycled from " + recycleRelativeSource));
-          Log.WriteLine("Recycling from " + SourceProjAbsolutePath + Environment.NewLine + "to           " + DestProjAbsolutePath);
+          Log.WriteLine("Recycling from " + SourceProjAbsolutePath + Environment.NewLine + 
+                        "            to " + DestProjAbsolutePath);
 
 
           foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
@@ -243,11 +244,10 @@ namespace CodeRecycler
         string oldXml = oldXmlBuilder.ToString();
 
         List<XElement> keepers = new List<XElement>();
-        Log.WriteLine(oldXml);
 
         if (oldXml.Contains("ItemGroup"))
         {
-          XElement xElement = XElement.Parse(oldXml);
+          XElement xElement = XElement.Parse("<root>" + oldXml + "</root>");
 
           foreach (XElement descendant in xElement.Elements().Where(e => e.Attribute("Include") != null) )
           {
