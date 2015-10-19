@@ -122,6 +122,7 @@ namespace CodeRecyclerGui
       this.recycleButton.TabIndex = 6;
       this.recycleButton.Text = "Recycle";
       this.recycleButton.UseVisualStyleBackColor = true;
+      this.recycleButton.Click += new System.EventHandler(this.recycleButton_Click);
       // 
       // guiBindingSource
       // 

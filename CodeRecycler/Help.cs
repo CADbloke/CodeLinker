@@ -16,7 +16,7 @@ namespace CodeRecycler
       WriteLine("Usages...");
       WriteLine("CODERECYCLER /?");
       WriteLine("CODERECYCLER [Folder [/s]]");
-      WriteLine("CODERECYCLER [Source.csproj Destination.csproj]");
+      WriteLine("CODERECYCLER [[Source.csproj] Destination.csproj]");
       WriteLine("CODERECYCLER strip [Destination Folder [/s]]");
       WriteLine("CODERECYCLER strip [Destination.csproj]");
       WriteLine();
@@ -28,7 +28,8 @@ namespace CodeRecycler
       WriteLine("/s       Also iterates all subfolders. You just forgot this, right?");
       WriteLine("         use . for the current folder, add /s for all subfolders.");
       WriteLine();
-      WriteLine("Source.csproj        Path to the CSPROJ with the source to be recycled.");
+      WriteLine("Source.csproj        optional Path to the CSPROJ with the source to be recycled.");
+      WriteLine("                     if only 1 CSPROJ is specified then it is the Destination.");
       WriteLine("Destination.csproj   Path to the existing Destination project.");
       WriteLine();
       WriteLine("Source Solution Root  (optional)");

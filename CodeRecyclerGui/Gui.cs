@@ -22,13 +22,9 @@ namespace CodeRecyclerGui
       projectListDataGridView.Columns[0].FillWeight = 5;
       projectListDataGridView.Columns[1].FillWeight = 2;
     }
-     class BeforeAfter
-    {
-      public string SourceProject { get; set; } 
-      public string DestinationProjectName { get; set; } 
-    }
     
-    BindingList<BeforeAfter> projectsList = new BindingList<BeforeAfter>();
+    
+    BindingList<ProjectToRecycle> projectsList = new BindingList<ProjectToRecycle>();
     
 
     private void projectListDataGridView_DragEnter(object sender, DragEventArgs e)
@@ -38,40 +34,36 @@ namespace CodeRecyclerGui
 
 
 
-     private void Sources_DragDrop(object sender, DragEventArgs e)
+    private void Sources_DragDrop(object sender, DragEventArgs e)
+    { AddFilesOrFolderToSources( (string[]) e.Data.GetData(DataFormats.FileDrop, false)); }
+
+
+    private void AddFilesOrFolderToSources(string[] filesOrFolders)
     {
       List<string> filepaths =  new List<string>();
-      foreach (string s in (string[]) e.Data.GetData(DataFormats.FileDrop, false))
+      foreach (string fileOrFolder in filesOrFolders)
       {
-        if (Directory.Exists(s))
+        if (Directory.Exists(fileOrFolder))
         {
-          filepaths.AddRange(Directory.GetFiles(s, "*.??proj", SearchOption.AllDirectories));
-          SourceProjectFolderTextBox.Text = s; // last one wins. May or may not be useful.
+          filepaths.AddRange(Directory.GetFiles(fileOrFolder, "*.??proj", SearchOption.AllDirectories));
+          SourceProjectFolderTextBox.Text = fileOrFolder; // last one wins. May or may not be useful.
         }
-        else if (s.IsaCsOrVbProjFile()) { filepaths.Add(s); }
+        else if (fileOrFolder.IsaCsOrVbProjFile()) { filepaths.Add(fileOrFolder); }
       }
       foreach (string filePath in filepaths)
       {
         if (!(projectsList.Any(p => p.SourceProject == filePath)))
-          projectsList.Add(new BeforeAfter {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
+          projectsList.Add(new ProjectToRecycle {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
        CheckDestinationProjects();
-       projectListDataGridView.Refresh();
     }
+
 
     private void FolderTextBox_DragEnter(object sender, DragEventArgs e)
     {
       string[] drops = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
-      if (drops.Any())
-      {
-       if (Directory.Exists(drops[0]))
-       {
-         e.Effect = DragDropEffects.All;
-         return;
-       }
-      }
-      e.Effect = DragDropEffects.None;
-
+      if (drops.Any() && (Directory.Exists(drops[0]))) e.Effect = DragDropEffects.All;
+      else e.Effect = DragDropEffects.None;
     }
 
     private void SourceFolderTextBox_DragDrop(object sender, DragEventArgs e)
@@ -109,6 +101,7 @@ namespace CodeRecyclerGui
       if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
 
       SourceProjectFolderTextBox.Text = folderBrowser.SelectedPath;
+      AddFilesOrFolderToSources(new string[] {folderBrowser.SelectedPath});
     }
 
     
@@ -122,11 +115,12 @@ namespace CodeRecyclerGui
         folderBrowser.SelectedPath = SourceProjectFolderTextBox.Text;
       folderBrowser.ShowNewFolderButton = true;
 
-      if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
+      if (folderBrowser.ShowDialog() != DialogResult.OK) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
       CheckDestinationProjects();
     }
+
 
     private void CheckDestinationProjects(object sender = null, EventArgs e = null)
     {
@@ -159,13 +153,20 @@ namespace CodeRecyclerGui
           }
         }
       }
+      projectListDataGridView.Refresh();
     }
 
-    private void CheckDestinationProjects(object sender, DataGridViewCellEventArgs e) { CheckDestinationProjects(sender, (EventArgs) e); }
 
+
+    private void CheckDestinationProjects(object sender, DataGridViewCellEventArgs e)
+      { CheckDestinationProjects(sender, (EventArgs) e); }
     private void CheckDestinationProjects(object sender, DataGridViewRowsRemovedEventArgs e)
+      { CheckDestinationProjects(sender, (EventArgs) e); }
+
+    private void recycleButton_Click(object sender, EventArgs e)
     {
-      CheckDestinationProjects(sender, (EventArgs) e);
+      Recycle.AllTheThings(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
+      CheckDestinationProjects();
     }
   }
 }

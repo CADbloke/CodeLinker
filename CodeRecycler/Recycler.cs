@@ -100,8 +100,6 @@ namespace CodeRecycler
           Crash(errorMessage);
         }
       }
-
-      Finish();
     }
 
 
@@ -136,8 +134,8 @@ namespace CodeRecycler
 
       foreach (DestinationProjParser recycler in recyclers)
       {
-        message += "from " + String.Join(",", recycler.SourceProjList.ToArray());
-        message += " to " + recycler.DestProjAbsolutePath + Environment.NewLine;
+        message += "from :" + String.Join(",", recycler.SourceProjList.ToArray());
+        message += " to  :" + recycler.DestProjAbsolutePath + Environment.NewLine;
       }
       Console.WriteLine(message);
       Environment.Exit(0);
@@ -155,7 +153,7 @@ namespace CodeRecycler
       Environment.Exit(1);
     }
 
-    public static void Crash(string errorMessage)
+    internal static void Crash(string errorMessage)
     {
       Log.WriteLine(errorMessage);
       Console.WriteLine(errorMessage);

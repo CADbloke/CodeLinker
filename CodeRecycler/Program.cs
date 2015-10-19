@@ -5,6 +5,7 @@
     static void Main(string[] args)
     {
       Recycler.Run(args);
+      Recycler.Finish();
     }
   }
 }

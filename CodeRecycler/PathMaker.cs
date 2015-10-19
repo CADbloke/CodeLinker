@@ -9,8 +9,8 @@ namespace CodeRecycler
     /// <summary> Creates a relative path from one file or folder to another.
     ///   Returns <c>toPath</c> if paths are not related. </summary>
     /// <exception cref="ArgumentNullException">. </exception>
-    /// <param name="fromPath"> Contains the directory that defines the start of the relative path. </param>
-    /// <param name="toPath">   Contains the path that defines the endpoint of the relative path. </param>
+    /// <param name="fromPath"> Where you are now. Contains the directory that defines the start of the relative path. </param>
+    /// <param name="toPath">   Where you want o end up.  Contains the path that defines the endpoint of the relative path. </param>
     /// <returns> The relative path from the start directory to the end path or <c>toPath</c> if the paths are not related.</returns>
     /// <exception cref="UriFormatException">. </exception>
     /// <exception cref="InvalidOperationException">. </exception>
@@ -40,7 +40,7 @@ namespace CodeRecycler
     /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. </summary>
     /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute. 
     ///                                     In any case this always returns an Absolute Path. </param>
-    /// <param name="basePath">             Optional: Base Path if building an Absolute Path from a relative path.
+    /// <param name="basePath">             Optional: Where you are now. Base Path if building an Absolute Path from a relative path.
     ///                                     Defaults to the current execution folder if <c>null</c>. </param>
     internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
     {

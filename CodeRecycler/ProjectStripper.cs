@@ -17,9 +17,9 @@ namespace CodeRecycler
     internal string DestProjDirectory { get; }
 
 
-    private XDocument destProjXdoc;
-    private XComment  startPlaceHolder;
-    private XComment  endPlaceHolder;
+    internal XDocument DestProjXdoc;
+    internal XComment  StartPlaceHolder;
+    internal XComment  EndPlaceHolder;
     private  List<XElement> itemGroups;
 
 
@@ -28,27 +28,27 @@ namespace CodeRecycler
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
       DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
 
-      try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
+      try { DestProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
       { Recycler.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath); }
 
-      startPlaceHolder = FindComment(Settings.StartPlaceholderComment);
-      endPlaceHolder   = FindComment(Settings.EndPlaceholderComment);
+      StartPlaceHolder = FindComment(Settings.StartPlaceholderComment);
+      EndPlaceHolder   = FindComment(Settings.EndPlaceholderComment);
     }
 
 
     internal void Strip()
     {
-      XElement xElement = destProjXdoc.Element(Settings.MSBuild + "Project");
+      XElement xElement = DestProjXdoc.Element(Settings.MSBuild + "Project");
 
       if (xElement != null)
       {
         try
         {
-          if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder)) // previously recycled
+          if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder)) // previously recycled
           {
-            XNode startNode = startPlaceHolder;
-            while (startNode.NextNode != endPlaceHolder) { startNode.NextNode.Remove(); }
+            XNode startNode = StartPlaceHolder;
+            while (startNode.NextNode != EndPlaceHolder) { startNode.NextNode.Remove(); }
 
             Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
           }
@@ -60,7 +60,7 @@ namespace CodeRecycler
           if (itemGroups.Count == 0)
             Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
         }
-        catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjDirectory); }
+        catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
 
 
         foreach (XElement itemGroup in itemGroups)
@@ -71,25 +71,23 @@ namespace CodeRecycler
           if (itemGroup.IsEmpty) itemGroup.Remove();
         }
 
-        if (startPlaceHolder == null)
+        if (StartPlaceHolder == null)
         {
           XElement lastItemGroup =xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements).Last();
           lastItemGroup.AddAfterSelf(new XComment(Settings.EndPlaceholderComment));
-
-          lastItemGroup.AddAfterSelf(new XComment(
-                                       Settings.StartPlaceholderComment     + Environment.NewLine +
-                                       Settings.SourcePlaceholderLowerCase  + "Source Project(s) here, one per line"     + Environment.NewLine +
-                                       Settings.ExcludePlaceholderLowerCase + "Optional Exclusion(s) here, one per line" + Environment.NewLine ));
+          lastItemGroup.AddAfterSelf(new XComment( Settings.StartPlaceholderComment ));
+          StartPlaceHolder = FindComment(Settings.StartPlaceholderComment);
+          EndPlaceHolder   = FindComment(Settings.EndPlaceholderComment);
         }
 
-        destProjXdoc.Save(DestProjAbsolutePath);
+        DestProjXdoc.Save(DestProjAbsolutePath);
       }
     }
 
 
     private XComment FindComment(string commentStartsWith)
     {
-      IEnumerable<XComment> comments = from node in destProjXdoc.Elements().DescendantNodesAndSelf()
+      IEnumerable<XComment> comments = from node in DestProjXdoc.Elements().DescendantNodesAndSelf()
                                        where node.NodeType == XmlNodeType.Comment
                                        select node as XComment;
 
