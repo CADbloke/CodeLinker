@@ -234,37 +234,35 @@ namespace CodeRecycler
       if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
       {
         XNode startNode = startPlaceHolder;
-        List<XElement> keepers = new List<XElement>();
-        while (startNode != endPlaceHolder)
+        while (startNode.NextNode != endPlaceHolder)
         {
-          if (startNode == null)
-          {
-            startNode = startNode.NextNode;
-            continue;
-          }
-          oldXmlBuilder.Append(startNode.NextNode);
-
-          if (startNode.NextNode != null && startNode.NextNode.NodeType == XmlNodeType.Element)
-          {
-          XElement xElement = XElement.Parse(startNode.NextNode.ToString());
-          
-          foreach (XElement descendant in xElement.Elements("Include"))
-            if (!descendant.Value.StartsWith("..")) keepers.Add(descendant);
-          }
-
-          if (remove && startNode.NextNode  != null) startNode.NextNode.Remove();
+          oldXmlBuilder.Append(startNode.NextNode.ToString());
+          if (remove) startNode.NextNode.Remove();
           else startNode = startNode.NextNode;
         }
-        if (remove && keepers.Any())
+        string oldXml = oldXmlBuilder.ToString();
+
+        List<XElement> keepers = new List<XElement>();
+        Log.WriteLine(oldXml);
+
+        if (oldXml.Contains("ItemGroup"))
         {
-          XElement newItemGroup = new XElement("ItemGroup");
-          foreach (XElement keeper in keepers)
+          XElement xElement = XElement.Parse(oldXml);
+
+          foreach (XElement descendant in xElement.Elements().Where(e => e.Attribute("Include") != null) )
           {
-            newItemGroup.Add(keeper);
+            if (!descendant.Attribute("Include").Value.StartsWith("..")) { keepers.Add(descendant); }
           }
-          endPlaceHolder.AddAfterSelf(newItemGroup);
+
+          if (remove && keepers.Any())
+          {
+            XElement newItemGroup = new XElement("ItemGroup");
+            foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
+            endPlaceHolder.AddAfterSelf(newItemGroup);
+          }
         }
-        return oldXmlBuilder.ToString();
+
+        return oldXml;
       }
       Recycler.Crash("Error: cannot get old Recycled Code from " + DestProjAbsolutePath);
       return "you'll never get this";
