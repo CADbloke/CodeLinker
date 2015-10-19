@@ -93,5 +93,36 @@ namespace CodeRecyclerGui
         tb.Text = drops[0];
       }
     }
+
+
+    private void SourceFolderButton_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog folderBrowser = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop};
+
+      if (!string.IsNullOrEmpty(SourceProjectFolderTextBox.Text) && Directory.Exists(SourceProjectFolderTextBox.Text))
+        folderBrowser.SelectedPath = SourceProjectFolderTextBox.Text;
+
+      folderBrowser.ShowNewFolderButton = true;
+
+      if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
+
+      SourceProjectFolderTextBox.Text = folderBrowser.SelectedPath;
+    }
+
+    
+    private void DestinationFolderButton_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog folderBrowser = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop};
+
+      if (!string.IsNullOrEmpty(DestinationProjectFolderTextBox.Text) && Directory.Exists(DestinationProjectFolderTextBox.Text))
+        folderBrowser.SelectedPath = DestinationProjectFolderTextBox.Text;
+      else if (!string.IsNullOrEmpty(SourceProjectFolderTextBox.Text) && Directory.Exists(SourceProjectFolderTextBox.Text))
+        folderBrowser.SelectedPath = SourceProjectFolderTextBox.Text;
+      folderBrowser.ShowNewFolderButton = true;
+
+      if (folderBrowser.ShowDialog() == DialogResult.Cancel) return;
+
+      DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
+    }
   }
 }

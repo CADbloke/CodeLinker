@@ -53,6 +53,7 @@ namespace CodeRecyclerGui
       this.sourceFolderButton.TabIndex = 0;
       this.sourceFolderButton.Text = "Source Folder";
       this.sourceFolderButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.sourceFolderButton.Click += new System.EventHandler(this.SourceFolderButton_Click);
       // 
       // SourceProjectFolderTextBox
       // 
@@ -75,6 +76,7 @@ namespace CodeRecyclerGui
       this.destinationFolderButton.TabIndex = 3;
       this.destinationFolderButton.Text = "Destination Folder";
       this.destinationFolderButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.destinationFolderButton.Click += new System.EventHandler(this.DestinationFolderButton_Click);
       // 
       // DestinationProjectFolderTextBox
       // 
