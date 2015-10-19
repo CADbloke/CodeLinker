@@ -66,7 +66,9 @@ namespace CodeRecycler
         foreach (XElement itemGroup in itemGroups)
         {
           itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
-                                          (i.Attribute("Include") != null || i.Attribute("Exclude") != null)).Remove();
+                                          (i.Attribute("Include") != null) && 
+                                           i.Attribute("Link")    != null &&
+                                           i.Attribute("Include")?.Value.Replace("..\\", "") != i.Attribute("Link")?.Value ).Remove();
 
           if (itemGroup.IsEmpty) itemGroup.Remove();
         }

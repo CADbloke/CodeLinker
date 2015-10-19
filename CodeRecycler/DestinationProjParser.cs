@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-
+using System.Xml.XPath;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
@@ -234,11 +234,35 @@ namespace CodeRecycler
       if (startPlaceHolder != null && endPlaceHolder != null && startPlaceHolder.IsBefore(endPlaceHolder))
       {
         XNode startNode = startPlaceHolder;
-        while (startNode.NextNode != endPlaceHolder)
+        List<XElement> keepers = new List<XElement>();
+        while (startNode != endPlaceHolder)
         {
-          oldXmlBuilder.Append(startNode.NextNode.ToString());
-          if (remove) startNode.NextNode.Remove();
+          if (startNode == null)
+          {
+            startNode = startNode.NextNode;
+            continue;
+          }
+          oldXmlBuilder.Append(startNode.NextNode);
+
+          if (startNode.NextNode != null && startNode.NextNode.NodeType == XmlNodeType.Element)
+          {
+          XElement xElement = XElement.Parse(startNode.NextNode.ToString());
+          
+          foreach (XElement descendant in xElement.Elements("Include"))
+            if (!descendant.Value.StartsWith("..")) keepers.Add(descendant);
+          }
+
+          if (remove && startNode.NextNode  != null) startNode.NextNode.Remove();
           else startNode = startNode.NextNode;
+        }
+        if (remove && keepers.Any())
+        {
+          XElement newItemGroup = new XElement("ItemGroup");
+          foreach (XElement keeper in keepers)
+          {
+            newItemGroup.Add(keeper);
+          }
+          endPlaceHolder.AddAfterSelf(newItemGroup);
         }
         return oldXmlBuilder.ToString();
       }
