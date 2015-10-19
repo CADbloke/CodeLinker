@@ -1,4 +1,6 @@
-﻿namespace CodeRecyclerGui
+﻿using System.Windows.Forms;
+
+namespace CodeRecyclerGui
 {
   partial class Gui
   {
@@ -29,9 +31,9 @@
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.sourceLabel = new System.Windows.Forms.Label();
+      this.sourceFolderButton = new System.Windows.Forms.Button();
       this.SourceProjectFolderTextBox = new System.Windows.Forms.TextBox();
-      this.destinationLabel = new System.Windows.Forms.Label();
+      this.destinationFolderButton = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.projectListDataGridView = new System.Windows.Forms.DataGridView();
       this.recycleButton = new System.Windows.Forms.Button();
@@ -42,44 +44,44 @@
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
       this.SuspendLayout();
       // 
-      // sourceLabel
+      // sourceFolderButton
       // 
-      this.sourceLabel.AutoSize = true;
-      this.sourceLabel.Location = new System.Drawing.Point(32, 20);
-      this.sourceLabel.Name = "sourceLabel";
-      this.sourceLabel.Size = new System.Drawing.Size(88, 13);
-      this.sourceLabel.TabIndex = 0;
-      this.sourceLabel.Text = "Source Project(s)";
-      this.sourceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.sourceFolderButton.AutoSize = true;
+      this.sourceFolderButton.Location = new System.Drawing.Point(30, 9);
+      this.sourceFolderButton.Name = "sourceFolderButton";
+      this.sourceFolderButton.Size = new System.Drawing.Size(84, 23);
+      this.sourceFolderButton.TabIndex = 0;
+      this.sourceFolderButton.Text = "Source Folder";
+      this.sourceFolderButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // SourceProjectFolderTextBox
       // 
       this.SourceProjectFolderTextBox.AllowDrop = true;
       this.SourceProjectFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.SourceProjectFolderTextBox.Location = new System.Drawing.Point(126, 13);
+      this.SourceProjectFolderTextBox.Location = new System.Drawing.Point(120, 9);
       this.SourceProjectFolderTextBox.Name = "SourceProjectFolderTextBox";
       this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(282, 20);
       this.SourceProjectFolderTextBox.TabIndex = 2;
       this.SourceProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragDrop);
       this.SourceProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
-      // destinationLabel
+      // destinationFolderButton
       // 
-      this.destinationLabel.AutoSize = true;
-      this.destinationLabel.Location = new System.Drawing.Point(13, 42);
-      this.destinationLabel.Name = "destinationLabel";
-      this.destinationLabel.Size = new System.Drawing.Size(107, 13);
-      this.destinationLabel.TabIndex = 3;
-      this.destinationLabel.Text = "Destination Project(s)";
-      this.destinationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.destinationFolderButton.AutoSize = true;
+      this.destinationFolderButton.Location = new System.Drawing.Point(12, 33);
+      this.destinationFolderButton.Name = "destinationFolderButton";
+      this.destinationFolderButton.Size = new System.Drawing.Size(102, 23);
+      this.destinationFolderButton.TabIndex = 3;
+      this.destinationFolderButton.Text = "Destination Folder";
+      this.destinationFolderButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // textBox1
       // 
       this.textBox1.AllowDrop = true;
       this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBox1.Location = new System.Drawing.Point(126, 39);
+      this.textBox1.Location = new System.Drawing.Point(120, 36);
       this.textBox1.Name = "textBox1";
       this.textBox1.Size = new System.Drawing.Size(282, 20);
       this.textBox1.TabIndex = 4;
@@ -125,9 +127,9 @@
       this.Controls.Add(this.recycleButton);
       this.Controls.Add(this.projectListDataGridView);
       this.Controls.Add(this.textBox1);
-      this.Controls.Add(this.destinationLabel);
+      this.Controls.Add(this.destinationFolderButton);
       this.Controls.Add(this.SourceProjectFolderTextBox);
-      this.Controls.Add(this.sourceLabel);
+      this.Controls.Add(this.sourceFolderButton);
       this.Name = "Gui";
       this.Text = "Code Recycler by CADbloke";
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).EndInit();
@@ -140,9 +142,9 @@
 
     #endregion
 
-    private System.Windows.Forms.Label sourceLabel;
+    private System.Windows.Forms.Button sourceFolderButton;
     private System.Windows.Forms.TextBox SourceProjectFolderTextBox;
-    private System.Windows.Forms.Label destinationLabel;
+    private System.Windows.Forms.Button destinationFolderButton;
     private System.Windows.Forms.TextBox textBox1;
     private System.Windows.Forms.DataGridView projectListDataGridView;
     private System.Windows.Forms.Button recycleButton;
