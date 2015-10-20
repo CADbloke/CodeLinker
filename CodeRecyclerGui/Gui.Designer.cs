@@ -63,7 +63,7 @@ namespace CodeRecyclerGui
       this.SourceProjectFolderTextBox.Name = "SourceProjectFolderTextBox";
       this.SourceProjectFolderTextBox.Size = new System.Drawing.Size(749, 20);
       this.SourceProjectFolderTextBox.TabIndex = 2;
-      this.SourceProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckDestinationProjects);
+      this.SourceProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckProjectsList);
       this.SourceProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.SourceFolderTextBox_DragDrop);
       this.SourceProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
@@ -87,7 +87,7 @@ namespace CodeRecyclerGui
       this.DestinationProjectFolderTextBox.Name = "DestinationProjectFolderTextBox";
       this.DestinationProjectFolderTextBox.Size = new System.Drawing.Size(749, 20);
       this.DestinationProjectFolderTextBox.TabIndex = 4;
-      this.DestinationProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckDestinationProjects);
+      this.DestinationProjectFolderTextBox.TextChanged += new System.EventHandler(this.CheckProjectsList);
       this.DestinationProjectFolderTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.ProjectFolderTextBox_DragDrop);
       this.DestinationProjectFolderTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.FolderTextBox_DragEnter);
       // 
@@ -107,9 +107,9 @@ namespace CodeRecyclerGui
       this.projectListDataGridView.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
       this.projectListDataGridView.Size = new System.Drawing.Size(857, 349);
       this.projectListDataGridView.TabIndex = 5;
-      this.projectListDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckDestinationProjects);
-      this.projectListDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckDestinationProjects);
-      this.projectListDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.CheckDestinationProjects);
+      this.projectListDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckProjectsList);
+      this.projectListDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckProjectsList);
+      this.projectListDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.CheckProjectsList);
       this.projectListDataGridView.DragDrop += new System.Windows.Forms.DragEventHandler(this.Sources_DragDrop);
       this.projectListDataGridView.DragEnter += new System.Windows.Forms.DragEventHandler(this.projectListDataGridView_DragEnter);
       // 

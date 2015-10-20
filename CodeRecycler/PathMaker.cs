@@ -17,21 +17,27 @@ namespace CodeRecycler
     /// <!-- from http://stackoverflow.com/questions/275689/how-to-get-relative-path-from-absolute-path/340454#340454 -->
     internal static string MakeRelativePath(string fromPath, string toPath)
     {
-      if (string.IsNullOrEmpty(fromPath)) { throw new ArgumentNullException(nameof(fromPath)); }
-      if (string.IsNullOrEmpty(toPath))   { throw new ArgumentNullException(nameof(toPath)); }
+      string relativePath = toPath;
 
-      Uri fromUri = new Uri(fromPath);
-      Uri toUri   = new Uri(toPath);
-
-      if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
-
-      Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-      string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-      if (toUri.Scheme.ToUpperInvariant() == "FILE")
+      try
       {
-        relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        if (string.IsNullOrEmpty(fromPath)) { throw new ArgumentNullException(nameof(fromPath)); }
+        if (string.IsNullOrEmpty(toPath))   { throw new ArgumentNullException(nameof(toPath)); }
+
+        Uri fromUri = new Uri(fromPath);
+        Uri toUri   = new Uri(toPath);
+
+        if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+        Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+
+        relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+        if (toUri.Scheme.ToUpperInvariant() == "FILE")
+          relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
       }
+      catch (Exception e)
+      { Recycler.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath); }
 
       return relativePath;
     }
@@ -54,7 +60,10 @@ namespace CodeRecycler
       {
         properAbsolutePath = Path.GetFullPath(basePath + possibleRelativePath); // http://stackoverflow.com/a/1299356/492
       }
-      catch (Exception e) { Recycler.Crash(e, "PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath); }
+      catch (Exception e)
+      {
+        Recycler.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
+      }
 
       bool dir  = Directory.Exists(properAbsolutePath);
       bool file = File.Exists(properAbsolutePath);

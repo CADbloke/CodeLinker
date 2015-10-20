@@ -55,7 +55,7 @@ namespace CodeRecyclerGui
         if (!(projectsList.Any(p => p.SourceProject == filePath)))
           projectsList.Add(new ProjectToRecycle {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
-       CheckDestinationProjects();
+       CheckProjectsList();
     }
 
 
@@ -85,7 +85,7 @@ namespace CodeRecyclerGui
         TextBox tb = (TextBox) sender;
         tb.Text = drops[0];
       }
-      CheckDestinationProjects();
+      CheckProjectsList();
     }
 
 
@@ -118,16 +118,32 @@ namespace CodeRecyclerGui
       if (folderBrowser.ShowDialog() != DialogResult.OK) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
-      CheckDestinationProjects();
+      CheckProjectsList();
     }
 
 
-    private void CheckDestinationProjects(object sender = null, EventArgs e = null)
+    private void CheckProjectsList(object sender = null, EventArgs e = null)
     {
-      // todo: check source projects too - they may have been deleted etc
       foreach (DataGridViewRow row in projectListDataGridView.Rows)
       {
-        if (row.Cells[1]?.Value != null)
+        if (row.Cells[1]?.Value != null) // source
+        {
+          string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text?? "" , row.Cells[0].Value.ToString());
+          if (!File.Exists(pathToCheck))
+          {
+            row.Cells[0].Style.ForeColor = Color.OrangeRed;
+            row.Cells[0].Style.Font = new Font(projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Bold);
+            row.Cells[0].ToolTipText += "Source Project does not exist on disk.";
+          }
+          else
+          {
+            row.Cells[1].Style.ForeColor = row.Cells[0].Style.ForeColor; 
+            row.Cells[1].Style.Font = new Font( projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Regular);
+            row.Cells[0].ToolTipText = "";
+          }
+        }
+
+        if (row.Cells[1]?.Value != null) // destination
         {
           if (projectsList.Count(destination => destination.DestinationProjectName == row.Cells[1].Value.ToString()) > 1)
           {
@@ -159,15 +175,15 @@ namespace CodeRecyclerGui
 
 
 
-    private void CheckDestinationProjects(object sender, DataGridViewCellEventArgs e)
-      { CheckDestinationProjects(sender, (EventArgs) e); }
-    private void CheckDestinationProjects(object sender, DataGridViewRowsRemovedEventArgs e)
-      { CheckDestinationProjects(sender, (EventArgs) e); }
+    private void CheckProjectsList(object sender, DataGridViewCellEventArgs e)
+      { CheckProjectsList(sender, (EventArgs) e); }
+    private void CheckProjectsList(object sender, DataGridViewRowsRemovedEventArgs e)
+      { CheckProjectsList(sender, (EventArgs) e); }
 
     private void recycleButton_Click(object sender, EventArgs e)
     {
       ProjectCloner.Clone(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
-      CheckDestinationProjects();
+      CheckProjectsList();
     }
   }
 }

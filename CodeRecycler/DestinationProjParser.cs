@@ -75,11 +75,10 @@ namespace CodeRecycler
     internal DestinationProjParser(string sourceProj, string destProj)
     {
       SourceProjList = new List<string> {PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProj)};
-      // bug: whut ?
       ExclusionsList = new List<string>();
 
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
-      DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath);
+      DestProjDirectory    = Path.GetDirectoryName(DestProjAbsolutePath);
 
       try { destProjXdoc = XDocument.Load(DestProjAbsolutePath); }
       catch (Exception e)
@@ -99,12 +98,13 @@ namespace CodeRecycler
     ///           Adds a <c>&lt;Link&gt;</c> so you can edit within the destination project.</summary>
     internal void RecycleCode()
     {
-      if (string.IsNullOrEmpty(DestProjAbsolutePath)) { Recycler.Crash("ERROR: No destProjFileAbsolutePath. That's a bug."); }
-      if (destProjXdoc.Root == null || !destProjXdoc.Root.Elements().Any()) {
-        Recycler.Crash("ERROR: No Destination Proj file at " + DestProjAbsolutePath);
-      }
+      if (string.IsNullOrEmpty(DestProjAbsolutePath))
+        Recycler.Crash("ERROR: No destProjFileAbsolutePath. That's a bug.");
 
-      string oldXML = GetOrRemoveDestProjRecycledCode(remove:true);
+      if (destProjXdoc.Root == null || !destProjXdoc.Root.Elements().Any())
+        Recycler.Crash("ERROR: No Destination Proj file at " + DestProjAbsolutePath);
+
+      string oldXml = GetOrRemoveDestProjRecycledCode(remove:true);
       int totalCodezRecycled = 0;
 
       foreach (string sourcePath in SourceProjList)
@@ -113,20 +113,20 @@ namespace CodeRecycler
 
         try
         {
-          string SourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath))
+          string sourceProjAbsolutePath = (PathMaker.IsAbsolutePath(sourcePath))
             ? sourcePath
             : Path.Combine(DestProjDirectory, sourcePath);
 
-          string SourceProjDirectory = Path.GetDirectoryName(SourceProjAbsolutePath);
+          string sourceProjDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
           string destDirectoryForRelativePath = DestProjDirectory.EndsWith("\\")
             ? DestProjDirectory
             : DestProjDirectory + "\\";
-          string recycleRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , SourceProjAbsolutePath);
+          string recycleRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , sourceProjAbsolutePath);
 
-          SourceProjParser sourceProjParser = new SourceProjParser(SourceProjAbsolutePath);
+          SourceProjParser sourceProjParser = new SourceProjParser(sourceProjAbsolutePath);
 
           endPlaceHolder.AddBeforeSelf(new XComment("Recycled from " + recycleRelativeSource));
-          Log.WriteLine("Recycling from " + SourceProjAbsolutePath + Environment.NewLine + 
+          Log.WriteLine("Recycling from " + sourceProjAbsolutePath + Environment.NewLine + 
                         "            to " + DestProjAbsolutePath);
 
 
@@ -149,8 +149,8 @@ namespace CodeRecycler
                 if ( ExclusionsList.Any(x => Operators.LikeString(trimmedOriginalPath, x, CompareMethod.Text))) // OW my eyes!
                 {
                   Log.WriteLine( 
-                    "Excluded : " + originalPath  +Environment.NewLine + 
-                    "     from " + SourceProjAbsolutePath + Environment.NewLine + 
+                    "Excluded: " + originalPath           + Environment.NewLine + 
+                    "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
                     "because you said to Exclude: " + ExclusionsList.FirstOrDefault(x => Operators.LikeString(trimmedOriginalPath, x, CompareMethod.Text)));
                   continue;
                 }
@@ -163,11 +163,11 @@ namespace CodeRecycler
                     string fileName = Path.GetFileName(originalPath); // wildcards blow up Path.GetFullPath()
                     string originalFolder = originalPath;
                     if (!string.IsNullOrEmpty(fileName))  originalFolder = originalPath.Replace(fileName, "");
-                    sourceAbsolutePath = Path.GetFullPath(SourceProjDirectory + "\\" + originalFolder) + fileName;
+                    sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + fileName;
                   }
                   catch (Exception e)
                   {
-                    Recycler.Crash(e, "Recycling. GetFullPath: " + SourceProjDirectory + "\\" + originalPath);
+                    Recycler.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalPath);
                   }
 
                   string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
@@ -201,7 +201,7 @@ namespace CodeRecycler
       endPlaceHolder.AddBeforeSelf(new XComment("End of Recycled Code" + Environment.NewLine + 
         "See CodeRecyclerLog.txt for details. CodeRecycler by " + Help.SourceCodeUrl + " "));
 
-      if (oldXML != GetOrRemoveDestProjRecycledCode())
+      if (oldXml != GetOrRemoveDestProjRecycledCode())
       {
         destProjXdoc.Save(DestProjAbsolutePath);
         Log.WriteLine("Recycled " + totalCodezRecycled + " codez from " + SourceProjList.Count + " source Project(s).");

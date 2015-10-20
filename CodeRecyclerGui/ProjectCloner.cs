@@ -18,11 +18,6 @@ namespace CodeRecyclerGui
       if (projectsToRecycle == null) { throw new ArgumentNullException(nameof(projectsToRecycle)); }
       if (string.IsNullOrEmpty(destinationFolder)) { throw new ArgumentNullException(nameof(destinationFolder)); }
 
-      /* TODO:
-
-      Copy then ClearOldRecycledCodeLinks() source project (FIRST if there are more than 1)
-      */
-
       HashSet<string> destinationProjects = new HashSet<string>(projectsToRecycle.Select(p => p.DestinationProjectName));
       Log.WriteLine("Recycling "+ destinationProjects.Count + " Projects to " + destinationFolder);
 
