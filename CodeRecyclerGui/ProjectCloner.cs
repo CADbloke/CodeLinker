@@ -2,29 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using CodeRecycler;
 
 namespace CodeRecyclerGui
 {
-  static class Recycle
+  static class ProjectCloner
   {
-    /// <summary> All the things. </summary>
-    /// <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null. </exception>
+    /// <summary> Clones a List of Projects into the <c>destinationFolder</c>. </summary>
+    /// <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null or empty. </exception>
     /// <param name="projectsToRecycle">  The projects to recycle. </param>
-    /// <param name="destinationFolder">  Pathname of the destination folder. Empty string throws <exception cref="ArgumentNullException" /> </param>
-    internal static void AllTheThings(List<ProjectToRecycle> projectsToRecycle, string destinationFolder )
+    /// <param name="destinationFolder">  Pathname of the destination folder. Empty string throws <c>ArgumentNullException</c></param>
+    internal static void Clone(List<ProjectToRecycle> projectsToRecycle, string destinationFolder )
     {
       
       if (projectsToRecycle == null) { throw new ArgumentNullException(nameof(projectsToRecycle)); }
       if (string.IsNullOrEmpty(destinationFolder)) { throw new ArgumentNullException(nameof(destinationFolder)); }
 
       /* TODO:
-      Check for existing destination projects
-      check for multiple source projects
 
-      Copy then Strip() source project (FIRST if there are more than 1)
+      Copy then ClearOldRecycledCodeLinks() source project (FIRST if there are more than 1)
       */
 
       HashSet<string> destinationProjects = new HashSet<string>(projectsToRecycle.Select(p => p.DestinationProjectName));
@@ -66,8 +62,9 @@ namespace CodeRecyclerGui
         {
           Log.WriteLine("Recycling to :" + destinationProjectPath );
           File.Copy(sources[0], destinationProjectPath, overwrite: true);
-          ProjectStripper destinationProjectXml = new ProjectStripper(destinationProjectPath);
-          destinationProjectXml.Strip();
+          DestinationProjectXml destinationProjectXml = new DestinationProjectXml(destinationProjectPath);
+          destinationProjectXml.ClearOldRecycledCodeLinks();
+          destinationProjectXml.ClearCodeIncludesExceptLinked();
 
           foreach (string source in sources)
           {

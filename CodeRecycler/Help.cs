@@ -65,7 +65,7 @@ namespace CodeRecycler
       WriteLine(" - You may specify multiple Exclude: items, file or path. No wildcards.");
       WriteLine(" - Exclusions are a simple String.Contains() filter list.");
       WriteLine(" - If you specify multiple items then they must be on separate lines.");
-      WriteLine(" - Every Code Recycle will re-recycle the source CSPROJ");
+      WriteLine(" - Every Code ProjectCloner will re-recycle the source CSPROJ");
       WriteLine("   into the space between the XML comment placeholders.");
       WriteLine(" - ALL code links inside these placeholders are refreshed every time. OK?");
       WriteLine();

@@ -8,7 +8,8 @@ using System.Xml.Linq;
 
 namespace CodeRecycler
 {
-  internal class ProjectStripper
+  /// <summary> Removes previously Recycled Code. </summary>
+  internal class DestinationProjectXml
   {
     /// <summary> Absolute pathname of the destination <c>Proj</c> including file name. </summary>
     internal string DestProjAbsolutePath { get; }
@@ -21,14 +22,20 @@ namespace CodeRecycler
     internal XComment  StartPlaceHolder;
     internal XComment  EndPlaceHolder;
     private  List<XElement> itemGroups;
+    private  XElement rootXelement;
 
 
-    internal ProjectStripper(string destProj)
+    internal DestinationProjectXml(string destProj)
     {
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
       DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
+      
 
-      try { DestProjXdoc = XDocument.Load(DestProjAbsolutePath); }
+      try
+      {
+        DestProjXdoc = XDocument.Load(DestProjAbsolutePath);
+        rootXelement = DestProjXdoc.Element(Settings.MSBuild + "Project");
+      }
       catch (Exception e)
       { Recycler.Crash(e, "DestinationProjParser CTOR (1 param) loading destination XML from " + DestProjAbsolutePath); }
 
@@ -37,11 +44,9 @@ namespace CodeRecycler
     }
 
 
-    internal void Strip()
+    internal void ClearOldRecycledCodeLinks()
     {
-      XElement xElement = DestProjXdoc.Element(Settings.MSBuild + "Project");
-
-      if (xElement != null)
+      if (rootXelement != null)
       {
         if (StartPlaceHolder != null && EndPlaceHolder != null)
         {
@@ -56,7 +61,7 @@ namespace CodeRecycler
             }
             string oldXml = oldXmlBuilder.ToString();
 
-            List<XElement> keepers = new List<XElement>();
+            List<XElement> keepers = new List<XElement>(); // todo: Keep a copy of the old Recycle. Use that to generate Keepers.
 
             if (oldXml.Contains("ItemGroup"))
             {
@@ -79,7 +84,7 @@ namespace CodeRecycler
 
             itemGroups = new List<XElement>();
 
-            itemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
+            itemGroups.AddRange(rootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
 
             if (itemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
           }
@@ -102,7 +107,7 @@ namespace CodeRecycler
 
         if (StartPlaceHolder == null)
         {
-          XElement lastItemGroup =xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements).Last();
+          XElement lastItemGroup =rootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements).Last();
           lastItemGroup.AddAfterSelf(new XComment(Settings.EndPlaceholderComment));
           lastItemGroup.AddAfterSelf(new XComment( Settings.StartPlaceholderComment ));
           StartPlaceHolder = FindComment(Settings.StartPlaceholderComment);
@@ -126,6 +131,32 @@ namespace CodeRecycler
         Recycler.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
 
       return placeholders.FirstOrDefault();
+    }
+
+
+    internal void ClearCodeIncludesExceptLinked()
+    {
+      if (rootXelement != null)
+      {
+        itemGroups = new List<XElement>();
+        itemGroups.AddRange(rootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
+        if (itemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+
+        if (itemGroups != null)
+        {
+          foreach (XElement itemGroup in itemGroups)
+          {
+            itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
+                                      (i.Attribute("Include") != null) && 
+                                       i.Attribute("Link")    == null).Remove();
+
+            if (itemGroup.IsEmpty) itemGroup.Remove();
+          }
+        }
+      }
+      
+
+      DestProjXdoc.Save(DestProjAbsolutePath);
     }
   }
 }

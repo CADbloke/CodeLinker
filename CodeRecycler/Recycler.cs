@@ -53,8 +53,8 @@ namespace CodeRecycler
           {
             if (args[1].IsaCsOrVbProjFile())
             {
-              ProjectStripper projectStripper = new ProjectStripper(args[1]);
-              projectStripper.Strip();
+              DestinationProjectXml destinationProjectXml = new DestinationProjectXml(args[1]);
+              destinationProjectXml.ClearOldRecycledCodeLinks();
               Finish("Stripped all code from " + args[1]);
             }
 
@@ -67,8 +67,8 @@ namespace CodeRecycler
                 foreach (string destProjFile in destProjFiles)
                 {
                   Log.WriteLine("Stripping Code from: " + destProjFile + ". ");
-                  ProjectStripper projectStripper = new ProjectStripper(destProjFile);
-                  projectStripper.Strip();
+                  DestinationProjectXml destinationProjectXml = new DestinationProjectXml(destProjFile);
+                  destinationProjectXml.ClearOldRecycledCodeLinks();
                 }
               }
               catch (Exception e) { Crash(e, "Stripping Code from  didn't work. Bad file name?"); }

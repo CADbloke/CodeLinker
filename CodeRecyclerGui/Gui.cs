@@ -166,7 +166,7 @@ namespace CodeRecyclerGui
 
     private void recycleButton_Click(object sender, EventArgs e)
     {
-      Recycle.AllTheThings(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
+      ProjectCloner.Clone(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
       CheckDestinationProjects();
     }
   }
