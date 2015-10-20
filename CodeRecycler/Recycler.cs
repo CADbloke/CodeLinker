@@ -10,7 +10,7 @@ namespace CodeRecycler
     static List<DestinationProjParser> recyclers = new List<DestinationProjParser>();
     public static void Run(string[] args)
     {
-      // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
+      System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
       int argsCount = args.Length;
       if (argsCount == 0)
       {
@@ -71,7 +71,7 @@ namespace CodeRecycler
                   destinationProjectXml.ClearOldRecycledCodeLinks();
                 }
               }
-              catch (Exception e) { Crash(e, "Stripping Code from  didn't work. Bad file name?"); }
+              catch (Exception e) { Crash(e, "Stripping Code from Folder: "+ args[1] + " didn't work. Bad name?"); }
               Finish("Stripped all code");
             }
           }

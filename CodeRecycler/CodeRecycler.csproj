@@ -63,7 +63,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(TargetPath) ..\..\..\_Builds\CodeRecycler-3.5\CodeRecycler-3.5.csproj
-$(TargetPath)  ..\..\..\CodeRecyclerGui\CodeRecyclerGui.csproj</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
