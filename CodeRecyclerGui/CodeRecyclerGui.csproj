@@ -7,7 +7,7 @@
     <ProjectGuid>{396125C3-F024-463E-B512-93F9401152C4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeRecyclerGui</RootNamespace>
+    <RootNamespace>CodeRecycler</RootNamespace>
     <AssemblyName>CodeRecyclerGui</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -48,6 +48,7 @@ Source: ..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config
 Exclude: *\assemblyinfo.cs
 Exclude: Program.cs
+Exclude: YesOrNo.cs
 -->
   <!--Recycled from ..\coderecycler\coderecycler.csproj-->
   <ItemGroup>
@@ -66,11 +67,17 @@ Exclude: Program.cs
     <Compile Include="..\coderecycler\PathMaker.cs">
       <Link>PathMaker.cs</Link>
     </Compile>
+    <Compile Include="..\coderecycler\ProjectCloner.cs">
+      <Link>ProjectCloner.cs</Link>
+    </Compile>
+    <Compile Include="..\coderecycler\ProjectToRecycle.cs">
+      <Link>ProjectToRecycle.cs</Link>
+    </Compile>
     <Compile Include="..\coderecycler\Recycler.cs">
       <Link>Recycler.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\DestinationProjectXml.cs">
-      <Link>DestinationProjectXml.cs</Link>
+    <Compile Include="..\coderecycler\DestinationProjXml.cs">
+      <Link>DestinationProjXml.cs</Link>
     </Compile>
     <Compile Include="..\coderecycler\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -83,13 +90,11 @@ Exclude: Program.cs
     </Compile>
   </ItemGroup>
   <!--End Recycle from ..\coderecycler\coderecycler.csproj
-Recycled 10 codez.-->
+Recycled 12 codez.-->
   <!--End of Recycled Code
 See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke/CodeRecycler -->
   <!-- EndCodeRecycler -->
   <ItemGroup>
-    <Compile Include="ProjectToRecycle.cs" />
-    <Compile Include="ProjectCloner.cs" />
     <Compile Include="YesOrNo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +117,7 @@ See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

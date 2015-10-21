@@ -40,7 +40,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup />
   <!-- CodeRecycler
 Source: ..\..\CodeRecycler\CodeRecycler.csproj
 Exclude: app.config

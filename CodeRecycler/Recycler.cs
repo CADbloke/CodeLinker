@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+
 namespace CodeRecycler
 {
   public static class Recycler
@@ -22,14 +23,16 @@ namespace CodeRecycler
 
       List<string> argsList = args.ToList();
 
-      if (argsList[0] == "/?")
+      
+
+      if (argsList.Contains("/?"))
       {
         Help.Write();
         Log.WriteLine("User asked For Help. Hope I helped.");
         Finish();
       }
 
-      
+      bool doSubDirectories = (argsList.Contains("/s", StringComparer.CurrentCultureIgnoreCase));
 
       if (!string.IsNullOrEmpty(argsList[0]))
       {
@@ -49,12 +52,13 @@ namespace CodeRecycler
 
         else if (argsList[0].ToLower() == "strip")
         {
-          if (argsCount > 1)
+          if (argsCount >1)
           {
             if (args[1].IsaCsOrVbProjFile())
             {
-              DestinationProjectXml destinationProjectXml = new DestinationProjectXml(args[1]);
-              destinationProjectXml.ClearOldRecycledCodeLinks();
+              DestinationProjXml destinationProjXml = new DestinationProjXml(args[1]); 
+              destinationProjXml.ClearOldRecycledCodeLinks();
+              destinationProjXml.Save();
               Finish("Stripped all code from " + args[1]);
             }
 
@@ -62,13 +66,14 @@ namespace CodeRecycler
             {
               try
               {
-                List<string> destProjFiles = GetProjectsFromFolders(argsList[1]);
+                List<string> destProjFiles = GetProjectsFromFolders(argsList[1], doSubDirectories);
 
                 foreach (string destProjFile in destProjFiles)
                 {
                   Log.WriteLine("Stripping Code from: " + destProjFile + ". ");
-                  DestinationProjectXml destinationProjectXml = new DestinationProjectXml(destProjFile);
-                  destinationProjectXml.ClearOldRecycledCodeLinks();
+                  DestinationProjXml destinationProjXml = new DestinationProjXml(destProjFile);
+                  destinationProjXml.ClearOldRecycledCodeLinks();
+                  destinationProjXml.Save();
                 }
               }
               catch (Exception e) { Crash(e, "Stripping Code from Folder: "+ args[1] + " didn't work. Bad name?"); }
@@ -77,11 +82,56 @@ namespace CodeRecycler
           }
         }
 
-        else
+        else if (argsList[0].ToLower() == "clone")
+        {
+          if (argsCount >2)
+          {
+            if (args[1].IsaCsOrVbProjFile())
+            {
+              string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, args[1]);
+              try { ProjectCloner.Clone(sourcePath, args[2]); }
+              catch (Exception e)
+              { Crash(e, "Cloning "+ args[1] +  " to " + args[2] + " didn't work. Bad name?"); }
+
+              Finish("Cloned " + " from " + args[1] +  " to " + args[2]);
+            }
+
+            else
+            { 
+              try
+              {
+                List<string> sourceProjFiles = GetProjectsFromFolders(argsList[1], doSubDirectories);
+
+                foreach (string sourceProjFile in sourceProjFiles)
+                {
+                  if (sourceProjFile.IsaCsOrVbProjFile())
+                  {
+                    string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProjFile);
+                    try { ProjectCloner.Clone(sourcePath, args[2]); }
+                    catch (Exception e)
+                     { Crash( e, "Cloning " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?"); }
+
+                    Log.WriteLine("Cloned " + " from " + sourceProjFile + " to " + args[2]);
+                  }
+                  else
+                  {
+                    Log.WriteLine("ERROR: " + sourceProjFile + " is not a project file. Cannot clone it.");
+                  }
+                }
+              }
+              catch (Exception e) { Crash( e, "Cloning Projects from Folder: " + args[1] + " didn't work. Bad name?"); }
+
+              Finish("Cloned Projects");
+            }
+          }
+        } // /Clone
+
+
+        else // vanilla RECYCLE command
         {
           try
           {
-            List<string> destProjFiles = GetProjectsFromFolders(argsList[0]);
+            List<string> destProjFiles = GetProjectsFromFolders(argsList[0], doSubDirectories);
 
             foreach (string destProjFile in destProjFiles)
             {
@@ -101,9 +151,9 @@ namespace CodeRecycler
         }
 
 
-        foreach (DestinationProjRecycler DestinationProjRecycler in recyclers)
+        foreach (DestinationProjRecycler destinationProjRecycler in recyclers)
         {
-          DestinationProjRecycler.RecycleCode();
+          destinationProjRecycler.RecycleCode();
         }
       }
     }
@@ -112,24 +162,28 @@ namespace CodeRecycler
     private static List<string> GetProjectsFromFolders(string rootFolder, bool subDirectories = false)
     {
       string destinationsDirectory = rootFolder;
-          if (!PathMaker.IsAbsolutePath(rootFolder))
-            destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, rootFolder);
+      if (!PathMaker.IsAbsolutePath(rootFolder)) {
+        destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, rootFolder);
+      }
 
-          if (Directory.Exists(destinationsDirectory))
-          try
-          {
-            List<string> destProjFiles = new List<string>();
+      if (Directory.Exists(destinationsDirectory))
+      {
+        try
+        {
+          List<string> destProjFiles = new List<string>();
 
-            SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
-			      destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
+          SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+          destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
+          destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
 
-            return destProjFiles;
-          }
-        catch (Exception e) { Crash(e, "Queueing Code Recycle in " + rootFolder+ " didn't work. Bad file name?"); }
-
-        return new List<string>();
+          return destProjFiles;
         }
+        catch (Exception e)
+         { Crash(e, "Getting Projects in " + rootFolder + " didn't work. Bad name?"); }
+      }
+
+      return new List<string>(); // because complain no return path
+    }
 
 
     internal static void Finish(string message = "")
@@ -150,8 +204,8 @@ namespace CodeRecycler
     
     internal static void Crash(Exception e, string crashedAt = "")
     {
-      Log.WriteLine("");
-      Log.WriteLine("I crashed at "+crashedAt+". Whups.");
+      Log.WriteLine();
+      Log.WriteLine("I crashed at "+ crashedAt +". Whups.");
       Log.WriteLine(e.ToString());
       Log.WriteLine(e.InnerException?.ToString());
       Log.WriteLine(e.StackTrace);

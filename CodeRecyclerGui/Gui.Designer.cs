@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CodeRecyclerGui
+namespace CodeRecycler
 {
   partial class Gui
   {
@@ -126,7 +126,7 @@ namespace CodeRecyclerGui
       // 
       // guiBindingSource
       // 
-      this.guiBindingSource.DataSource = typeof(CodeRecyclerGui.Gui);
+      this.guiBindingSource.DataSource = typeof(CodeRecycler.Gui);
       // 
       // Gui
       // 

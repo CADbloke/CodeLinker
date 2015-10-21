@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CodeRecyclerGui
+namespace CodeRecycler
 {
   /// <summary> A project to recycle. </summary>
   class ProjectToRecycle

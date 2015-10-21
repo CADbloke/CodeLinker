@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace CodeRecycler
 {
   /// <summary> Removes previously Recycled Code. </summary>
-  internal class DestinationProjectXml
+  internal class DestinationProjXml
   {
     /// <summary> Absolute pathname of the destination <c>Proj</c> including file name. </summary>
     internal string DestProjAbsolutePath { get; }
@@ -22,10 +22,10 @@ namespace CodeRecycler
     internal XComment  StartPlaceHolder;
     internal XComment  EndPlaceHolder;
     internal List<XElement> ItemGroups;
-    internal XElement RootXelement;
+    internal XElement  RootXelement;
 
 
-    internal DestinationProjectXml(string destProj)
+    internal DestinationProjXml(string destProj)
     {
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
       DestProjDirectory    = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
@@ -39,8 +39,7 @@ namespace CodeRecycler
       { Recycler.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath); }
 
       if (RootXelement == null)
-      { Recycler.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath);
-        
+      { Recycler.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath);         
       }
 
       StartPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);

@@ -17,6 +17,8 @@ namespace CodeRecycler
       WriteLine("CODERECYCLER /?");
       WriteLine("CODERECYCLER [Folder [/s]]");
       WriteLine("CODERECYCLER [[Source.csproj] Destination.csproj]");
+      WriteLine("CODERECYCLER clone [[Source.csproj] Destination Folder]");
+      WriteLine("CODERECYCLER clone [[Source Folder] Destination Folder] [/s]");
       WriteLine("CODERECYCLER strip [Destination Folder [/s]]");
       WriteLine("CODERECYCLER strip [Destination.csproj]");
       WriteLine();
@@ -31,6 +33,10 @@ namespace CodeRecycler
       WriteLine("Source.csproj        optional Path to the CSPROJ with the source to be recycled.");
       WriteLine("                     if only 1 CSPROJ is specified then it is the Destination.");
       WriteLine("Destination.csproj   Path to the existing Destination project.");
+      WriteLine();
+      WriteLine("clone    Clones the Source to the Destination path and strips the contents.");
+      WriteLine("         Creates a new project file with a placeholder.");
+      WriteLine("         Using folders it clones all Projects to the same destination.");
       WriteLine();
       WriteLine("Source Solution Root  (optional)");
       WriteLine("         The root of the solution containing the projects to recycle.");

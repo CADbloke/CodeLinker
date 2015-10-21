@@ -50,12 +50,15 @@
     <Compile Include="Log.cs" />
     <Compile Include="PathMaker.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProjectCloner.cs" />
+    <Compile Include="ProjectToRecycle.cs" />
     <Compile Include="Recycler.cs" />
-    <Compile Include="DestinationProjectXml.cs" />
+    <Compile Include="DestinationProjXml.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SourceProjParser.cs" />
+    <Compile Include="YesOrNo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using CodeRecycler;
 
-namespace CodeRecyclerGui
+namespace CodeRecycler
 {
   public partial class Gui : Form
   {

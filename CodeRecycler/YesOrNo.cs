@@ -1,4 +1,9 @@
-﻿using System.Windows.Forms;
+﻿
+
+
+using System;
+using CodeRecycler;
+
 
 namespace CodeRecycler
 {
@@ -9,8 +14,12 @@ namespace CodeRecycler
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool Ask(string message, string caption = "Hey!")
     {
-      DialogResult dialogResult = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-      if (dialogResult == DialogResult.Yes) { return true; }
+      Console.WriteLine(message);
+      Console.WriteLine("Y/N ?");
+      ConsoleKeyInfo yn = Console.ReadKey();
+
+      if (yn.KeyChar.ToString().ToLower() == "y") return true;
+
       return false;
     }
 
@@ -20,15 +29,19 @@ namespace CodeRecycler
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool? OrCancel(string message, string caption = "Hey!")
     {
-      DialogResult dialogResult = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-      if (dialogResult == DialogResult.Yes)    return true;
-      if (dialogResult == DialogResult.Cancel) return null;
+      Console.WriteLine(message);
+      Console.WriteLine("Y/N or C for Cancel ?");
+      ConsoleKeyInfo yn = Console.ReadKey();
+
+      if (yn.KeyChar.ToString().ToLower() == "y") return true;
+      if (yn.KeyChar.ToString().ToLower() == "c") return null;
+
       return false;
     }
 
     internal static void Crashing(string message, string caption = "Hey!")
     {
-      MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      Recycler.Crash(message);
     }
 
   }
