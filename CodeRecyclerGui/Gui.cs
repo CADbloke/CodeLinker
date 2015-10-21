@@ -11,14 +11,16 @@ namespace CodeRecycler
 {
   public partial class Gui : Form
   {
+    public BindingSource source;
     public Gui()
     {
       InitializeComponent();
-      BindingSource source = new BindingSource(projectsList, null);
+      source = new BindingSource(projectsList, null);
       projectListDataGridView.DataSource = source;
       projectListDataGridView.AutoGenerateColumns = true;
       projectListDataGridView.Columns[0].FillWeight = 5;
       projectListDataGridView.Columns[1].FillWeight = 2;
+      source.AddingNew += OnAddingNewToBindingSource;
     }
     
     
@@ -38,6 +40,9 @@ namespace CodeRecycler
 
     private void AddFilesOrFolderToSources(string[] filesOrFolders)
     {
+      if (projectListDataGridView.Rows.Count == source.Count) { source.RemoveAt(source.Count - 1); } // http://stackoverflow.com/a/27051109/492
+
+      projectListDataGridView.Refresh();
       List<string> filepaths =  new List<string>();
       foreach (string fileOrFolder in filesOrFolders)
       {
@@ -50,7 +55,7 @@ namespace CodeRecycler
       }
       foreach (string filePath in filepaths)
       {
-        if (!(projectsList.Any(p => p.SourceProject == filePath)))
+        if (!(projectsList.Any(p => p?.SourceProject == filePath)))
           projectsList.Add(new ProjectToRecycle {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
        CheckProjectsList();
@@ -82,6 +87,7 @@ namespace CodeRecycler
       {
         TextBox tb = (TextBox) sender;
         tb.Text = drops[0];
+        tb.BackColor = SourceProjectFolderTextBox.BackColor;
       }
       CheckProjectsList();
     }
@@ -116,6 +122,7 @@ namespace CodeRecycler
       if (folderBrowser.ShowDialog() != DialogResult.OK) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
+      DestinationProjectFolderTextBox.BackColor = DefaultBackColor;
       CheckProjectsList();
     }
 
@@ -180,8 +187,20 @@ namespace CodeRecycler
 
     private void recycleButton_Click(object sender, EventArgs e)
     {
+      if (string.IsNullOrEmpty(DestinationProjectFolderTextBox.Text) || !Directory.Exists(DestinationProjectFolderTextBox.Text))
+      {
+       DestinationProjectFolderTextBox.BackColor = Color.BlanchedAlmond;
+        return;
+      }
       ProjectCloner.Clone(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
       CheckProjectsList();
+    }
+
+
+    private void OnAddingNewToBindingSource(object sender, AddingNewEventArgs e)
+    {
+      if (projectListDataGridView.Rows.Count == source.Count) // http://stackoverflow.com/a/2363918/492
+      { source.RemoveAt(source.Count - 1); }
     }
   }
 }
