@@ -14,7 +14,6 @@ namespace CodeRecyclerGui
     /// <param name="destinationFolder">  Pathname of the destination folder. Empty string throws <c>ArgumentNullException</c></param>
     internal static void Clone(List<ProjectToRecycle> projectsToRecycle, string destinationFolder )
     {
-      
       if (projectsToRecycle == null) { throw new ArgumentNullException(nameof(projectsToRecycle)); }
       if (string.IsNullOrEmpty(destinationFolder)) { throw new ArgumentNullException(nameof(destinationFolder)); }
 
@@ -59,7 +58,7 @@ namespace CodeRecyclerGui
           File.Copy(sources[0], destinationProjectPath, overwrite: true);
           DestinationProjectXml destinationProjectXml = new DestinationProjectXml(destinationProjectPath);
           destinationProjectXml.ClearOldRecycledCodeLinks();
-          destinationProjectXml.ClearCodeIncludesExceptLinked();
+          destinationProjectXml.ClearExistingCodeExceptLinked();
 
           foreach (string source in sources)
           {
@@ -70,7 +69,7 @@ namespace CodeRecyclerGui
           destinationProjectXml.DestProjXdoc.Save(destinationProjectXml.DestProjAbsolutePath);
           Log.WriteLine("saved: " + destinationProjectXml.DestProjAbsolutePath);
 
-          Recycler.Run(new []{destinationProjectPath});
+          Recycler.Recycle(new []{destinationProjectPath});
         }
       }
     }

@@ -7,10 +7,10 @@ namespace CodeRecycler
 {
   public static class Recycler
   {
-    static List<DestinationProjParser> recyclers = new List<DestinationProjParser>();
-    public static void Run(string[] args)
+    static List<DestinationProjRecycler> recyclers = new List<DestinationProjRecycler>();
+    public static void Recycle(string[] args)
     {
-      System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
+      // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
       int argsCount = args.Length;
       if (argsCount == 0)
       {
@@ -38,12 +38,12 @@ namespace CodeRecycler
           if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
           {
             Log.WriteLine("Queueing Code Recycle from: " + argsList[0] + " to " + argsList[1]);
-            recyclers.Add(new DestinationProjParser(sourceProj: argsList[0], destProj: argsList[1]));
+            recyclers.Add(new DestinationProjRecycler(sourceProj: argsList[0], destProj: argsList[1]));
           }
           else
           {
             Log.WriteLine("Queueing Code Recycle to: " + argsList[0] + ". Source TBA.");
-            recyclers.Add(new DestinationProjParser(destProj: argsList[0]));
+            recyclers.Add(new DestinationProjRecycler(destProj: argsList[0]));
           }
         }
 
@@ -86,7 +86,7 @@ namespace CodeRecycler
             foreach (string destProjFile in destProjFiles)
             {
               Log.WriteLine("Queueing Code Recycle to: " + destProjFile + ". Source TBA.");
-              recyclers.Add(new DestinationProjParser(destProjFile));
+              recyclers.Add(new DestinationProjRecycler(destProjFile));
             }
           }
             catch (Exception e) { Crash(e, "Queueing Code Recycle didn't work. Bad file name?"); }
@@ -98,6 +98,12 @@ namespace CodeRecycler
           string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
           foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
           Crash(errorMessage);
+        }
+
+
+        foreach (DestinationProjRecycler DestinationProjRecycler in recyclers)
+        {
+          DestinationProjRecycler.RecycleCode();
         }
       }
     }
@@ -132,7 +138,7 @@ namespace CodeRecycler
       if (recyclers.Count != 1) { message += "s"; }
       message += "." + Environment.NewLine;
 
-      foreach (DestinationProjParser recycler in recyclers)
+      foreach (DestinationProjRecycler recycler in recyclers)
       {
         message += "from :" + String.Join(",", recycler.SourceProjList.ToArray());
         message += " to  :" + recycler.DestProjAbsolutePath + Environment.NewLine;
@@ -150,14 +156,14 @@ namespace CodeRecycler
       Log.WriteLine(e.InnerException?.ToString());
       Log.WriteLine(e.StackTrace);
       Console.WriteLine(e.ToString());
-      Environment.Exit(1);
+      throw e;
     }
 
     internal static void Crash(string errorMessage)
     {
       Log.WriteLine(errorMessage);
       Console.WriteLine(errorMessage);
-      Environment.Exit(1);
+      throw new Exception("Crashed. See Log file for details");
     }
   }
 }

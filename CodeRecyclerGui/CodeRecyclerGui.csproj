@@ -51,8 +51,8 @@ Exclude: Program.cs
 -->
   <!--Recycled from ..\coderecycler\coderecycler.csproj-->
   <ItemGroup>
-    <Compile Include="..\coderecycler\DestinationProjParser.cs">
-      <Link>DestinationProjParser.cs</Link>
+    <Compile Include="..\coderecycler\DestinationProjRecycler.cs">
+      <Link>DestinationProjRecycler.cs</Link>
     </Compile>
     <Compile Include="..\coderecycler\Help.cs">
       <Link>Help.cs</Link>
