@@ -44,8 +44,8 @@ namespace CodeRecycler
       WriteLine("Source Solution Root  (optional)");
       WriteLine("         The root of the solution containing the projects to recycle.");
       WriteLine("         Default is the current directory.");
-      WriteLine("Destination Solution Folder  (optional)");
-      WriteLine("         The new Folder Name for the recycled projects. Default is \"_Builds\".");
+      WriteLine("Destination Solution Folder.");
+      WriteLine("         The new Folder Name for the recycled project(s).");
       WriteLine("         If only one Folder is specifed then it is the destination folder.");
       WriteLine();
       WriteLine("strip    Creates new recycled projects from ALL existing CSPROJ in the folder.");
