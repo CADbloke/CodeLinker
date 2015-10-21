@@ -35,8 +35,8 @@ namespace CodeRecycler
       WriteLine("Destination.csproj   Path to the existing Destination project.");
       WriteLine();
       WriteLine("clone    Clones the Source to the Destination path and strips the contents.");
-      WriteLine("         Creates a new project file with a placeholder.");
-      WriteLine("         Using folders it clones all Projects to the same destination.");
+      WriteLine("         Creates new project file(s) with a placeholder + Source.");
+      WriteLine("         Using folders it clones all Projects to the same destination Folder.");
       WriteLine();
       WriteLine("Source Solution Root  (optional)");
       WriteLine("         The root of the solution containing the projects to recycle.");
@@ -68,9 +68,10 @@ namespace CodeRecycler
       WriteLine();
       WriteLine(" - You may specify multiple Source: projects. No wildcards.");
       WriteLine(" - If you don't specify a source in the command call it better be here.");
-      WriteLine(" - You may specify multiple Exclude: items, file or path. No wildcards.");
+      WriteLine(" - You may specify multiple Exclude: items, file or path. Wildcards are OK.");
       WriteLine(" - Exclusions are a simple String.Contains() filter list.");
-      WriteLine(" - If you specify multiple items then they must be on separate lines.");
+      WriteLine();
+      WriteLine(" - Multiple Source: or Exclude: must be on separate lines.");
       WriteLine(" - Every Code ProjectCloner will re-recycle the source CSPROJ");
       WriteLine("   into the space between the XML comment placeholders.");
       WriteLine(" - ALL code links inside these placeholders are refreshed every time. OK?");

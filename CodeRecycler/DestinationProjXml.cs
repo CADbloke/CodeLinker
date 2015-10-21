@@ -92,7 +92,7 @@ namespace CodeRecycler
               }
             }
 
-            Log.WriteLine("Removed old Recycled Code from " + DestProjAbsolutePath);
+            Log.WriteLine("Housekeeping old Recycled Code from " + DestProjAbsolutePath);
 
             ItemGroups = new List<XElement>();
 
@@ -171,6 +171,7 @@ namespace CodeRecycler
 
             if (itemGroup.IsEmpty) itemGroup.Remove();
           }
+          Log.WriteLine("Removed old Code from: " + DestProjAbsolutePath);
         }
       }
     }
