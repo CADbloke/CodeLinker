@@ -11,6 +11,7 @@ namespace CodeRecycler
     static List<DestinationProjRecycler> recyclers = new List<DestinationProjRecycler>();
     public static void Recycle(string[] args)
     {
+      recyclers.Clear();
       // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
       int argsCount = args.Length;
       if (argsCount == 0)
@@ -126,8 +127,7 @@ namespace CodeRecycler
           }
         } // /Clone
 
-
-        else // vanilla RECYCLE command
+        else // vanilla RECYCLE command with a folder
         {
           try
           {
@@ -141,6 +141,7 @@ namespace CodeRecycler
           }
             catch (Exception e) { Crash(e, "Queueing Code Recycle didn't work. Bad file name?"); }
         }
+        
 
 
         if (!recyclers.Any()) 

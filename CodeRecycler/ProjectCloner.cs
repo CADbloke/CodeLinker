@@ -29,7 +29,8 @@ namespace CodeRecycler
           if (!overwriteExisting) continue;
         }
 
-        List<string> sources = projectsToRecycle.Where(d => d.DestinationProjectName == destinationProject).Select(s => s.SourceProject).ToList();
+        List<string> sources = projectsToRecycle.Where(d => d.DestinationProjectName == destinationProject)
+                                                .Select(s => s.SourceProject).ToList();
         if (sources.Count!=1)
         {
           string message = destinationProject + "has " + sources.Count + " source Projects." + Environment.NewLine;
