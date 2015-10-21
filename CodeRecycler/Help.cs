@@ -22,7 +22,8 @@ namespace CodeRecycler
       WriteLine("CODERECYCLER strip [Destination Folder [/s]]");
       WriteLine("CODERECYCLER strip [Destination.csproj]");
       WriteLine();
-      WriteLine("/?       This help text.");
+      WriteLine("/?           This help text.");
+      WriteLine("/noconfirm   Switch. Don't ask about overwrites etc. Use in batch jobs.");
       WriteLine();
       WriteLine("Folder   Recycles the source(s) into all CSPROJ files in the folder");
       WriteLine("         This is the destination folder that has recycled projects.");

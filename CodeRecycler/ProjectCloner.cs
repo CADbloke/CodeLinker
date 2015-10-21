@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CodeRecycler
 {
-  static class ProjectCloner // BUG: seems to clone things a few times. check out the log
+  static class ProjectCloner
   {
     /// <summary> Clones a List of Projects into the <c>destinationFolder</c>. 
     ///    <para> File is cloned from the first <c>projectsToRecycle</c> for each if there is more than 1 source.</para></summary>

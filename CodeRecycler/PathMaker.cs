@@ -43,11 +43,12 @@ namespace CodeRecycler
     }
 
 
-    /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. </summary>
+    /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. 
+    ///           <para>Will crash an burn if it can't return a path.</para></summary>
     /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute. 
     ///                                     In any case this always returns an Absolute Path. </param>
     /// <param name="basePath">             Optional: Where you are now. Base Path if building an Absolute Path from a relative path.
-    ///                                     Defaults to the current execution folder if <c>null</c>. </param>
+    ///                              <para> Defaults to the current execution folder if <c>null</c> or empty.</para> </param>
     internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
     {
       if (IsAbsolutePath(possibleRelativePath) )  { return possibleRelativePath; }

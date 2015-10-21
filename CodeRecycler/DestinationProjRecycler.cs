@@ -118,8 +118,6 @@ namespace CodeRecycler
 
               XAttribute attrib = sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude");
 
-              // bug: <Folder Include="..\cadblokefindreplace\  <---- WRONG
-
               if (attrib != null)
               {
                 string originalSourcePath  = attrib.Value;
@@ -136,7 +134,6 @@ namespace CodeRecycler
                   continue;
                 }
                 if (!PathMaker.IsAbsolutePath(originalSourcePath))
-
                 {
                   string sourceAbsolutePath = "";
                   try

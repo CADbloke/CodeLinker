@@ -12,6 +12,7 @@ namespace CodeRecycler
     {
       using (StreamWriter sw = File.AppendText(logFile))
       {
+        sw.WriteLine();
         sw.WriteLine("==========================");
         sw.WriteLine("Code Recycler Log: " + DateTime.Now);
         sw.WriteLine("--------------------------");

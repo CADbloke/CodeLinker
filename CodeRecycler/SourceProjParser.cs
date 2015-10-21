@@ -7,11 +7,13 @@ using System.Xml.Linq;
 
 namespace CodeRecycler
 {
+  /// <summary> Parses the <c>&lt;ItemGroup&gt;</c>s from the Source Project. Read Only. Never writes. </summary>
   internal class SourceProjParser
   {
-    /// <summary> Gets the full pathname of the source create structure project file. </summary>
+    /// <summary> Full pathname of the source project file. </summary>
     internal string SourceProjPath { get; }
 
+    /// <summary> Gets the <c>&lt;ItemGroup&gt;</c>s from the Source Project. </summary>
     internal List<XElement> ItemGroups { get; }
 
 

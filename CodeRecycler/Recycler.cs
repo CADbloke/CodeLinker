@@ -9,6 +9,7 @@ namespace CodeRecycler
   public static class Recycler
   {
     static List<DestinationProjRecycler> recyclers = new List<DestinationProjRecycler>();
+    internal static bool NoConfirm = false;
     public static void Recycle(string[] args)
     {
       recyclers.Clear();
@@ -24,8 +25,6 @@ namespace CodeRecycler
 
       List<string> argsList = args.ToList();
 
-      
-
       if (argsList.Contains("/?"))
       {
         Help.Write();
@@ -33,7 +32,9 @@ namespace CodeRecycler
         Finish();
       }
 
-      bool doSubDirectories = (argsList.Contains("/s", StringComparer.CurrentCultureIgnoreCase));
+      bool doSubDirectories = (argsList.Contains("/s",         StringComparer.CurrentCultureIgnoreCase));
+      NoConfirm             = (argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase));
+
 
       if (!string.IsNullOrEmpty(argsList[0]))
       {

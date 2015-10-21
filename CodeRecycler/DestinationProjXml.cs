@@ -71,24 +71,31 @@ namespace CodeRecycler
               oldXmlBuilder.Append(startNode.NextNode.ToString());
               startNode.NextNode.Remove();
             }
-            string oldXml = oldXmlBuilder.ToString();
+            string oldXml = "<root>" + oldXmlBuilder.ToString() +"</root>";
+
+            Log.WriteLine("Old XML");
+            Log.WriteLine(oldXml);
 
             List<XElement> keepers = new List<XElement>(); 
 
             if (oldXml.Contains("ItemGroup"))
             {
-              XElement keeperElements = XElement.Parse( "<root>" + oldXml +"</root>" ); // http://stackoverflow.com/a/11644640/492
+              XElement keeperElements = XElement.Parse( oldXml ); // http://stackoverflow.com/a/11644640/492
 
-              foreach (XElement descendant in keeperElements.Elements().Where(e => e.Attribute("Include") != null))
+              foreach (string rescueMe in Settings.ItemElementsRescueFromRecycleZone) // proably overkill since "Exclude" is an edge case at best
               {
-                if (!descendant.Attribute("Include").Value.StartsWith("..")) { keepers.Add(descendant); }
+                foreach (XElement descendant in keeperElements.Elements().Where(e => e.Attribute(rescueMe) != null))
+                {
+                  XAttribute xAttribute = descendant.Attribute(rescueMe);
+                  if (xAttribute != null && !xAttribute.Value.StartsWith("..")) { keepers.Add(descendant); }
+                }
               }
-
+              
               if (keepers.Any())
               {
                 XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
                 foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
-                EndPlaceHolder.AddAfterSelf(newItemGroup);
+                EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Recycle zone.
               }
             }
 
@@ -98,24 +105,33 @@ namespace CodeRecycler
 
             ItemGroups.AddRange(RootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
 
-            if (ItemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+            if (ItemGroups.Count == 0) { Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?"); }
+
+            if (ItemGroups != null)
+            {
+              foreach (XElement itemGroup in ItemGroups)
+              {
+                if (itemGroup.IsAfter(StartPlaceHolder) && itemGroup.IsBefore(EndPlaceHolder))
+                {
+                  itemGroup.Remove();
+              /*  itemGroup.Elements()
+                           .Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && (i.Attribute("Include") != null) &&
+                                       i.Attribute("Link") != null &&
+                                       i.Attribute("Include")?.Value.Replace("..\\", "") != i.Attribute("Link")?.Value)
+                           .Remove(); */
+                }
+
+                if (itemGroup.IsEmpty) { itemGroup.Remove(); }
+              }
+            }
           }
-          catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
+          catch (Exception e) {
+            Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath);
+          }
         }
 
 
-        if (ItemGroups != null)
-        {
-          foreach (XElement itemGroup in ItemGroups)
-          {
-            itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
-                                            (i.Attribute("Include") != null) && 
-                                             i.Attribute("Link")    != null &&
-                                             i.Attribute("Include")?.Value.Replace("..\\", "") != i.Attribute("Link")?.Value ).Remove();
-
-            if (itemGroup.IsEmpty) itemGroup.Remove();
-          }
-        }
+        
         // Save(); NO! only save the project DELIBERATELY if there are changes or it reloads in Visual Studio
       }
     }
