@@ -76,8 +76,6 @@ namespace CodeRecycler
             {
               XElement keeperElements = XElement.Parse(oldXml); // http://stackoverflow.com/a/11644640/492
 
-              Log.WriteLine(keeperElements.DescendantsAndSelf().Count().ToString());
-
               foreach (XElement descendant in keeperElements.DescendantsAndSelf().Where(e => e.Attribute("Include") != null))
               {
                 XAttribute xAttribute = descendant.Attribute("Include");
@@ -114,10 +112,7 @@ namespace CodeRecycler
           }
           catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
         }
-
-
-        
-        // Save(); NO! only save the project DELIBERATELY if there are changes or it reloads in Visual Studio
+        Log.WriteLine("ok.");
       }
     }
 
