@@ -122,7 +122,7 @@ namespace CodeRecycler
       if (folderBrowser.ShowDialog() != DialogResult.OK) return;
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
-      DestinationProjectFolderTextBox.BackColor = DefaultBackColor;
+      DestinationProjectFolderTextBox.BackColor = SourceProjectFolderTextBox.BackColor;;
       CheckProjectsList();
     }
 
