@@ -11,7 +11,7 @@ namespace CodeRecycler
       WriteLine("Does NOT Convert between CSPROJ and VBPROJ files.");
       WriteLine("Don't cross the streams.");
       WriteLine("Anywhere this mentions CSPROJ you can also use VBPROJ.");
-      WriteLine("Anywhere this mentions .CS you can also use .VB (or any file you need.");
+      WriteLine("Anywhere this mentions .CS you can also use .VB, or any file you need.");
       WriteLine();
       WriteLine("Usages...");
       WriteLine("CODERECYCLER /?");
@@ -21,6 +21,7 @@ namespace CodeRecycler
       WriteLine("CODERECYCLER clone [[Source Folder] Destination Folder] [/s]");
       WriteLine("CODERECYCLER strip [Destination Folder [/s]]");
       WriteLine("CODERECYCLER strip [Destination.csproj]");
+      WriteLine("CODERECYCLER ... /noconfirm");
       WriteLine();
       WriteLine("/?           This help text.");
       WriteLine("/noconfirm   Switch. Don't ask about overwrites etc. Use in batch jobs.");
@@ -33,6 +34,7 @@ namespace CodeRecycler
       WriteLine();
       WriteLine("Source.csproj        optional Path to the CSPROJ with the source to be recycled.");
       WriteLine("                     if only 1 CSPROJ is specified then it is the Destination.");
+      WriteLine("                     This source overrides all sources in the Destination.");
       WriteLine("Destination.csproj   Path to the existing Destination project.");
       WriteLine();
       WriteLine("clone    Clones the Source to the Destination path and strips the contents.");
@@ -49,6 +51,7 @@ namespace CodeRecycler
       WriteLine("strip    Creates new recycled projects from ALL existing CSPROJ in the folder.");
       WriteLine("         /s iterates all subfolders . Strips out ALL code. Adds a placeholder.");
       WriteLine("         usage: copy an existing CSPROJ. Strip it. Add a Source.");
+      WriteLine("         This is like clone but doesn't copy anything.");
       WriteLine("                Update References, build settings etc. Build it. Rejoice.");
       WriteLine();
       WriteLine(" - Wrap paths with spaces in double quotes.");
