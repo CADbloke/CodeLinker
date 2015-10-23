@@ -27,6 +27,9 @@ namespace CodeRecycler
     /// <summary> Code Files to be excluded from the recycle. </summary>
     internal List<string> ExclusionsList { get; }
 
+    /// <summary> Code Files to be Included from the recycle. </summary>
+    internal List<string> InclusionsList { get; }
+
 
     /// <summary> Source <c>Proj</c> is specified in the destination <c>Proj</c> XML comment placeholder. </summary>
     /// <param name="destProj"> Absolute path of destination <c>Proj</c>. </param>
@@ -49,6 +52,7 @@ namespace CodeRecycler
 
       SourceProjList = new List<string>();
       ExclusionsList = new List<string>();
+      InclusionsList = new List<string>();
 
       foreach (string line in destProjXml.StartPlaceHolder.Value.Split(new[] {"\r\n", "\n", Environment.NewLine}, StringSplitOptions.None).ToList())
       {
@@ -61,7 +65,11 @@ namespace CodeRecycler
 
         if (line.ToLower().Trim().StartsWith(Settings.ExcludePlaceholderLowerCase))
         { ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim().ToLower()); }
+
+        if (line.ToLower().Trim().StartsWith(Settings.IncludePlaceholderLowerCase))
+        { InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim().ToLower()); }
       }
+      if (InclusionsList == null || !InclusionsList.Any()) { InclusionsList.Add("*"); }
     }
 
 
@@ -133,35 +141,48 @@ namespace CodeRecycler
                                  "because you said to Exclude: " + exclude.FirstOrDefault() + Environment.NewLine);
                   continue;
                 }
-                if (!PathMaker.IsAbsolutePath(originalSourcePath))
+
+                List<string> include = InclusionsList
+                  .Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList(); // OW my eyes!
+
+                if ( !InclusionsList.Any() || include.Any() )
                 {
-                  string sourceAbsolutePath = "";
-                  try
+                  if (!PathMaker.IsAbsolutePath(originalSourcePath))
                   {
-                    string sourceFileName = Path.GetFileName(originalSourcePath); // wildcards blow up Path.GetFullPath()
-                    string originalFolder = originalSourcePath;
-                    if (!string.IsNullOrEmpty(sourceFileName)) originalFolder = originalSourcePath.Replace(sourceFileName, "");
-                    sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
-                  }
-                  catch (Exception e) {
-                    Recycler.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
-                  }
+                    string sourceAbsolutePath = "";
+                    try
+                    {
+                      string sourceFileName = Path.GetFileName(originalSourcePath); // wildcards blow up Path.GetFullPath()
+                      string originalFolder = originalSourcePath;
+                      if (!string.IsNullOrEmpty(sourceFileName)) { originalFolder = originalSourcePath.Replace(sourceFileName, ""); }
+                      sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
+                    }
+                    catch (Exception e) {
+                      Recycler.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
+                    }
 
-                  string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
+                    string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
 
-                  if (!Settings.ItemElementsDoNotMakeRelativePath.Contains(sourceElementName.ToLower()))
-                    attrib.Value = relativePathFromDestination;
+                    if (!Settings.ItemElementsDoNotMakeRelativePath.Contains(sourceElementName.ToLower()))
+                      attrib.Value = relativePathFromDestination;
+
+                    IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
+
+                    if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower()))) // Folders, mostly
+                    {
+                      XElement linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
+                      sourceItem.Add(linkElement);
+                    }
+                    newRecycledItemGroup.Add(sourceItem);
+                    codezRecycled++;
+                  }
                 }
-
-                IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
-
-                if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))  // Folders, mostly
+                else
                 {
-                  XElement linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
-                  sourceItem.Add(linkElement);
+                  Log.WriteLine( "Excluded: " + originalSourcePath     + Environment.NewLine + 
+                                 "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
+                                 "because it did not match anything on the Include: list " + Environment.NewLine);
                 }
-                newRecycledItemGroup.Add(sourceItem);
-                codezRecycled++;
               }
             }
             if (newRecycledItemGroup.HasElements) { destProjXml.EndPlaceHolder.AddBeforeSelf(newRecycledItemGroup); }

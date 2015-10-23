@@ -15,5 +15,6 @@ namespace CodeRecycler
     internal static string EndPlaceholderComment     = "EndCodeRecycler";
     internal static string SourcePlaceholderLowerCase  = "source:";
     internal static string ExcludePlaceholderLowerCase = "exclude:";
+    internal static string IncludePlaceholderLowerCase = "include:";
   }
 }
