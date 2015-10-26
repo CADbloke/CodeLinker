@@ -67,6 +67,7 @@
   <PropertyGroup>
     <PostBuildEvent>$(TargetPath) ..\..\..\_Builds\CodeLinker-3.5\CodeLinker-3.5.csproj
 $(TargetPath)  ..\..\..\CodeLinkerGui\CodeLinkerGui.csproj
+$(TargetPath)  ..\..\..\_Builds\CodeLinker-3.5\CodeLinkerGui-3.5.csproj
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

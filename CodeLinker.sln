@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinker-3.5", "_Builds\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinkerGui", "CodeLinkerGui\CodeLinkerGui.csproj", "{396125C3-F024-463E-B512-93F9401152C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinkerGui-3.5", "_Builds\CodeLinker-3.5\CodeLinkerGui-3.5.csproj", "{569B89AF-56A4-4AC0-86BA-B50A69A73275}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +31,16 @@ Global
 		{396125C3-F024-463E-B512-93F9401152C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{396125C3-F024-463E-B512-93F9401152C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{396125C3-F024-463E-B512-93F9401152C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE} = {3BE7265E-6EF3-4676-B1E2-78F5C0B68B9D}
+		{569B89AF-56A4-4AC0-86BA-B50A69A73275} = {3BE7265E-6EF3-4676-B1E2-78F5C0B68B9D}
 	EndGlobalSection
 EndGlobal
