@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   internal static class YesOrNo
   {
@@ -10,7 +10,7 @@ namespace CodeRecycler
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool Ask(string message, string caption = "Hey!")
     {
-      if (Recycler.NoConfirm) { return true; }
+      if (Linker.NoConfirm) { return true; }
       Console.WriteLine(message);
       Console.WriteLine("Y/N ?");
       ConsoleKeyInfo yn = Console.ReadKey();
@@ -26,7 +26,7 @@ namespace CodeRecycler
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool? OrCancel(string message, string caption = "Hey!")
     {
-      if (Recycler.NoConfirm) { return true; }
+      if (Linker.NoConfirm) { return true; }
       Console.WriteLine(message);
       Console.WriteLine("Y/N or C for Cancel ?");
       ConsoleKeyInfo yn = Console.ReadKey();
@@ -39,7 +39,7 @@ namespace CodeRecycler
 
     internal static void Crashing(string message, string caption = "Hey!")
     {
-      Recycler.Crash(message);
+      Linker.Crash(message);
     }
 
   }

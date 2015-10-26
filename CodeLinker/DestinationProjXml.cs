@@ -6,9 +6,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
-  /// <summary> Removes previously Recycled Code. </summary>
+  /// <summary> Removes previously Linked Code. </summary>
   internal class DestinationProjXml
   {
     /// <summary> Absolute pathname of the destination <c>Proj</c> including file name. </summary>
@@ -38,10 +38,10 @@ namespace CodeRecycler
         ItemGroups   = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
       }
       catch (Exception e)
-      { Recycler.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath); }
+      { Linker.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath); }
 
       if (RootXelement == null)
-      { Recycler.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath); }
+      { Linker.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath); }
 
       StartPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);
       EndPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);
@@ -55,13 +55,13 @@ namespace CodeRecycler
           EndPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);
         }
 
-      OldXml = ReadRecycledXml();
+      OldXml = ReadLinkedXml();
     }
 
 
-    internal void ClearOldRecycledCodeLinks() // todo: Keep a copy of the old Recycle. Use that to generate Keepers.
+    internal void ClearOldLinkedCode() // todo: Keep a copy of the old LinkCodez. Use that to generate Keepers.
     {
-      Log.WriteLine("Housekeeping old Recycled Code from " + DestProjAbsolutePath);
+      Log.WriteLine("Housekeeping old Linked Code from " + DestProjAbsolutePath);
       if (RootXelement != null)
       {
         if (StartPlaceHolder != null && EndPlaceHolder != null)
@@ -90,7 +90,7 @@ namespace CodeRecycler
               {
                 XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
                 foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
-                EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Recycle zone.
+                EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the LinkCodez zone.
               }
             }
 
@@ -110,14 +110,14 @@ namespace CodeRecycler
 
             ItemGroups = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
           }
-          catch (Exception e) { Recycler.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
+          catch (Exception e) { Linker.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
         }
         Log.WriteLine("ok.");
       }
     }
 
-    /// <summary> Reads XML of between the Recycled zone placeholders. Does not add a <c>&lt;Root&gt;</c> element </summary>
-    internal string ReadRecycledXml()
+    /// <summary> Reads XML of between the Linked zone placeholders. Does not add a <c>&lt;Root&gt;</c> element </summary>
+    internal string ReadLinkedXml()
     {
       StringBuilder oldXmlBuilder = new StringBuilder();
       if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder))
@@ -143,7 +143,7 @@ namespace CodeRecycler
       List<XComment> placeholders = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count > 1)
-        Recycler.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
+        Linker.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
 
       return placeholders.FirstOrDefault();
     }
@@ -163,7 +163,7 @@ namespace CodeRecycler
           {
             itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
                                       (i.Attribute("Include") != null) && 
-                                       i.Attribute("Link")    == null).Remove();
+                                       i.Attribute("LinkCodez")    == null).Remove();
 
             if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value))) itemGroup.Remove();
           }

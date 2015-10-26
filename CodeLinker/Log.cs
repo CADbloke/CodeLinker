@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   internal static class Log
   {
-    internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeRecyclerLog.txt";
+    internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeLinkerLog.txt";
 
     static Log()
     {
@@ -14,7 +14,7 @@ namespace CodeRecycler
       {
         sw.WriteLine();
         sw.WriteLine("==========================");
-        sw.WriteLine("Code Recycler Log: " + DateTime.Now);
+        sw.WriteLine("Code Linker Log: " + DateTime.Now);
         sw.WriteLine("--------------------------");
       }
     }

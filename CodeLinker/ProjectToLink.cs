@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
-  /// <summary> A project to recycle. </summary>
-  class ProjectToRecycle
+  /// <summary> A project to LinkCodez. </summary>
+  class ProjectToLink
   {
       /// <summary> Source project.  Full Path with file extension.</summary>
       public string SourceProject { get; set; } 

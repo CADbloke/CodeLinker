@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   partial class Gui
   {
@@ -37,7 +37,7 @@ namespace CodeRecycler
       this.destinationFolderButton = new System.Windows.Forms.Button();
       this.DestinationProjectFolderTextBox = new System.Windows.Forms.TextBox();
       this.projectListDataGridView = new System.Windows.Forms.DataGridView();
-      this.recycleButton = new System.Windows.Forms.Button();
+      this.linkButton = new System.Windows.Forms.Button();
       this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
@@ -113,34 +113,34 @@ namespace CodeRecycler
       this.projectListDataGridView.DragDrop += new System.Windows.Forms.DragEventHandler(this.Sources_DragDrop);
       this.projectListDataGridView.DragEnter += new System.Windows.Forms.DragEventHandler(this.projectListDataGridView_DragEnter);
       // 
-      // recycleButton
+      // linkButton
       // 
-      this.recycleButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.recycleButton.Location = new System.Drawing.Point(797, 426);
-      this.recycleButton.Name = "recycleButton";
-      this.recycleButton.Size = new System.Drawing.Size(75, 23);
-      this.recycleButton.TabIndex = 6;
-      this.recycleButton.Text = "Recycle";
-      this.recycleButton.UseVisualStyleBackColor = true;
-      this.recycleButton.Click += new System.EventHandler(this.recycleButton_Click);
+      this.linkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkButton.Location = new System.Drawing.Point(784, 426);
+      this.linkButton.Name = "linkButton";
+      this.linkButton.Size = new System.Drawing.Size(88, 23);
+      this.linkButton.TabIndex = 6;
+      this.linkButton.Text = "Link the Codez";
+      this.linkButton.UseVisualStyleBackColor = true;
+      this.linkButton.Click += new System.EventHandler(this.linkButton_Click);
       // 
       // guiBindingSource
       // 
-      this.guiBindingSource.DataSource = typeof(CodeRecycler.Gui);
+      this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
       // 
       // Gui
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(884, 461);
-      this.Controls.Add(this.recycleButton);
+      this.Controls.Add(this.linkButton);
       this.Controls.Add(this.projectListDataGridView);
       this.Controls.Add(this.DestinationProjectFolderTextBox);
       this.Controls.Add(this.destinationFolderButton);
       this.Controls.Add(this.SourceProjectFolderTextBox);
       this.Controls.Add(this.sourceFolderButton);
       this.Name = "Gui";
-      this.Text = "Code Recycler by CADbloke";
+      this.Text = "Code Linker by CADbloke";
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).EndInit();
       this.ResumeLayout(false);
@@ -155,7 +155,7 @@ namespace CodeRecycler
     private System.Windows.Forms.Button destinationFolderButton;
     private System.Windows.Forms.TextBox DestinationProjectFolderTextBox;
     private System.Windows.Forms.DataGridView projectListDataGridView;
-    private System.Windows.Forms.Button recycleButton;
+    private System.Windows.Forms.Button linkButton;
     private System.Windows.Forms.BindingSource guiBindingSource;
   }
 }

@@ -1,15 +1,13 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CodeRecycler")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("CodeRecycler")]
-
-
-
+[assembly: AssemblyTitle("CodeLinkerGui")]
+[assembly: AssemblyDescription("Code Linker Windows Forms App")]
+[assembly: AssemblyProduct("CodeLinkerGui")]
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1bc2d099-0296-474b-b8f3-7a5c77e30919")]
+[assembly: Guid("396125c3-f024-463e-b512-93f9401152c4")]
 

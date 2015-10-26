@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   internal static class YesOrNo
   {

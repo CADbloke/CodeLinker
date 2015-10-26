@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
-  static class ProjectCloner
+  static class ProjectLinker
   {
-    /// <summary> Clones a List of Projects into the <c>destinationFolder</c>. 
-    ///    <para> File is cloned from the first <c>projectsToRecycle</c> for each if there is more than 1 source.</para></summary>
+    /// <summary> Copies and links a List of Projects into the <c>destinationFolder</c>. 
+    ///    <para> File is Linked from the first <c>projectsToLink</c> for each if there is more than 1 source.</para></summary>
     /// <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null or empty. </exception>
-    /// <param name="projectsToRecycle">  The projects to recycle. </param>
+    /// <param name="projectsToLink">  The projects to LinkCodez. </param>
     /// <param name="destinationFolder">  Pathname of the destination folder. Empty string throws <c>ArgumentNullException</c></param>
-    internal static void Clone(List<ProjectToRecycle> projectsToRecycle, string destinationFolder )
+    internal static void NewProject(List<ProjectToLink> projectsToLink, string destinationFolder )
     {
-      if (projectsToRecycle == null) { throw new ArgumentNullException(nameof(projectsToRecycle)); }
+      if (projectsToLink == null) { throw new ArgumentNullException(nameof(projectsToLink)); }
       if (string.IsNullOrEmpty(destinationFolder)) { throw new ArgumentNullException(nameof(destinationFolder)); }
 
-      HashSet<string> destinationProjects = new HashSet<string>(projectsToRecycle.Select(p => p.DestinationProjectName));
+      HashSet<string> destinationProjects = new HashSet<string>(projectsToLink.Select(p => p.DestinationProjectName));
       Log.WriteLine("Recycling "+ destinationProjects.Count + " Projects to " + destinationFolder);
 
       foreach (string destinationProject in destinationProjects)
@@ -29,7 +29,7 @@ namespace CodeRecycler
           if (!overwriteExisting) continue;
         }
 
-        List<string> sources = projectsToRecycle.Where(d => d.DestinationProjectName == destinationProject)
+        List<string> sources = projectsToLink.Where(d => d.DestinationProjectName == destinationProject)
                                                 .Select(s => s.SourceProject).ToList();
         if (sources.Count!=1)
         {
@@ -49,7 +49,7 @@ namespace CodeRecycler
           }   
           if (carryOn == false)
           {
-            Log.WriteLine("User skipped one Recycled Project. "+ message);
+            Log.WriteLine("User skipped one Linked Project. "+ message);
             continue; // skip just this Destination Project
           } 
         }
@@ -59,7 +59,7 @@ namespace CodeRecycler
           Log.WriteLine("Recycling to :" + destinationProjPath );
           File.Copy(sources[0], destinationProjPath, overwrite: true);
           DestinationProjXml destinationProjXml = new DestinationProjXml(destinationProjPath);
-          destinationProjXml.ClearOldRecycledCodeLinks();
+          destinationProjXml.ClearOldLinkedCode();
           destinationProjXml.ClearExistingCodeExceptLinked();
 
           foreach (string source in sources)
@@ -81,20 +81,20 @@ namespace CodeRecycler
           destinationProjXml.DestProjXdoc.Save(destinationProjXml.DestProjAbsolutePath);
           Log.WriteLine("saved: " + destinationProjXml.DestProjAbsolutePath);
 
-          Recycler.Recycle(new []{destinationProjPath});
+          Linker.LinkCodez(new []{destinationProjPath});
         }
       }
     }
 
 
-    internal static void Clone(ProjectToRecycle projectsToRecycle, string destinationFolder)
+    internal static void NewProject(ProjectToLink projectsToLink, string destinationFolder)
     {
-      Clone(new List<ProjectToRecycle> {projectsToRecycle }, destinationFolder);
+      NewProject(new List<ProjectToLink> {projectsToLink }, destinationFolder);
     }
 
-    internal static void Clone(string projectToRecycle, string destinationFolder)
+    internal static void NewProject(string projectToLink, string destinationFolder)
     {
-      Clone(new List<ProjectToRecycle> { new ProjectToRecycle {SourceProject = projectToRecycle} }, destinationFolder);
+      NewProject(new List<ProjectToLink> { new ProjectToLink {SourceProject = projectToLink} }, destinationFolder);
     }
   }
 

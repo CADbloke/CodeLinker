@@ -1,4 +1,4 @@
-﻿namespace CodeRecycler
+﻿namespace CodeLinker
 {
   public static  class IsaCsOrVbProjectFile
   {

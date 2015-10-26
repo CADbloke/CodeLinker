@@ -2,7 +2,7 @@
 using System.IO;
 
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   internal static class PathMaker
   {
@@ -37,7 +37,7 @@ namespace CodeRecycler
           relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
       }
       catch (Exception e)
-      { Recycler.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath); }
+      { Linker.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath); }
 
       return relativePath;
     }
@@ -63,13 +63,13 @@ namespace CodeRecycler
       }
       catch (Exception e)
       {
-        Recycler.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
+        Linker.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
       }
 
       bool dir  = Directory.Exists(properAbsolutePath);
       bool file = File.Exists(properAbsolutePath);
 
-      if (!dir && !file) { Recycler.Crash("ERROR: Bad Path: " + properAbsolutePath); }
+      if (!dir && !file) { Linker.Crash("ERROR: Bad Path: " + properAbsolutePath); }
       return properAbsolutePath;
     }
 

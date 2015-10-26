@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   public partial class Gui : Form
   {
@@ -24,7 +24,7 @@ namespace CodeRecycler
     }
     
     
-    BindingList<ProjectToRecycle> projectsList = new BindingList<ProjectToRecycle>();
+    BindingList<ProjectToLink> projectsList = new BindingList<ProjectToLink>();
     
 
     private void projectListDataGridView_DragEnter(object sender, DragEventArgs e)
@@ -56,7 +56,7 @@ namespace CodeRecycler
       foreach (string filePath in filepaths)
       {
         if (!(projectsList.Any(p => p?.SourceProject == filePath)))
-          projectsList.Add(new ProjectToRecycle {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
+          projectsList.Add(new ProjectToLink {SourceProject = filePath, DestinationProjectName = Path.GetFileName(filePath)});
       }
        CheckProjectsList();
     }
@@ -185,14 +185,14 @@ namespace CodeRecycler
     private void CheckProjectsList(object sender, DataGridViewRowsRemovedEventArgs e)
       { CheckProjectsList(sender, (EventArgs) e); }
 
-    private void recycleButton_Click(object sender, EventArgs e)
+    private void linkButton_Click(object sender, EventArgs e)
     {
       if (string.IsNullOrEmpty(DestinationProjectFolderTextBox.Text) || !Directory.Exists(DestinationProjectFolderTextBox.Text))
       {
        DestinationProjectFolderTextBox.BackColor = Color.BlanchedAlmond;
         return;
       }
-      ProjectCloner.Clone(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
+      ProjectLinker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
       CheckProjectsList();
     }
 

@@ -4,15 +4,15 @@ using System.IO;
 using System.Linq;
 
 
-namespace CodeRecycler
+namespace CodeLinker
 {
-  public static class Recycler
+  public static class Linker
   {
-    static List<DestinationProjRecycler> recyclers = new List<DestinationProjRecycler>();
+    static List<DestinationProjLinker> linkers = new List<DestinationProjLinker>();
     internal static bool NoConfirm = false;
-    public static void Recycle(string[] args)
+    public static void LinkCodez(string[] args)
     {
-      recyclers.Clear();
+      linkers.Clear();
       // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.
       int argsCount = args.Length;
       if (argsCount == 0)
@@ -42,13 +42,13 @@ namespace CodeRecycler
         {
           if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
           {
-            Log.WriteLine("Queueing Code Recycle from: " + argsList[0] + " to " + argsList[1]);
-            recyclers.Add(new DestinationProjRecycler(sourceProj: argsList[0], destProj: argsList[1]));
+            Log.WriteLine("Queueing Code Link from: " + argsList[0] + " to " + argsList[1]);
+            linkers.Add(new DestinationProjLinker(sourceProj: argsList[0], destProj: argsList[1]));
           }
           else
           {
-            Log.WriteLine("Queueing Code Recycle to: " + argsList[0] + ". Source TBA.");
-            recyclers.Add(new DestinationProjRecycler(destProj: argsList[0]));
+            Log.WriteLine("Queueing Code Link to: " + argsList[0] + ". Source TBA.");
+            linkers.Add(new DestinationProjLinker(destProj: argsList[0]));
           }
         }
 
@@ -59,7 +59,7 @@ namespace CodeRecycler
             if (args[1].IsaCsOrVbProjFile())
             {
               DestinationProjXml destinationProjXml = new DestinationProjXml(args[1]); 
-              destinationProjXml.ClearOldRecycledCodeLinks();
+              destinationProjXml.ClearOldLinkedCode();
               destinationProjXml.Save();
               Finish("Stripped all code from " + args[1]);
             }
@@ -74,7 +74,7 @@ namespace CodeRecycler
                 {
                   Log.WriteLine("Stripping Code from: " + destProjFile + ". ");
                   DestinationProjXml destinationProjXml = new DestinationProjXml(destProjFile);
-                  destinationProjXml.ClearOldRecycledCodeLinks();
+                  destinationProjXml.ClearOldLinkedCode();
                   destinationProjXml.Save();
                 }
               }
@@ -84,18 +84,18 @@ namespace CodeRecycler
           }
         }
 
-        else if (argsList[0].ToLower() == "clone")
+        else if (argsList[0].ToLower() == "new")
         {
           if (argsCount >2)
           {
             if (args[1].IsaCsOrVbProjFile())
             {
               string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, args[1]);
-              try { ProjectCloner.Clone(sourcePath, args[2]); }
+              try { ProjectLinker.NewProject(sourcePath, args[2]); }
               catch (Exception e)
-              { Crash(e, "Cloning "+ args[1] +  " to " + args[2] + " didn't work. Bad name?"); }
+              { Crash(e, "Linking "+ args[1] +  " to " + args[2] + " didn't work. Bad name?"); }
 
-              Finish("Cloned " + " from " + args[1] +  " to " + args[2]);
+              Finish("Linked " + " from " + args[1] +  " to " + args[2]);
             }
 
             else
@@ -109,26 +109,26 @@ namespace CodeRecycler
                   if (sourceProjFile.IsaCsOrVbProjFile())
                   {
                     string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProjFile);
-                    try { ProjectCloner.Clone(sourcePath, args[2]); }
+                    try { ProjectLinker.NewProject(sourcePath, args[2]); }
                     catch (Exception e)
-                     { Crash( e, "Cloning " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?"); }
+                     { Crash( e, "Linking " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?"); }
 
-                    Log.WriteLine("Cloned " + " from " + sourceProjFile + " to " + args[2]);
+                    Log.WriteLine("Linked " + " from " + sourceProjFile + " to " + args[2]);
                   }
                   else
                   {
-                    Log.WriteLine("ERROR: " + sourceProjFile + " is not a project file. Cannot clone it.");
+                    Log.WriteLine("ERROR: " + sourceProjFile + " is not a project file. Cannot Link it.");
                   }
                 }
               }
-              catch (Exception e) { Crash( e, "Cloning Projects from Folder: " + args[1] + " didn't work. Bad name?"); }
+              catch (Exception e) { Crash( e, "Linking Projects from Folder: " + args[1] + " didn't work. Bad name?"); }
 
-              Finish("Cloned Projects");
+              Finish("Linked Projects");
             }
           }
-        } // /Clone
+        } // /NewProject
 
-        else // vanilla RECYCLE command with a folder
+        else // vanilla Link command with a folder
         {
           try
           {
@@ -136,16 +136,16 @@ namespace CodeRecycler
 
             foreach (string destProjFile in destProjFiles)
             {
-              Log.WriteLine("Queueing Code Recycle to: " + destProjFile + ". Source TBA.");
-              recyclers.Add(new DestinationProjRecycler(destProjFile));
+              Log.WriteLine("Queueing Code Link to: " + destProjFile + ". Source TBA.");
+              linkers.Add(new DestinationProjLinker(destProjFile));
             }
           }
-            catch (Exception e) { Crash(e, "Queueing Code Recycle didn't work. Bad file name?"); }
+            catch (Exception e) { Crash(e, "Queueing Code Link didn't work. Bad file name?"); }
         }
         
 
 
-        if (!recyclers.Any()) 
+        if (!linkers.Any()) 
         {
           string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
           foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
@@ -153,9 +153,9 @@ namespace CodeRecycler
         }
 
 
-        foreach (DestinationProjRecycler destinationProjRecycler in recyclers)
+        foreach (DestinationProjLinker destinationProjLinker in linkers)
         {
-          destinationProjRecycler.RecycleCode();
+          destinationProjLinker.LinkCode();
         }
       }
     }
@@ -190,14 +190,14 @@ namespace CodeRecycler
 
     internal static void Finish(string message = "")
     {
-      message += "Finished recycling " + recyclers.Count + " Project"; // writes to VS window
-      if (recyclers.Count != 1) { message += "s"; }
+      message += "Finished recycling " + linkers.Count + " Project"; // writes to VS window
+      if (linkers.Count != 1) { message += "s"; }
       message += "." + Environment.NewLine;
 
-      foreach (DestinationProjRecycler recycler in recyclers)
+      foreach (DestinationProjLinker linker in linkers)
       {
-        message += "from :" + String.Join(",", recycler.SourceProjList.ToArray());
-        message += " to  :" + recycler.DestProjAbsolutePath + Environment.NewLine;
+        message += "from :" + String.Join(",", linker.SourceProjList.ToArray());
+        message += " to  :" + linker.DestProjAbsolutePath + Environment.NewLine;
       }
       Console.WriteLine(message);
       Environment.Exit(0);

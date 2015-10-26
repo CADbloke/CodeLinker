@@ -7,8 +7,8 @@
     <ProjectGuid>{396125C3-F024-463E-B512-93F9401152C4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeRecycler</RootNamespace>
-    <AssemblyName>CodeRecyclerGui</AssemblyName>
+    <RootNamespace>CodeLinker</RootNamespace>
+    <AssemblyName>CodeLinkerGui</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,57 +43,57 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <!-- CodeRecycler
-Source: ..\CodeRecycler\CodeRecycler.csproj
+  <!-- CodeLinker
+Source: ..\CodeLinker\CodeLinker.csproj
 Exclude: app.config
 Exclude: *\assemblyinfo.cs
 Exclude: Program.cs
 Exclude: YesOrNo.cs
 -->
-  <!--Recycled from ..\coderecycler\coderecycler.csproj-->
+  <!--Linked from ..\codelinker\codelinker.csproj-->
   <ItemGroup>
-    <Compile Include="..\coderecycler\DestinationProjRecycler.cs">
-      <Link>DestinationProjRecycler.cs</Link>
+    <Compile Include="..\codelinker\DestinationProjLinker.cs">
+      <Link>DestinationProjLinker.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Help.cs">
+    <Compile Include="..\codelinker\Help.cs">
       <Link>Help.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\IsaCsOrVbProjectFile.cs">
+    <Compile Include="..\codelinker\IsaCsOrVbProjectFile.cs">
       <Link>IsaCsOrVbProjectFile.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Log.cs">
+    <Compile Include="..\codelinker\Log.cs">
       <Link>Log.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\PathMaker.cs">
+    <Compile Include="..\codelinker\PathMaker.cs">
       <Link>PathMaker.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\ProjectCloner.cs">
-      <Link>ProjectCloner.cs</Link>
+    <Compile Include="..\codelinker\ProjectLinker.cs">
+      <Link>ProjectLinker.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\ProjectToRecycle.cs">
-      <Link>ProjectToRecycle.cs</Link>
+    <Compile Include="..\codelinker\ProjectToLink.cs">
+      <Link>ProjectToLink.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Recycler.cs">
-      <Link>Recycler.cs</Link>
+    <Compile Include="..\codelinker\Linker.cs">
+      <Link>Linker.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\DestinationProjXml.cs">
+    <Compile Include="..\codelinker\DestinationProjXml.cs">
       <Link>DestinationProjXml.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Properties\CommonAssemblyInfo.cs">
+    <Compile Include="..\codelinker\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\Settings.cs">
+    <Compile Include="..\codelinker\Settings.cs">
       <Link>Settings.cs</Link>
     </Compile>
-    <Compile Include="..\coderecycler\SourceProjParser.cs">
+    <Compile Include="..\codelinker\SourceProjParser.cs">
       <Link>SourceProjParser.cs</Link>
     </Compile>
   </ItemGroup>
-  <!--End Recycle from ..\coderecycler\coderecycler.csproj
-Recycled 12 codez.-->
-  <!--End of Recycled Code
-See CodeRecyclerLog.txt for details. CodeRecycler by https://github.com/CADbloke/CodeRecycler -->
-  <!-- EndCodeRecycler -->
+  <!--End LinkCodez from ..\codelinker\codelinker.csproj
+Linked 12 codez.-->
+  <!--End of Linked Code
+See CodeLinkerLog.txt for details. CodeLinker by https://github.com/CADbloke/CodeLinker -->
+  <!-- EndCodeLinker -->
   <ItemGroup>
     <Compile Include="YesOrNo.cs" />
   </ItemGroup>

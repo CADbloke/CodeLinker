@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   /// <summary> Parses the <c>&lt;ItemGroup&gt;</c>s from the Source Project. Read Only. Never writes. </summary>
   internal class SourceProjParser
@@ -21,10 +21,10 @@ namespace CodeRecycler
     {
       SourceProjPath = sourceProjAbsolutePath;
       if (!File.Exists(sourceProjAbsolutePath))
-        Recycler.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
+        Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
 
       if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
-        Recycler.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
+        Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
 
       try
       {
@@ -40,7 +40,7 @@ namespace CodeRecycler
       }
       catch (Exception e)
       {
-        Recycler.Crash(e, "source Proj: " + sourceProjAbsolutePath);
+        Linker.Crash(e, "source Proj: " + sourceProjAbsolutePath);
       }
     }
   }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace CodeRecycler
+namespace CodeLinker
 {
   static class Program
   {

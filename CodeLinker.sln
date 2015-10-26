@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRecycler", "CodeRecycler\CodeRecycler.csproj", "{1BC2D099-0296-474B-B8F3-7A5C77E30919}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinker", "CodeLinker\CodeLinker.csproj", "{1BC2D099-0296-474B-B8F3-7A5C77E30919}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Builds", "_Builds", "{3BE7265E-6EF3-4676-B1E2-78F5C0B68B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRecycler-3.5", "_Builds\CodeRecycler-3.5\CodeRecycler-3.5.csproj", "{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinker-3.5", "_Builds\CodeLinker-3.5\CodeLinker-3.5.csproj", "{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRecyclerGui", "CodeRecyclerGui\CodeRecyclerGui.csproj", "{396125C3-F024-463E-B512-93F9401152C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinkerGui", "CodeLinkerGui\CodeLinkerGui.csproj", "{396125C3-F024-463E-B512-93F9401152C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
