@@ -200,7 +200,7 @@ namespace CodeLinker
 
 
       destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End of Linked Code" + Environment.NewLine + 
-        "See CodeLinkerLog.txt for details. CodeLinker by " + Help.SourceCodeUrl + " "));
+        "See CodeLinkerLog.txt for details. CodeLinker by " + Settings.SourceCodeUrl + " "));
 
       if (oldXml != destProjXml.ReadLinkedXml())
       {

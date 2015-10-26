@@ -53,7 +53,7 @@ namespace CodeLinker
         {
           logger.WriteLine();
           logger.WriteLine("Finished at " + DateTime.Now);
-          logger.WriteLine("More Info & Source at " + Help.SourceCodeUrl);
+          logger.WriteLine("More Info & Source at " + Settings.SourceCodeUrl);
           logger.WriteLine("Closing Log. kthxbai.");
           logger.WriteLine("==========================");
           logger.WriteLine();
