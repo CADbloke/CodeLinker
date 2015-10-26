@@ -45,55 +45,8 @@ Source: ..\..\CodeLinker\CodeLinker.csproj
 Exclude: app.config
 Exclude: properties\assemblyinfo.cs
 -->
-  <!--Linked from ..\..\codelinker\codelinker.csproj-->
-  <ItemGroup>
-    <Compile Include="..\..\codelinker\DestinationProjLinker.cs">
-      <Link>DestinationProjLinker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Help.cs">
-      <Link>Help.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\IsaCsOrVbProjectFile.cs">
-      <Link>IsaCsOrVbProjectFile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Log.cs">
-      <Link>Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\PathMaker.cs">
-      <Link>PathMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Program.cs">
-      <Link>Program.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\ProjectMaker.cs">
-      <Link>ProjectMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\ProjectToLink.cs">
-      <Link>ProjectToLink.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Linker.cs">
-      <Link>Linker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\DestinationProjXml.cs">
-      <Link>DestinationProjXml.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Properties\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Settings.cs">
-      <Link>Settings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\SourceProjParser.cs">
-      <Link>SourceProjParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\YesOrNo.cs">
-      <Link>YesOrNo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <!--End LinkCodez from ..\..\codelinker\codelinker.csproj
-Linked 14 codez.-->
-  <!--End of Linked Code
-See CodeLinkerLog.txt for details. CodeLinker by https://github.com/CADbloke/CodeLinker -->
+
+
   <!-- EndCodeLinker -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
