@@ -95,7 +95,6 @@ namespace CodeLinker
             }
 
 
-
             if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder))
             {
               XNode startNode = StartPlaceHolder;
@@ -163,7 +162,7 @@ namespace CodeLinker
           {
             itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
                                       (i.Attribute("Include") != null) && 
-                                       i.Attribute("LinkCodez")    == null).Remove();
+                                       i.Attribute("Link")    == null).Remove();
 
             if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value))) itemGroup.Remove();
           }
@@ -173,6 +172,17 @@ namespace CodeLinker
       }
     }
 
+    internal void ClearStartPlaceholderContent() { StartPlaceHolder.Value = Settings.StartPlaceholderComment; }
+
+    internal void AddExclusion(string exclusion)
+    {
+      StartPlaceHolder.Value += Environment.NewLine + Settings.ExcludePlaceholderLowerCase + " " + exclusion;
+    }
+
+    internal void AddInclusion(string inclusion)
+    {
+      StartPlaceHolder.Value += Environment.NewLine + Settings.IncludePlaceholderLowerCase + " " + inclusion;
+    }
 
     internal void Save() { DestProjXdoc.Save(DestProjAbsolutePath); }
   }

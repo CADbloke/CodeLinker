@@ -167,7 +167,7 @@ namespace CodeLinker
                       attrib.Value = relativePathFromDestination;
                   }
                   
-                  IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "LinkCodez");
+                  IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
                   
                   if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))  // Folders, mostly
                   {

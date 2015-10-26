@@ -30,7 +30,7 @@ namespace CodeLinker
         }
 
         List<string> sources = projectsToLink.Where(d => d.DestinationProjectName == destinationProject)
-                                                .Select(s => s.SourceProject).ToList();
+                                             .Select(s => s.SourceProject).ToList();
         if (sources.Count!=1)
         {
           string message = destinationProject + "has " + sources.Count + " source Projects." + Environment.NewLine;
@@ -60,6 +60,8 @@ namespace CodeLinker
           File.Copy(sources[0], destinationProjPath, overwrite: true);
           DestinationProjXml destinationProjXml = new DestinationProjXml(destinationProjPath);
           destinationProjXml.ClearOldLinkedCode();
+          destinationProjXml.ClearStartPlaceholderContent();
+          destinationProjXml.AddExclusion("app.config"); // tends to break a build if/when you change frameworks. Don't link it
           destinationProjXml.ClearExistingCodeExceptLinked();
 
           foreach (string source in sources)
