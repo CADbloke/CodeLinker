@@ -192,7 +192,7 @@ namespace CodeLinker
        DestinationProjectFolderTextBox.BackColor = Color.BlanchedAlmond;
         return;
       }
-      ProjectLinker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
+      ProjectMaker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
       CheckProjectsList();
     }
 

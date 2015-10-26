@@ -66,8 +66,8 @@ source: ..\..\CodeLinkerGui\CodeLinkerGui.csproj-->
     <Compile Include="..\..\codelinker\PathMaker.cs">
       <Link>PathMaker.cs</Link>
     </Compile>
-    <Compile Include="..\..\codelinker\ProjectLinker.cs">
-      <Link>ProjectLinker.cs</Link>
+    <Compile Include="..\..\codelinker\ProjectMaker.cs">
+      <Link>ProjectMaker.cs</Link>
     </Compile>
     <Compile Include="..\..\codelinker\ProjectToLink.cs">
       <Link>ProjectToLink.cs</Link>

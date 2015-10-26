@@ -65,8 +65,8 @@ Exclude: properties\assemblyinfo.cs
     <Compile Include="..\..\codelinker\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
-    <Compile Include="..\..\codelinker\ProjectLinker.cs">
-      <Link>ProjectLinker.cs</Link>
+    <Compile Include="..\..\codelinker\ProjectMaker.cs">
+      <Link>ProjectMaker.cs</Link>
     </Compile>
     <Compile Include="..\..\codelinker\ProjectToLink.cs">
       <Link>ProjectToLink.cs</Link>

@@ -207,7 +207,7 @@ namespace CodeLinker
         destProjXml.Save();
         Log.WriteLine("Linked " + totalCodezLinked + " codez from " + SourceProjList.Count + " source Project(s).");
       }
-      else Log.WriteLine("No changes to save so nothing Linked.");
+      else Log.WriteLine("No changes, didn't save.");
 
       Log.WriteLine("----------------------------");
       Log.WriteLine();

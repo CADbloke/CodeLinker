@@ -23,7 +23,7 @@ namespace CodeLinker
     internal XComment  EndPlaceHolder;
     internal List<XElement> ItemGroups;
     internal XElement  RootXelement;
-    internal string    OldXml;
+    internal string    OldLinkedXml;
 
 
     internal DestinationProjXml(string destProj)
@@ -43,43 +43,43 @@ namespace CodeLinker
       if (RootXelement == null)
       { Linker.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath); }
 
-      StartPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);
-      EndPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);
+      StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
+      EndPlaceHolder   = FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
 
       if (StartPlaceHolder == null && RootXelement != null)
         {
           XElement lastItemGroup = ItemGroups?.Last();
-          lastItemGroup?.AddAfterSelf(new XComment(Settings.EndPlaceholderComment));
+          lastItemGroup?.AddAfterSelf(new XComment( Settings.EndPlaceholderComment   ));
           lastItemGroup?.AddAfterSelf(new XComment( Settings.StartPlaceholderComment ));
-          StartPlaceHolder = FindCommentOrCrash(Settings.StartPlaceholderComment);
-          EndPlaceHolder   = FindCommentOrCrash(Settings.EndPlaceholderComment);
+          StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
+          EndPlaceHolder   = FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
         }
 
-      OldXml = ReadLinkedXml();
+      OldLinkedXml = ReadLinkedXml();
     }
 
 
-    internal void ClearOldLinkedCode() // todo: Keep a copy of the old LinkCodez. Use that to generate Keepers.
+    internal void ClearOldLinkedCode()
     {
-      Log.WriteLine("Housekeeping old Linked Code from " + DestProjAbsolutePath);
+      Log.WriteLine("Housekeeping old Linked Code.");
       if (RootXelement != null)
       {
         if (StartPlaceHolder != null && EndPlaceHolder != null)
         {
           try
           {
-            string oldXml = "<root>" + OldXml + "</root>";
+            string oldLinkedXml = "<root>" + OldLinkedXml + "</root>";
 
             List<XElement> keepers = new List<XElement>(); 
 
-            if (oldXml.Contains("ItemGroup"))
+            if (oldLinkedXml.Contains("ItemGroup"))
             {
-              XElement keeperElements = XElement.Parse(oldXml); // http://stackoverflow.com/a/11644640/492
+              XElement keeperElements = XElement.Parse(oldLinkedXml); // http://stackoverflow.com/a/11644640/492
 
               foreach (XElement descendant in keeperElements.DescendantsAndSelf().Where(e => e.Attribute("Include") != null))
               {
                 XAttribute xAttribute = descendant.Attribute("Include");
-                if (xAttribute != null && !xAttribute.Value.StartsWith(".."))
+                if (xAttribute != null && !xAttribute.Value.StartsWith("..")) // keep stray code that is not a link. VS may have added it here.
                 {
                   keepers.Add(descendant);
                   Log.WriteLine("Keeping: " + descendant.ToString().Replace("xmlns=\"" + Settings.MSBuild.ToString() + "\"", ""));
@@ -133,7 +133,7 @@ namespace CodeLinker
     }
 
 
-    private XComment FindCommentOrCrash(string commentStartsWith)
+    private XComment FindCommentOrCrashIfDuplicatesFound(string commentStartsWith)
     {
       IEnumerable<XComment> comments = from node in DestProjXdoc.Elements().DescendantNodesAndSelf()
                                        where node.NodeType == XmlNodeType.Comment
@@ -148,7 +148,7 @@ namespace CodeLinker
     }
 
 
-    internal void ClearExistingCodeExceptLinked()
+    internal void ClearAllExistingCodeExceptExplicitlyLinked()
     {
       if (RootXelement != null)
       {
@@ -172,18 +172,34 @@ namespace CodeLinker
       }
     }
 
-    internal void ClearStartPlaceholderContent() { StartPlaceHolder.Value = Settings.StartPlaceholderComment; }
+    internal void ClearStartPlaceholderContent()
+    {
+      StartPlaceHolder.Value = Settings.StartPlaceholderComment;
+      Log.WriteLine("Reset Includes & Excludes");
+    }
 
     internal void AddExclusion(string exclusion)
     {
       StartPlaceHolder.Value += Environment.NewLine + Settings.ExcludePlaceholderLowerCase + " " + exclusion;
+      Log.WriteLine("Excluded: " + exclusion);
     }
 
     internal void AddInclusion(string inclusion)
     {
       StartPlaceHolder.Value += Environment.NewLine + Settings.IncludePlaceholderLowerCase + " " + inclusion;
+      Log.WriteLine("Included: " + inclusion);
     }
 
-    internal void Save() { DestProjXdoc.Save(DestProjAbsolutePath); }
+    internal void AddSource(string source)
+    {
+      StartPlaceHolder.Value += Environment.NewLine + Settings.SourcePlaceholderLowerCase + " " + source;
+      Log.WriteLine("Added Source: " + source);
+    }
+
+    internal void Save()
+    {
+      DestProjXdoc.Save(DestProjAbsolutePath); 
+      Log.WriteLine("Saved: " + DestProjAbsolutePath);
+    }
   }
 }

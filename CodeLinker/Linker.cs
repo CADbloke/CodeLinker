@@ -91,7 +91,7 @@ namespace CodeLinker
             if (args[1].IsaCsOrVbProjFile())
             {
               string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, args[1]);
-              try { ProjectLinker.NewProject(sourcePath, args[2]); }
+              try { ProjectMaker.NewProject(sourcePath, args[2]); }
               catch (Exception e)
               { Crash(e, "Linking "+ args[1] +  " to " + args[2] + " didn't work. Bad name?"); }
 
@@ -109,7 +109,7 @@ namespace CodeLinker
                   if (sourceProjFile.IsaCsOrVbProjFile())
                   {
                     string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProjFile);
-                    try { ProjectLinker.NewProject(sourcePath, args[2]); }
+                    try { ProjectMaker.NewProject(sourcePath, args[2]); }
                     catch (Exception e)
                      { Crash( e, "Linking " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?"); }
 

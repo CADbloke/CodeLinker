@@ -50,7 +50,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="PathMaker.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProjectLinker.cs" />
+    <Compile Include="ProjectMaker.cs" />
     <Compile Include="ProjectToLink.cs" />
     <Compile Include="Linker.cs" />
     <Compile Include="DestinationProjXml.cs" />

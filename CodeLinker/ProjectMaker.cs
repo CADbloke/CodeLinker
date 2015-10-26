@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CodeLinker
 {
-  static class ProjectLinker
+  static class ProjectMaker
   {
     /// <summary> Copies and links a List of Projects into the <c>destinationFolder</c>. 
     ///    <para> File is Linked from the first <c>projectsToLink</c> for each if there is more than 1 source.</para></summary>
@@ -18,7 +18,7 @@ namespace CodeLinker
       if (string.IsNullOrEmpty(destinationFolder)) { throw new ArgumentNullException(nameof(destinationFolder)); }
 
       HashSet<string> destinationProjects = new HashSet<string>(projectsToLink.Select(p => p.DestinationProjectName));
-      Log.WriteLine("Recycling "+ destinationProjects.Count + " Projects to " + destinationFolder);
+      Log.WriteLine("Recycling "+ destinationProjects.Count + " Project(s) to " + destinationFolder);
 
       foreach (string destinationProject in destinationProjects)
       {
@@ -61,18 +61,14 @@ namespace CodeLinker
           DestinationProjXml destinationProjXml = new DestinationProjXml(destinationProjPath);
           destinationProjXml.ClearOldLinkedCode();
           destinationProjXml.ClearStartPlaceholderContent();
-          destinationProjXml.AddExclusion("app.config"); // tends to break a build if/when you change frameworks. Don't link it
-          destinationProjXml.ClearExistingCodeExceptLinked();
+          destinationProjXml.AddExclusion("app.config"); 
+          Log.WriteLine("...because a linked App.config will cause problems when you change build settings.");
+          destinationProjXml.ClearAllExistingCodeExceptExplicitlyLinked();
 
           foreach (string source in sources)
           {
             if (File.Exists(source))
-            {
-              string relativeSource = PathMaker.MakeRelativePath(destinationProjPath, source);
-              destinationProjXml.StartPlaceHolder.Value += Environment.NewLine + 
-                Settings.SourcePlaceholderLowerCase + " " + relativeSource;
-              Log.WriteLine("added Source: " + relativeSource);
-            }
+              destinationProjXml.AddSource(PathMaker.MakeRelativePath(destinationProjPath, source));
             else
             {
               Log.WriteLine("Bad Source in: " + destinationProjPath + Environment.NewLine + 
@@ -80,9 +76,8 @@ namespace CodeLinker
             }
           }
 
-          destinationProjXml.DestProjXdoc.Save(destinationProjXml.DestProjAbsolutePath);
-          Log.WriteLine("saved: " + destinationProjXml.DestProjAbsolutePath);
-
+          destinationProjXml.Save();
+          
           Linker.LinkCodez(new []{destinationProjPath});
         }
       }
