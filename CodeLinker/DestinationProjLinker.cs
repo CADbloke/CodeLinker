@@ -106,11 +106,11 @@ namespace CodeLinker
           string destDirectoryForRelativePath = DestProjDirectory.EndsWith("\\")
             ? DestProjDirectory
             : DestProjDirectory + "\\";
-          string LinkeRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , sourceProjAbsolutePath);
+          string linkRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , sourceProjAbsolutePath);
 
           SourceProjParser sourceProjParser = new SourceProjParser(sourceProjAbsolutePath);
 
-          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("Linked from " + LinkeRelativeSource));
+          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("Linked from " + linkRelativeSource));
           Log.WriteLine("Recycling from: " + sourceProjAbsolutePath + Environment.NewLine + 
                         "            to: " + DestProjAbsolutePath   + Environment.NewLine);
 
@@ -187,11 +187,14 @@ namespace CodeLinker
                 
               }
             }
+
             if (newLinkedItemGroup.HasElements) { destProjXml.EndPlaceHolder.AddBeforeSelf(newLinkedItemGroup); }
           }
-          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End LinkCodez from " + LinkeRelativeSource+ Environment.NewLine + 
+          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End LinkCodez from " + linkRelativeSource+ Environment.NewLine + 
             "Linked " + codezLinked + " codez."));
           totalCodezLinked += codezLinked;
+
+          destProjXml.Keepers.RemoveAll(k => k.Attribute("Include").Value.Contains(sourceProjDirectory));
         }
         catch (Exception e) {
           Linker.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);

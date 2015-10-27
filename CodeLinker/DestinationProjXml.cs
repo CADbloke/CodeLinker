@@ -18,12 +18,13 @@ namespace CodeLinker
     internal string DestProjDirectory { get; }
 
 
-    internal XDocument DestProjXdoc;
-    internal XComment  StartPlaceHolder;
-    internal XComment  EndPlaceHolder;
+    internal XDocument      DestProjXdoc;
+    internal XComment       StartPlaceHolder;
+    internal XComment       EndPlaceHolder;
     internal List<XElement> ItemGroups;
-    internal XElement  RootXelement;
-    internal string    OldLinkedXml;
+    internal XElement       RootXelement;
+    internal string         OldLinkedXml;
+    internal List<XElement> Keepers;
 
 
     internal DestinationProjXml(string destProj)
@@ -56,6 +57,7 @@ namespace CodeLinker
         }
 
       OldLinkedXml = ReadLinkedXml();
+      Keepers = new List<XElement>();
     }
 
 
@@ -70,7 +72,7 @@ namespace CodeLinker
           {
             string oldLinkedXml = "<root>" + OldLinkedXml + "</root>";
 
-            List<XElement> keepers = new List<XElement>(); 
+             
 
             if (oldLinkedXml.Contains("ItemGroup"))
             {
@@ -79,19 +81,11 @@ namespace CodeLinker
               foreach (XElement descendant in keeperElements.DescendantsAndSelf().Where(e => e.Attribute("Include") != null))
               {
                 XAttribute xAttribute = descendant.Attribute("Include");
-                if (xAttribute != null && !xAttribute.Value.StartsWith("..")) // keep stray code that is not a link. VS may have added it here.
-                {
-                  keepers.Add(descendant);
-                  Log.WriteLine("Keeping: " + descendant.ToString().Replace("xmlns=\"" + Settings.MSBuild.ToString() + "\"", ""));
-                }
+                if (xAttribute != null && !xAttribute.Value.StartsWith(".."))
+                  Keepers.Add(descendant); // keep stray code that is not a relative link. VS *may* have added it here.
               }
 
-              if (keepers.Any())
-              {
-                XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
-                foreach (XElement keeper in keepers) { newItemGroup.Add(keeper); }
-                EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the LinkCodez zone.
-              }
+              
             }
 
 
@@ -198,7 +192,18 @@ namespace CodeLinker
 
     internal void Save()
     {
-      DestProjXdoc.Save(DestProjAbsolutePath); 
+      if (Keepers.Any())
+      {
+        XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
+        foreach (XElement keeper in Keepers)
+        {
+          newItemGroup.Add(keeper); 
+          Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild.ToString() + "\"", ""));
+        }
+        EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the LinkCodez zone.
+      }
+
+      DestProjXdoc.Save(DestProjAbsolutePath);
       Log.WriteLine("Saved: " + DestProjAbsolutePath);
     }
   }
