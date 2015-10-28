@@ -24,7 +24,11 @@ namespace CodeLinker
     {
       using (StreamWriter sw = File.AppendText(logFile))
       {
-        foreach (string line in lines) { sw.WriteLine(line); }
+        foreach (string line in lines)
+        {
+          sw.WriteLine(line); 
+          Console.WriteLine(line);
+        }
       }
     }
 
@@ -35,11 +39,12 @@ namespace CodeLinker
 
 
 
-    internal static void WriteLine(Exception e)
+    internal static void WriteException(Exception e)
     {
       WriteLine(e.ToString());
       WriteLine(e.InnerException?.ToString());
       Console.WriteLine(e.ToString());
+      Console.WriteLine(e.InnerException?.ToString());
     }
 
 

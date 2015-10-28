@@ -206,12 +206,11 @@ namespace CodeLinker
     
     internal static void Crash(Exception e, string crashedAt = "")
     {
+      string message = "I crashed at " + crashedAt + ". Whups. See CodeLinkerLog.txt for details.";
+      YesOrNo.Crashing(message);
       Log.WriteLine();
-      Log.WriteLine("I crashed at "+ crashedAt +". Whups.");
-      Log.WriteLine(e.ToString());
-      Log.WriteLine(e.InnerException?.ToString());
-      Log.WriteLine(e.StackTrace);
-      Console.WriteLine(e.ToString());
+      Log.WriteLine(message);
+      Log.WriteException(e);
       throw e;
     }
 

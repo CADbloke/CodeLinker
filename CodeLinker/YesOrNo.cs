@@ -39,7 +39,7 @@ namespace CodeLinker
 
     internal static void Crashing(string message, string caption = "Hey!")
     {
-      Linker.Crash(message);
+      Console.WriteLine(message);
     }
 
   }
