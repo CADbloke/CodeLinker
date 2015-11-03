@@ -10,7 +10,7 @@ namespace CodeLinker
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool Ask(string message, string caption = "Hey!")
     {
-      if (Linker.NoConfirm)
+      if (App.NoConfirm)
       {
         return true;
       }
@@ -32,7 +32,7 @@ namespace CodeLinker
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool? OrCancel(string message, string caption = "Hey!")
     {
-      if (Linker.NoConfirm)
+      if (App.NoConfirm)
       {
         return true;
       }

@@ -22,12 +22,12 @@ namespace CodeLinker
       SourceProjPath = sourceProjAbsolutePath;
       if (!File.Exists(sourceProjAbsolutePath))
       {
-        Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
+        App.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
       }
 
       if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
       {
-        Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
+        App.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
       }
 
       try
@@ -48,7 +48,7 @@ namespace CodeLinker
       }
       catch (Exception e)
       {
-        Linker.Crash(e, "source Proj: " + sourceProjAbsolutePath);
+        App.Crash(e, "source Proj: " + sourceProjAbsolutePath);
       }
     }
   }

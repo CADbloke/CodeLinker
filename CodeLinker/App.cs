@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace CodeLinker
 {
-  public static class Linker
+  public static class App
   {
     private static List<DestinationProjLinker> linkers = new List<DestinationProjLinker>();
     internal static bool NoConfirm = false;
 
-    public static void LinkCodez(string[] args)
+    public static void ParseCommands(string[] args)
     {
       linkers.Clear();
       // System.Diagnostics.Debugger.Launch(); // to find teh bugs load this in Visual Studio and uncomment the start of this line.

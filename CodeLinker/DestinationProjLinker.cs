@@ -24,7 +24,7 @@ namespace CodeLinker
     ///           Can be zero, can be lots.</summary>
     internal List<string> SourceProjList { get; }
 
-    /// <summary> Code Files to be excluded from the LinkCodez. </summary>
+    /// <summary> Code Files to be excluded from the Link. </summary>
     internal List<string> ExclusionsList { get; }
 
     /// <summary> Code Files to be Included from the recycle. </summary>
@@ -40,7 +40,7 @@ namespace CodeLinker
 
       if (string.IsNullOrEmpty(DestProjAbsolutePath))
       {
-        Linker.Crash("ERROR: No destProjFileAbsolutePath. That's a bug.");
+        App.Crash("ERROR: No destProjFileAbsolutePath. That's a bug.");
       }
 
       try
@@ -49,12 +49,12 @@ namespace CodeLinker
       }
       catch (Exception e)
       {
-        Linker.Crash(e, "DestinationProjLinker CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
+        App.Crash(e, "DestinationProjLinker CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
       }
 
       if (destProjXml.RootXelement == null || !destProjXml.RootXelement.Elements().Any())
       {
-        Linker.Crash("ERROR: Bad Destination Proj file at " + DestProjAbsolutePath);
+        App.Crash("ERROR: Bad Destination Proj file at " + DestProjAbsolutePath);
       }
 
       SourceProjList = new List<string>();
@@ -98,7 +98,7 @@ namespace CodeLinker
 
     /// <summary> Links the source code from the source <c>sourceProj</c> file to the destination <c>destProj</c> file.
     ///           <para> Tweaks relative file paths so the project can find them. </para>
-    ///           Adds a <c>&lt;LinkCodez&gt;</c> for the destination project Solution Explorer.</summary>
+    ///           Adds a <c>&lt;Link&gt;</c> for the destination project Solution Explorer.</summary>
     internal void LinkCode()
     {
       string oldXml = destProjXml.ReadLinkedXml();
@@ -183,7 +183,7 @@ namespace CodeLinker
                     }
                     catch (Exception e)
                     {
-                      Linker.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
+                      App.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
                     }
 
                     string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
@@ -218,7 +218,7 @@ namespace CodeLinker
               destProjXml.EndPlaceHolder.AddBeforeSelf(newLinkedItemGroup);
             }
           }
-          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End LinkCodez from " + linkRelativeSource + Environment.NewLine + 
+          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End Link from " + linkRelativeSource + Environment.NewLine + 
                                                                 "Linked " + codezLinked + " codez."));
           totalCodezLinked += codezLinked;
 
@@ -226,7 +226,7 @@ namespace CodeLinker
         }
         catch (Exception e)
         {
-          Linker.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
+          App.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
         }
       }
 

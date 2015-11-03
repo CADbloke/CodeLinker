@@ -49,7 +49,7 @@ namespace CodeLinker
       }
       catch (Exception e)
       {
-        Linker.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath);
+        App.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath);
       }
 
       return relativePath;
@@ -87,12 +87,12 @@ namespace CodeLinker
       }
       catch (Exception e)
       {
-        Linker.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
+        App.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
       }
 
       if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath))
       {
-        Linker.Crash("ERROR: Bad Path: " + properAbsolutePath);
+        App.Crash("ERROR: Bad Path: " + properAbsolutePath);
       }
 
       return properAbsolutePath;

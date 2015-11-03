@@ -4,8 +4,8 @@
   {
     static void Main(string[] args)
     {
-      Linker.LinkCodez(args);
-      Linker.Finish();
+      App.ParseCommands(args);
+      App.Finish();
     }
   }
 }

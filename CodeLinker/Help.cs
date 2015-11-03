@@ -40,7 +40,7 @@ namespace CodeLinker
       WriteLine("         For Folders it copies all Projects to the same destination Folder.");
       WriteLine();
       WriteLine("Source Solution Root  (optional)");
-      WriteLine("         The root of the solution containing the projects to LinkCodez.");
+      WriteLine("         The root of the solution containing the projects to Link.");
       WriteLine("         Default is the current directory. Current? Depends - see the Wiki.");
       WriteLine("Destination Solution Folder.");
       WriteLine("         The Folder Name for the Linked project(s).");
@@ -79,7 +79,7 @@ namespace CodeLinker
       WriteLine(" - If you specify no Inclusions then everything is an Inclusion.");
       WriteLine();
       WriteLine(" - Multiple Source: or Exclude: or Include: must be on separate lines.");
-      WriteLine(" - Every Code ProjectLinker will re-LinkCodez the source CSPROJ");
+      WriteLine(" - Every Code ProjectLinker will re-Link the source CSPROJ");
       WriteLine("   into the space between the XML comment placeholders.");
       WriteLine(" - ALL code links inside these placeholders are refreshed every time. OK?");
       WriteLine();

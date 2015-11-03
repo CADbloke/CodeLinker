@@ -52,7 +52,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProjectMaker.cs" />
     <Compile Include="ProjectToLink.cs" />
-    <Compile Include="Linker.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="DestinationProjXml.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

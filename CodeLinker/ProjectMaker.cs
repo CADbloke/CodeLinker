@@ -10,7 +10,7 @@ namespace CodeLinker
     /// <summary> Copies and links a List of Projects into the <c>destinationFolder</c>. 
     ///    <para> File is Linked from the first <c>projectsToLink</c> for each if there is more than 1 source.</para></summary>
     /// <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null or empty. </exception>
-    /// <param name="projectsToLink">  The projects to LinkCodez. </param>
+    /// <param name="projectsToLink">  The projects to Link. </param>
     /// <param name="destinationFolder">  Pathname of the destination folder. Empty string throws <c>ArgumentNullException</c></param>
     internal static void NewProject(List<ProjectToLink> projectsToLink, string destinationFolder)
     {
@@ -89,7 +89,7 @@ namespace CodeLinker
 
           destinationProjXml.Save();
 
-          Linker.LinkCodez(new[] {destinationProjPath});
+          App.ParseCommands(new[] {destinationProjPath});
         }
       }
     }

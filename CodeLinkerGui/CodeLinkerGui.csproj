@@ -76,8 +76,8 @@ Exclude: YesOrNo.cs
     <Compile Include="..\codelinker\ProjectToLink.cs">
       <Link>ProjectToLink.cs</Link>
     </Compile>
-    <Compile Include="..\codelinker\Linker.cs">
-      <Link>Linker.cs</Link>
+    <Compile Include="..\codelinker\App.cs">
+      <Link>App.cs</Link>
     </Compile>
     <Compile Include="..\codelinker\DestinationProjXml.cs">
       <Link>DestinationProjXml.cs</Link>
@@ -92,7 +92,7 @@ Exclude: YesOrNo.cs
       <Link>SourceProjParser.cs</Link>
     </Compile>
   </ItemGroup>
-  <!--End LinkCodez from ..\codelinker\codelinker.csproj
+  <!--End Link from ..\codelinker\codelinker.csproj
 Linked 12 codez.-->
   <!--End of Linked Code
 See CodeLinkerLog.txt for details. CodeLinker by https://github.com/CADbloke/CodeLinker -->

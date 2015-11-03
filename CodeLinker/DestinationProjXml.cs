@@ -40,12 +40,12 @@ namespace CodeLinker
       }
       catch (Exception e)
       {
-        Linker.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath);
+        App.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath);
       }
 
       if (RootXelement == null)
       {
-        Linker.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath);
+        App.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath);
       }
 
       StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
@@ -111,7 +111,7 @@ namespace CodeLinker
           }
           catch (Exception e)
           {
-            Linker.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath);
+            App.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath);
           }
         }
         Log.WriteLine("ok.");
@@ -146,7 +146,7 @@ namespace CodeLinker
 
       if (placeholders.Count > 1)
       {
-        Linker.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
+        App.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
       }
 
       return placeholders.FirstOrDefault();
@@ -219,7 +219,7 @@ namespace CodeLinker
           newItemGroup.Add(keeper);
           Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild.ToString() + "\"", ""));
         }
-        EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the LinkCodez zone.
+        EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Link zone.
       }
 
       DestProjXdoc.Save(DestProjAbsolutePath);

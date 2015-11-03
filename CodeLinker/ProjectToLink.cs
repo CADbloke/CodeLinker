@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CodeLinker
 {
-  /// <summary> A project to LinkCodez. </summary>
+  /// <summary> A project to Link. </summary>
   class ProjectToLink
   {
       /// <summary> Source project.  Full Path with file extension.</summary>
