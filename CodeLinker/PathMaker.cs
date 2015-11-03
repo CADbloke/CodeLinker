@@ -21,40 +21,64 @@ namespace CodeLinker
 
       try
       {
-        if (string.IsNullOrEmpty(fromPath)) { throw new ArgumentNullException(nameof(fromPath)); }
-        if (string.IsNullOrEmpty(toPath))   { throw new ArgumentNullException(nameof(toPath)); }
+        if (string.IsNullOrEmpty(fromPath))
+        {
+          throw new ArgumentNullException(nameof(fromPath));
+        }
+        if (string.IsNullOrEmpty(toPath))
+        {
+          throw new ArgumentNullException(nameof(toPath));
+        }
 
         Uri fromUri = new Uri(fromPath);
-        Uri toUri   = new Uri(toPath);
+        Uri toUri =   new Uri(toPath);
 
-        if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+        if (fromUri.Scheme != toUri.Scheme)
+        {
+          return toPath;
+        } // path can't be made relative.
 
         Uri relativeUri = fromUri.MakeRelativeUri(toUri);
 
         relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
         if (toUri.Scheme.ToUpperInvariant() == "FILE")
+        {
           relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
       }
       catch (Exception e)
-      { Linker.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath); }
+      {
+        Linker.Crash(e, "Crashed at PathMaker.MakeRelativePath() from " + fromPath + " to " + toPath);
+      }
 
       return relativePath;
     }
 
 
     /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute. 
-    ///           <para>Will crash an burn if it can't return a path.</para></summary>
+    ///    <para> Will crash and burn if it can't return a path.</para></summary>
     /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute. 
     ///                                     In any case this always returns an Absolute Path. </param>
     /// <param name="basePath">             Optional: Where you are now. Base Path if building an Absolute Path from a relative path.
     ///                              <para> Defaults to the current execution folder if <c>null</c> or empty.</para> </param>
     internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
     {
-      if (IsAbsolutePath(possibleRelativePath) )  { return possibleRelativePath; }
+      if (IsAbsolutePath(possibleRelativePath))
+      {
+        return possibleRelativePath;
+      }
 
-      if (string.IsNullOrEmpty(basePath)) basePath = AppDomain.CurrentDomain.BaseDirectory;
-      if (!basePath.EndsWith("\\"))       basePath += "\\";
+      if (string.IsNullOrEmpty(basePath))
+      {
+        basePath = AppDomain.CurrentDomain.BaseDirectory;
+      }
+
+      if (!basePath.EndsWith("\\"))
+      {
+        basePath += "\\";
+      }
+
       string properAbsolutePath = "";
 
       try
@@ -66,20 +90,36 @@ namespace CodeLinker
         Linker.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
       }
 
-      bool dir  = Directory.Exists(properAbsolutePath);
-      bool file = File.Exists(properAbsolutePath);
+      if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath))
+      {
+        Linker.Crash("ERROR: Bad Path: " + properAbsolutePath);
+      }
 
-      if (!dir && !file) { Linker.Crash("ERROR: Bad Path: " + properAbsolutePath); }
       return properAbsolutePath;
     }
 
     internal static bool IsAbsolutePath(string possibleRelativePath)
     {
-      if (possibleRelativePath.StartsWith("$("))   { return true; } // starts with Environment Variable - don't break it.
-      if (possibleRelativePath.StartsWith(".."))   { return false; } 
-      if (Directory.Exists(possibleRelativePath))  { return true; }
-      if (File.Exists(possibleRelativePath))       { return true; }
-      if (Path.IsPathRooted(possibleRelativePath)) { return true; }
+      if (possibleRelativePath.StartsWith("$("))
+      { // starts with Environment Variable - don't break it.
+        return true;
+      } 
+      if (possibleRelativePath.StartsWith(".."))
+      {
+        return false;
+      }
+      if (Directory.Exists(possibleRelativePath))
+      {
+        return true;
+      }
+      if (File.Exists(possibleRelativePath))
+      {
+        return true;
+      }
+      if (Path.IsPathRooted(possibleRelativePath))
+      {
+        return true;
+      }
       return false;
     }
   }

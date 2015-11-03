@@ -10,7 +10,10 @@ namespace CodeLinker
     internal static bool Ask(string message, string caption = "Hey!")
     {
       DialogResult dialogResult = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-      if (dialogResult == DialogResult.Yes) { return true; }
+      if (dialogResult == DialogResult.Yes)
+      {
+        return true;
+      }
       return false;
     }
 
@@ -21,8 +24,14 @@ namespace CodeLinker
     internal static bool? OrCancel(string message, string caption = "Hey!")
     {
       DialogResult dialogResult = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-      if (dialogResult == DialogResult.Yes)    return true;
-      if (dialogResult == DialogResult.Cancel) return null;
+      if (dialogResult == DialogResult.Yes)
+      {
+        return true;
+      }
+      if (dialogResult == DialogResult.Cancel)
+      {
+        return null;
+      }
       return false;
     }
 
@@ -30,6 +39,5 @@ namespace CodeLinker
     {
       MessageBox.Show(message, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
-
   }
 }

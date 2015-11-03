@@ -21,10 +21,14 @@ namespace CodeLinker
     {
       SourceProjPath = sourceProjAbsolutePath;
       if (!File.Exists(sourceProjAbsolutePath))
+      {
         Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  does not exist.");
+      }
 
       if (!sourceProjAbsolutePath.IsaCsOrVbProjFile())
+      {
         Linker.Crash("ERROR: " + sourceProjAbsolutePath + "  is not a C# or VB Proj.");
+      }
 
       try
       {
@@ -33,10 +37,14 @@ namespace CodeLinker
 
         XElement xElement = ProjXml.Element(Settings.MSBuild + "Project");
         if (xElement != null)
+        {
           ItemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
+        }
 
         if (ItemGroups.Count == 0)
+        {
           Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?");
+        }
       }
       catch (Exception e)
       {

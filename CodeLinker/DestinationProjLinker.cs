@@ -36,19 +36,26 @@ namespace CodeLinker
     internal DestinationProjLinker(string destProj)
     {
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
-      DestProjDirectory    = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
+      DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
 
       if (string.IsNullOrEmpty(DestProjAbsolutePath))
+      {
         Linker.Crash("ERROR: No destProjFileAbsolutePath. That's a bug.");
+      }
 
-      try { destProjXml = new DestinationProjXml(DestProjAbsolutePath); }
+      try
+      {
+        destProjXml = new DestinationProjXml(DestProjAbsolutePath);
+      }
       catch (Exception e)
       {
         Linker.Crash(e, "DestinationProjLinker CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
       }
 
       if (destProjXml.RootXelement == null || !destProjXml.RootXelement.Elements().Any())
+      {
         Linker.Crash("ERROR: Bad Destination Proj file at " + DestProjAbsolutePath);
+      }
 
       SourceProjList = new List<string>();
       ExclusionsList = new List<string>();
@@ -64,19 +71,26 @@ namespace CodeLinker
         }
 
         if (line.ToLower().Trim().StartsWith(Settings.ExcludePlaceholderLowerCase))
-        { ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim().ToLower()); }
+        {
+          ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim().ToLower());
+        }
 
         if (line.ToLower().Trim().StartsWith(Settings.IncludePlaceholderLowerCase))
-        { InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim().ToLower()); }
+        {
+          InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim().ToLower());
+        }
       }
-      if (InclusionsList == null || !InclusionsList.Any()) { InclusionsList.Add("*"); }
+      if (InclusionsList == null || !InclusionsList.Any())
+      {
+        InclusionsList.Add("*"); // default wildcard match will include everything.
+      }
     }
 
 
     /// <summary> <c>sourceProj</c> here overrides any sources specified in the <c>destProj</c></summary>
     /// <param name="sourceProj"> Absolute or Relative path of Source <c>Proj</c>. </param>
     /// <param name="destProj"> Absolute or Relative path of Destination <c>Proj</c>. </param>
-    internal DestinationProjLinker(string sourceProj, string destProj) :this(destProj)
+    internal DestinationProjLinker(string sourceProj, string destProj) : this(destProj)
     {
       SourceProjList = new List<string> {PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProj)};
     }
@@ -103,10 +117,12 @@ namespace CodeLinker
             : Path.Combine(DestProjDirectory, sourcePath);
 
           string sourceProjDirectory = Path.GetDirectoryName(sourceProjAbsolutePath);
+
           string destDirectoryForRelativePath = DestProjDirectory.EndsWith("\\")
             ? DestProjDirectory
             : DestProjDirectory + "\\";
-          string linkRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath , sourceProjAbsolutePath);
+
+          string linkRelativeSource = PathMaker.MakeRelativePath(destDirectoryForRelativePath, sourceProjAbsolutePath);
 
           SourceProjParser sourceProjParser = new SourceProjParser(sourceProjAbsolutePath);
 
@@ -122,30 +138,34 @@ namespace CodeLinker
             foreach (XElement sourceItem in sourceItemGroup.Elements())
             {
               string sourceElementName = sourceItem.Name.LocalName;
-              if (Settings.ItemElementsToSkip.Contains(sourceElementName.ToLower())) { continue; }
+
+              if (Settings.ItemElementsToSkip.Contains(sourceElementName.ToLower()))
+              {
+                continue;
+              }
 
               XAttribute attrib = sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude");
 
               if (attrib != null)
               {
-                string originalSourcePath  = attrib.Value;
+                string originalSourcePath = attrib.Value;
                 string trimmedOriginalSourcePath = originalSourcePath.Trim().ToLower();
 
-                IEnumerable<string> exclude = ExclusionsList 
-                  .Where(x => Operators.LikeString(trimmedOriginalSourcePath, x, CompareMethod.Text)).ToList(); // OW my eyes!
+                IEnumerable<string> exclude =
+                  ExclusionsList.Where(x => Operators.LikeString(trimmedOriginalSourcePath, x, CompareMethod.Text)).ToList(); // OW my eyes!
 
-                if ( exclude.Any() ) 
+                if (exclude.Any())
                 {
-                  Log.WriteLine( "Excluded: " + originalSourcePath     + Environment.NewLine + 
-                                 "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
-                                 "because you said to Exclude: " + exclude.FirstOrDefault() + Environment.NewLine);
+                  Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine + 
+                                "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
+                                "because you said to Exclude: " + exclude.FirstOrDefault() + Environment.NewLine);
                   continue;
                 }
 
-                List<string> include = InclusionsList
-                  .Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList(); // OW my eyes!
+                List<string> include =
+                  InclusionsList.Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList(); // OW my eyes!
 
-                if ( !InclusionsList.Any() || include.Any() )
+                if (!InclusionsList.Any() || include.Any())
                 {
                   if (!PathMaker.IsAbsolutePath(originalSourcePath))
                   {
@@ -154,63 +174,75 @@ namespace CodeLinker
                     {
                       string sourceFileName = Path.GetFileName(originalSourcePath); // wildcards blow up Path.GetFullPath()
                       string originalFolder = originalSourcePath;
-                      if (!string.IsNullOrEmpty(sourceFileName)) originalFolder = originalSourcePath.Replace(sourceFileName, "");
+
+                      if (!string.IsNullOrEmpty(sourceFileName))
+                      {
+                        originalFolder = originalSourcePath.Replace(sourceFileName, "");
+                      }
                       sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                       Linker.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
                     }
-                  
+
                     string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
-                  
+
                     if (!Settings.ItemElementsDoNotMakeRelativePath.Contains(sourceElementName.ToLower()))
+                    {
                       attrib.Value = relativePathFromDestination;
+                    }
                   }
-                  
+
                   IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
-                  
-                  if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))  // Folders, mostly
+
+                  if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower()))) // Folders, mostly
                   {
                     XElement linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
                     sourceItem.Add(linkElement);
                   }
                   newLinkedItemGroup.Add(sourceItem);
                   codezLinked++;
-                    
                 }
                 else
                 {
-                  Log.WriteLine( "Excluded: " + originalSourcePath     + Environment.NewLine + 
-                                 "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
-                                 "because it did not match anything on the Include: list " + Environment.NewLine);
+                  Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine + 
+                                "    from: " + sourceProjAbsolutePath + Environment.NewLine + 
+                                "because it did not match anything on the Include: list " + Environment.NewLine);
                 }
-                
               }
             }
 
-            if (newLinkedItemGroup.HasElements) { destProjXml.EndPlaceHolder.AddBeforeSelf(newLinkedItemGroup); }
+            if (newLinkedItemGroup.HasElements)
+            {
+              destProjXml.EndPlaceHolder.AddBeforeSelf(newLinkedItemGroup);
+            }
           }
-          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End LinkCodez from " + linkRelativeSource+ Environment.NewLine + 
-            "Linked " + codezLinked + " codez."));
+          destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End LinkCodez from " + linkRelativeSource + Environment.NewLine + 
+                                                                "Linked " + codezLinked + " codez."));
           totalCodezLinked += codezLinked;
 
           destProjXml.Keepers.RemoveAll(k => k.Attribute("Include").Value.Contains(sourceProjDirectory));
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
           Linker.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
         }
       }
 
 
       destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End of Linked Code" + Environment.NewLine + 
-        "See CodeLinkerLog.txt for details. CodeLinker by " + Settings.SourceCodeUrl + " "));
+                                                            "See CodeLinkerLog.txt for details. CodeLinker by " + Settings.SourceCodeUrl + " "));
 
       if (oldXml != destProjXml.ReadLinkedXml())
       {
         destProjXml.Save();
         Log.WriteLine("Linked " + totalCodezLinked + " codez from " + SourceProjList.Count + " source Project(s).");
       }
-      else Log.WriteLine("No changes, didn't save.");
+      else
+      {
+        Log.WriteLine("No changes, didn't save.");
+      }
 
       Log.WriteLine("----------------------------");
       Log.WriteLine();

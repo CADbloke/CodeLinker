@@ -23,38 +23,42 @@ namespace CodeLinker
     internal XComment       EndPlaceHolder;
     internal List<XElement> ItemGroups;
     internal XElement       RootXelement;
-    internal string         OldLinkedXml;
-    internal List<XElement> Keepers;
+    internal string         OldLinkedXml; // To see if this has changed and needs to be resaved
+    internal List<XElement> Keepers;      // These belong outside the Link Zone
 
 
     internal DestinationProjXml(string destProj)
     {
       DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
-      DestProjDirectory    = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
+      DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
 
       try
       {
         DestProjXdoc = XDocument.Load(DestProjAbsolutePath);
         RootXelement = DestProjXdoc.Element(Settings.MSBuild + "Project");
-        ItemGroups   = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
+        ItemGroups = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
       }
       catch (Exception e)
-      { Linker.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath); }
+      {
+        Linker.Crash(e, "Crash: DestProjXml CTOR loading destination XML from " + DestProjAbsolutePath);
+      }
 
       if (RootXelement == null)
-      { Linker.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath); }
+      {
+        Linker.Crash("Crash: No MSBuild Namespace in " + DestProjAbsolutePath);
+      }
 
       StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
-      EndPlaceHolder   = FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
+      EndPlaceHolder =   FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
 
       if (StartPlaceHolder == null && RootXelement != null)
-        {
-          XElement lastItemGroup = ItemGroups?.Last();
-          lastItemGroup?.AddAfterSelf(new XComment( Settings.EndPlaceholderComment   ));
-          lastItemGroup?.AddAfterSelf(new XComment( Settings.StartPlaceholderComment ));
-          StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
-          EndPlaceHolder   = FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
-        }
+      {
+        XElement lastItemGroup = ItemGroups?.Last();
+        lastItemGroup?.AddAfterSelf(new XComment(Settings.EndPlaceholderComment));
+        lastItemGroup?.AddAfterSelf(new XComment(Settings.StartPlaceholderComment));
+        StartPlaceHolder = FindCommentOrCrashIfDuplicatesFound(Settings.StartPlaceholderComment);
+        EndPlaceHolder =   FindCommentOrCrashIfDuplicatesFound(Settings.EndPlaceholderComment);
+      }
 
       OldLinkedXml = ReadLinkedXml();
       Keepers = new List<XElement>();
@@ -72,8 +76,6 @@ namespace CodeLinker
           {
             string oldLinkedXml = "<root>" + OldLinkedXml + "</root>";
 
-             
-
             if (oldLinkedXml.Contains("ItemGroup"))
             {
               XElement keeperElements = XElement.Parse(oldLinkedXml); // http://stackoverflow.com/a/11644640/492
@@ -82,12 +84,11 @@ namespace CodeLinker
               {
                 XAttribute xAttribute = descendant.Attribute("Include");
                 if (xAttribute != null && !xAttribute.Value.StartsWith(".."))
+                {
                   Keepers.Add(descendant); // keep stray code that is not a relative link. VS *may* have added it here.
+                }
               }
-
-              
             }
-
 
             if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder))
             {
@@ -99,11 +100,19 @@ namespace CodeLinker
             }
 
             foreach (XElement itemGroup in ItemGroups)
-              if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value))) itemGroup.Remove();
+            {
+              if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value)))
+              {
+                itemGroup.Remove();
+              }
+            }
 
             ItemGroups = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
           }
-          catch (Exception e) { Linker.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath); }
+          catch (Exception e)
+          {
+            Linker.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath);
+          }
         }
         Log.WriteLine("ok.");
       }
@@ -136,7 +145,9 @@ namespace CodeLinker
       List<XComment> placeholders = comments.Where(c => c.Value.ToLower().Trim().StartsWith(commentStartsWith.ToLower())).ToList();
 
       if (placeholders.Count > 1)
+      {
         Linker.Crash("ERROR: " + DestProjAbsolutePath + " has " + placeholders.Count + " XML comments with " + commentStartsWith);
+      }
 
       return placeholders.FirstOrDefault();
     }
@@ -148,17 +159,24 @@ namespace CodeLinker
       {
         ItemGroups = new List<XElement>();
         ItemGroups.AddRange(RootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
-        if (ItemGroups.Count == 0) Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+        if (ItemGroups.Count == 0)
+        {
+          Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+        }
 
         if (ItemGroups != null)
         {
           foreach (XElement itemGroup in ItemGroups)
           {
-            itemGroup.Elements().Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
-                                      (i.Attribute("Include") != null) && 
-                                       i.Attribute("Link")    == null).Remove();
+            itemGroup.Elements()
+                     .Where(i => !Settings.ItemElementsToSkip.Contains(i.Name.LocalName.ToLower()) && 
+                           (i.Attribute("Include") != null) && i.Attribute("Link") == null)
+                     .Remove();
 
-            if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value))) itemGroup.Remove();
+            if (itemGroup.IsEmpty || (!itemGroup.Descendants().Any() && string.IsNullOrEmpty(itemGroup.Value)))
+            {
+              itemGroup.Remove();
+            }
           }
           ItemGroups = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
           Log.WriteLine("Removed old Code from: " + DestProjAbsolutePath);
@@ -190,6 +208,7 @@ namespace CodeLinker
       Log.WriteLine("Added Source: " + source);
     }
 
+    /// <summary> Saves the Project and also preserves any <c>Keepers</c> - code that needs rescuing from the Link Zone. </summary>
     internal void Save()
     {
       if (Keepers.Any())
@@ -197,7 +216,7 @@ namespace CodeLinker
         XElement newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
         foreach (XElement keeper in Keepers)
         {
-          newItemGroup.Add(keeper); 
+          newItemGroup.Add(keeper);
           Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild.ToString() + "\"", ""));
         }
         EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the LinkCodez zone.

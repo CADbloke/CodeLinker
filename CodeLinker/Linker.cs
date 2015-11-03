@@ -8,8 +8,9 @@ namespace CodeLinker
 {
   public static class Linker
   {
-    static List<DestinationProjLinker> linkers = new List<DestinationProjLinker>();
+    private static List<DestinationProjLinker> linkers = new List<DestinationProjLinker>();
     internal static bool NoConfirm = false;
+
     public static void LinkCodez(string[] args)
     {
       linkers.Clear();
@@ -32,8 +33,8 @@ namespace CodeLinker
         Finish();
       }
 
-      bool doSubDirectories = (argsList.Contains("/s",         StringComparer.CurrentCultureIgnoreCase));
-      NoConfirm             = (argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase));
+      bool doSubDirectories = (argsList.Contains("/s", StringComparer.CurrentCultureIgnoreCase));
+      NoConfirm = (argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase));
 
 
       if (!string.IsNullOrEmpty(argsList[0]))
@@ -44,7 +45,7 @@ namespace CodeLinker
           {
             Log.WriteLine("Queueing Code Link from: " + argsList[0] + " to " + argsList[1]);
             linkers.Add(new DestinationProjLinker(sourceProj: argsList[0], destProj: argsList[1]));
-          }
+          } 
           else
           {
             Log.WriteLine("Queueing Code Link to: " + argsList[0] + ". Source TBA.");
@@ -54,11 +55,11 @@ namespace CodeLinker
 
         else if (argsList[0].ToLower() == "strip")
         {
-          if (argsCount >1)
+          if (argsCount > 1)
           {
             if (args[1].IsaCsOrVbProjFile())
             {
-              DestinationProjXml destinationProjXml = new DestinationProjXml(args[1]); 
+              DestinationProjXml destinationProjXml = new DestinationProjXml(args[1]);
               destinationProjXml.ClearOldLinkedCode();
               destinationProjXml.Save();
               Finish("Stripped all code from " + args[1]);
@@ -78,7 +79,10 @@ namespace CodeLinker
                   destinationProjXml.Save();
                 }
               }
-              catch (Exception e) { Crash(e, "Stripping Code from Folder: "+ args[1] + " didn't work. Bad name?"); }
+              catch (Exception e)
+              {
+                Crash(e, "Stripping Code from Folder: " + args[1] + " didn't work. Bad name?");
+              }
               Finish("Stripped all code");
             }
           }
@@ -86,20 +90,25 @@ namespace CodeLinker
 
         else if (argsList[0].ToLower() == "new")
         {
-          if (argsCount >2)
+          if (argsCount > 2)
           {
             if (args[1].IsaCsOrVbProjFile())
             {
               string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, args[1]);
-              try { ProjectMaker.NewProject(sourcePath, args[2]); }
+              try
+              {
+                ProjectMaker.NewProject(sourcePath, args[2]);
+              }
               catch (Exception e)
-              { Crash(e, "Linking "+ args[1] +  " to " + args[2] + " didn't work. Bad name?"); }
+              {
+                Crash(e, "Linking " + args[1] + " to " + args[2] + " didn't work. Bad name?");
+              }
 
-              Finish("Linked " + " from " + args[1] +  " to " + args[2]);
+              Finish("Linked " + " from " + args[1] + " to " + args[2]);
             }
 
             else
-            { 
+            {
               try
               {
                 List<string> sourceProjFiles = GetProjectsFromFolders(argsList[1], doSubDirectories);
@@ -109,9 +118,14 @@ namespace CodeLinker
                   if (sourceProjFile.IsaCsOrVbProjFile())
                   {
                     string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProjFile);
-                    try { ProjectMaker.NewProject(sourcePath, args[2]); }
+                    try
+                    {
+                      ProjectMaker.NewProject(sourcePath, args[2]);
+                    }
                     catch (Exception e)
-                     { Crash( e, "Linking " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?"); }
+                    {
+                      Crash(e, "Linking " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?");
+                    }
 
                     Log.WriteLine("Linked " + " from " + sourceProjFile + " to " + args[2]);
                   }
@@ -121,7 +135,10 @@ namespace CodeLinker
                   }
                 }
               }
-              catch (Exception e) { Crash( e, "Linking Projects from Folder: " + args[1] + " didn't work. Bad name?"); }
+              catch (Exception e)
+              {
+                Crash(e, "Linking Projects from Folder: " + args[1] + " didn't work. Bad name?");
+              }
 
               Finish("Linked Projects");
             }
@@ -140,15 +157,21 @@ namespace CodeLinker
               linkers.Add(new DestinationProjLinker(destProjFile));
             }
           }
-            catch (Exception e) { Crash(e, "Queueing Code Link didn't work. Bad file name?"); }
+          catch (Exception e)
+          {
+            Crash(e, "Queueing Code Link didn't work. Bad file name?");
+          }
         }
-        
 
 
-        if (!linkers.Any()) 
+
+        if (!linkers.Any())
         {
           string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
-          foreach (string arg in args) { errorMessage += arg + Environment.NewLine; }
+          foreach (string arg in args)
+          {
+            errorMessage += arg + Environment.NewLine;
+          }
           Crash(errorMessage);
         }
 
@@ -161,10 +184,11 @@ namespace CodeLinker
     }
 
 
-    private static List<string> GetProjectsFromFolders(string rootFolder, bool subDirectories = false)
+    private static List<string> GetProjectsFromFolders(string rootFolder, bool doSubDirectories = false)
     {
       string destinationsDirectory = rootFolder;
-      if (!PathMaker.IsAbsolutePath(rootFolder)) {
+      if (!PathMaker.IsAbsolutePath(rootFolder))
+      {
         destinationsDirectory = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, rootFolder);
       }
 
@@ -174,14 +198,19 @@ namespace CodeLinker
         {
           List<string> destProjFiles = new List<string>();
 
-          SearchOption includeSubs = subDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+          SearchOption includeSubs = doSubDirectories
+            ? SearchOption.AllDirectories
+            : SearchOption.TopDirectoryOnly;
+
           destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.csproj", includeSubs));
           destProjFiles.AddRange(Directory.GetFiles(destinationsDirectory, "*.vbproj", includeSubs));
 
           return destProjFiles;
         }
         catch (Exception e)
-         { Crash(e, "Getting Projects in " + rootFolder + " didn't work. Bad name?"); }
+        {
+          Crash(e, "Getting Projects in " + rootFolder + " didn't work. Bad name?");
+        }
       }
 
       return new List<string>(); // because complain no return path
@@ -191,19 +220,22 @@ namespace CodeLinker
     internal static void Finish(string message = "")
     {
       message += "Finished recycling " + linkers.Count + " Project"; // writes to VS window
-      if (linkers.Count != 1) { message += "s"; }
+      if (linkers.Count != 1)
+      {
+        message += "s";
+      }
       message += "." + Environment.NewLine;
 
       foreach (DestinationProjLinker linker in linkers)
       {
         message += "from :" + String.Join(",", linker.SourceProjList.ToArray());
-        message += " to  :" + linker.DestProjAbsolutePath + Environment.NewLine;
+        message += "  to :" + linker.DestProjAbsolutePath + Environment.NewLine;
       }
       Console.WriteLine(message);
       Environment.Exit(0);
     }
 
-    
+
     internal static void Crash(Exception e, string crashedAt = "")
     {
       string message = "I crashed at " + crashedAt + ". Whups. See CodeLinkerLog.txt for details.";

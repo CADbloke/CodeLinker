@@ -63,7 +63,6 @@ namespace CodeLinker
           logger.WriteLine("==========================");
           logger.WriteLine();
         }
-        
       }
     }
 

@@ -10,12 +10,18 @@ namespace CodeLinker
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool Ask(string message, string caption = "Hey!")
     {
-      if (Linker.NoConfirm) { return true; }
+      if (Linker.NoConfirm)
+      {
+        return true;
+      }
       Console.WriteLine(message);
       Console.WriteLine("Y/N ?");
       ConsoleKeyInfo yn = Console.ReadKey();
 
-      if (yn.KeyChar.ToString().ToLower() == "y") return true;
+      if (yn.KeyChar.ToString().ToLower() == "y")
+      {
+        return true;
+      }
 
       return false;
     }
@@ -26,13 +32,22 @@ namespace CodeLinker
     /// <param name="caption">  The caption for the Messagebox. Default is &quot;Hey!&quot; </param>
     internal static bool? OrCancel(string message, string caption = "Hey!")
     {
-      if (Linker.NoConfirm) { return true; }
+      if (Linker.NoConfirm)
+      {
+        return true;
+      }
       Console.WriteLine(message);
       Console.WriteLine("Y/N or C for Cancel ?");
       ConsoleKeyInfo yn = Console.ReadKey();
 
-      if (yn.KeyChar.ToString().ToLower() == "y") return true;
-      if (yn.KeyChar.ToString().ToLower() == "c") return null;
+      if (yn.KeyChar.ToString().ToLower() == "y")
+      {
+        return true;
+      }
+      if (yn.KeyChar.ToString().ToLower() == "c")
+      {
+        return null;
+      }
 
       return false;
     }
@@ -41,6 +56,5 @@ namespace CodeLinker
     {
       Console.WriteLine(message);
     }
-
   }
 }
