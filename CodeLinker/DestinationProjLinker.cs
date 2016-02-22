@@ -116,8 +116,11 @@ namespace CodeLinker
                                       where attrib != null
                                       select attrib.Value.ToLower()).ToList();
 
-      Log.WriteLine("These are already include so will not be linked...");
-      Log.WriteLine(alreadyIncluded);
+      if (alreadyIncluded.Count>1)
+      {
+        Log.WriteLine("These are already include so will not be linked...");
+        Log.WriteLine(alreadyIncluded);
+      }
 
       foreach (string sourcePath in SourceProjList)
       {
