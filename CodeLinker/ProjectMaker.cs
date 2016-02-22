@@ -75,6 +75,8 @@ namespace CodeLinker
           destinationProjXml.ClearStartPlaceholderContent();
           destinationProjXml.AddExclusion("app.config");
           Log.WriteLine("...because a linked App.config will cause problems when you change build settings.");
+          destinationProjXml.AddExclusion("packages.config");
+          Log.WriteLine("...because nuget's packages.config will cause problems when you change build settings.");
           destinationProjXml.ClearAllExistingCodeExceptExplicitlyLinked();
 
           foreach (string source in sources)
