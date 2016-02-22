@@ -223,11 +223,24 @@ namespace CodeLinker
 
     private void linkButton_Click(object sender, EventArgs e)
     {
-      if (string.IsNullOrEmpty(DestinationProjectFolderTextBox.Text) || !Directory.Exists(DestinationProjectFolderTextBox.Text))
+      if (string.IsNullOrEmpty(DestinationProjectFolderTextBox.Text))
       {
         DestinationProjectFolderTextBox.BackColor = Color.BlanchedAlmond;
         return;
       }
+
+      if (!Directory.Exists(DestinationProjectFolderTextBox.Text))
+        try
+        {
+          Directory.CreateDirectory(DestinationProjectFolderTextBox.Text);
+        }
+        catch (Exception exception)
+        {
+          DestinationProjectFolderTextBox.BackColor = Color.BlanchedAlmond;
+          DestinationProjectFolderTextBox.Text = exception.Message;
+          return;
+        }
+
       ProjectMaker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
       CheckProjectsList();
     }
