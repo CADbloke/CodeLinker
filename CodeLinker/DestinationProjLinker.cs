@@ -268,7 +268,7 @@ namespace CodeLinker
                 long   destSize = new FileInfo(destFile).Length;
                 if (sourceSize != destSize) // ie. it is probably a different file.
                 {
-                  Log.WriteLine($"WARNING: Overwriting {sourceFile}");
+                  Log.WriteLine($"WARNING: Overwriting {destFile}");
                   Log.WriteLine($"Source: {sourceSize} bytes, Dest: {destSize} Bytes.");
                 }
               }
