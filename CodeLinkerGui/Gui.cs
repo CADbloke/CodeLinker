@@ -14,6 +14,7 @@ namespace CodeLinker
   public partial class Gui : Form
   {
     public BindingSource source;
+    public ToolTip toolTip = new ToolTip(); 
 
     public Gui()
     {
@@ -24,8 +25,9 @@ namespace CodeLinker
       projectListDataGridView.Columns[0].FillWeight = 5;
       projectListDataGridView.Columns[1].FillWeight = 2;
       source.AddingNew += OnAddingNewToBindingSource;
+      this.toolTip.SetToolTip(SourceProjectFolderTextBox, "You can drag a folder from Windows Explorer to here.");
+      this.toolTip.SetToolTip(DestinationProjectFolderTextBox, "You can drag a folder from Windows Explorer to here.");
     }
-
 
     private BindingList<ProjectToLink> projectsList = new BindingList<ProjectToLink>();
 
@@ -155,12 +157,28 @@ namespace CodeLinker
 
       DestinationProjectFolderTextBox.Text = folderBrowser.SelectedPath;
       DestinationProjectFolderTextBox.BackColor = SourceProjectFolderTextBox.BackColor;
+
       CheckProjectsList();
     }
 
 
-    private void CheckProjectsList(object sender = null, EventArgs e = null)
+    private void CheckProjectsList()
     {
+      CheckProjectsList(null, null, false);
+    }
+
+    private void CheckProjectsList(object sender, EventArgs e)
+    {
+      CheckProjectsList(sender, e, false);
+    }
+    private void CheckProjectsList(object sender , EventArgs e, bool justCloned = false)
+    {
+      StatusLabel.Text = string.Empty;
+      int missingSourceProjects = 0;
+      int duplicateDestinationsListed = 0;
+      int existingDestinationProjects = 0;
+
+
       foreach (DataGridViewRow row in projectListDataGridView.Rows)
       {
         if (row.Cells[1]?.Value != null) // source
@@ -171,6 +189,7 @@ namespace CodeLinker
             row.Cells[0].Style.ForeColor = Color.OrangeRed;
             row.Cells[0].Style.Font = new Font(projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Bold);
             row.Cells[0].ToolTipText += "Source Project does not exist on disk.";
+            missingSourceProjects ++;
           }
           else
           {
@@ -186,6 +205,7 @@ namespace CodeLinker
           {
             row.Cells[1].Style.BackColor = Color.BlanchedAlmond;
             row.Cells[1].ToolTipText = "Destination is listed more than once. ";
+            duplicateDestinationsListed++;
           }
           else
           {
@@ -196,9 +216,10 @@ namespace CodeLinker
           string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text ?? "", row.Cells[1].Value.ToString());
           if (File.Exists(pathToCheck))
           {
-            row.Cells[1].Style.ForeColor = Color.OrangeRed;
+            row.Cells[1].Style.ForeColor = justCloned? Color.Green: Color.OrangeRed;
             row.Cells[1].Style.Font = new Font(projectListDataGridView.RowTemplate.DefaultCellStyle.Font, FontStyle.Bold);
             row.Cells[1].ToolTipText += "Destination Project already exists on disk.";
+            existingDestinationProjects++;
           }
           else
           {
@@ -207,18 +228,29 @@ namespace CodeLinker
           }
         }
       }
+
+      StatusLabel.Text += missingSourceProjects > 0
+                            ? $"Missing {missingSourceProjects} Source Projects. "
+                            : "";
+      StatusLabel.Text += duplicateDestinationsListed > 0
+                            ? $"{duplicateDestinationsListed} Duplicate Destination Projects specified. "
+                            : "";
+      StatusLabel.Text += existingDestinationProjects > 0
+                            ? $"Found {existingDestinationProjects} Destination Projects that already exist."
+                            : "";
+
       projectListDataGridView.Refresh();
     }
 
 
     private void CheckProjectsList(object sender, DataGridViewCellEventArgs e)
     {
-      CheckProjectsList(sender, (EventArgs)e);
+      CheckProjectsList(sender, (EventArgs)e, false);
     }
 
     private void CheckProjectsList(object sender, DataGridViewRowsRemovedEventArgs e)
     {
-      CheckProjectsList(sender, (EventArgs)e);
+      CheckProjectsList(sender, (EventArgs)e, false);
     }
 
     private void linkButton_Click(object sender, EventArgs e)
@@ -242,7 +274,8 @@ namespace CodeLinker
         }
 
       ProjectMaker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
-      CheckProjectsList();
+      CheckProjectsList(null, null, justCloned: true);
+      StatusLabel.Text = $"Cloned {projectsList.Count} projects.";
     }
 
 
