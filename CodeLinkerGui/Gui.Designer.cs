@@ -38,9 +38,9 @@ namespace CodeLinker
       this.DestinationProjectFolderTextBox = new System.Windows.Forms.TextBox();
       this.projectListDataGridView = new System.Windows.Forms.DataGridView();
       this.linkButton = new System.Windows.Forms.Button();
-      this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
       this.StatusLabel = new System.Windows.Forms.Label();
       this.OpenTheLogFileButton = new System.Windows.Forms.Button();
+      this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
       this.SuspendLayout();
@@ -126,12 +126,9 @@ namespace CodeLinker
       this.linkButton.UseVisualStyleBackColor = true;
       this.linkButton.Click += new System.EventHandler(this.linkButton_Click);
       // 
-      // guiBindingSource
-      // 
-      this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
-      // 
       // StatusLabel
       // 
+      this.StatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.StatusLabel.Location = new System.Drawing.Point(13, 426);
       this.StatusLabel.Name = "StatusLabel";
       this.StatusLabel.Size = new System.Drawing.Size(671, 23);
@@ -148,6 +145,10 @@ namespace CodeLinker
       this.OpenTheLogFileButton.Text = "Open Log File";
       this.OpenTheLogFileButton.UseVisualStyleBackColor = true;
       this.OpenTheLogFileButton.Click += new System.EventHandler(this.OpenTheLogFileButton_Click);
+      // 
+      // guiBindingSource
+      // 
+      this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
       // 
       // Gui
       // 
