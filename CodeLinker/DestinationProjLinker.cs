@@ -29,7 +29,7 @@ namespace CodeLinker
     /// <summary> Code Files to be excluded from the Link. </summary>
     internal List<string> ExclusionsList { get; }
 
-    /// <summary> Code Files to be Included from the recycle. </summary>
+    /// <summary> Code Files to be Included in the recycle. </summary>
     internal List<string> InclusionsList { get; }
 
 
@@ -108,6 +108,17 @@ namespace CodeLinker
 
       int totalCodezLinked = 0;
 
+      List<string> alreadyIncluded = (from sourceItemGroup in destProjXml.ItemGroups
+                                      from sourceItem in sourceItemGroup.Elements()
+                                      where !Settings.ItemElementsToSkip.Contains(sourceItem.Name.LocalName.ToLower())
+                                      select sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude")
+                                      into attrib
+                                      where attrib != null
+                                      select attrib.Value.ToLower()).ToList();
+
+      Log.WriteLine("These are already include so will not be linked...");
+      Log.WriteLine(alreadyIncluded);
+
       foreach (string sourcePath in SourceProjList)
       {
         int codezLinked = 0;
@@ -164,6 +175,14 @@ namespace CodeLinker
                   continue;
                 }
 
+                if (alreadyIncluded.IndexOf(trimmedOriginalSourcePath) > -1)
+                {
+                  Log.WriteLine("Skipped: " + originalSourcePath + Environment.NewLine +
+                                 "    from: " + sourceProjAbsolutePath + Environment.NewLine +
+                                 "because there is a file with the same path in the destination project." + Environment.NewLine);
+                  continue;
+                }
+                
                 List<string> include =
                   InclusionsList.Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList(); // OW my eyes!
 
@@ -205,6 +224,7 @@ namespace CodeLinker
                   }
                   newLinkedItemGroup.Add(sourceItem);
                   codezLinked++;
+                  alreadyIncluded.Add(originalSourcePath);
                 }
                 else
                 {
