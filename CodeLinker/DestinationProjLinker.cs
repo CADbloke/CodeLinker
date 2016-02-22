@@ -246,14 +246,45 @@ namespace CodeLinker
           destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End Link from " + linkRelativeSource + Environment.NewLine + 
                                                                 "Linked " + codezLinked + " codez."));
           totalCodezLinked += codezLinked;
-
+          // so we don't link things twice...
           destProjXml.Keepers.RemoveAll(k => k.Attribute("Include").Value.Contains(sourceProjDirectory));
+
+          // copy Source project Resources so *.resx files don't break. Warning: Last one wins so weird race condition lives here
+          string sourceResources = sourceProjDirectory + "\\Resources";
+          if (Directory.Exists(sourceResources))
+          {
+            string destResourcesPath = DestProjDirectory + "\\Resources";
+            Log.WriteLine($"Copying all Files from {sourceResources} to {destResourcesPath}.");
+
+            if (!Directory.Exists(destResourcesPath))
+              Directory.CreateDirectory(destResourcesPath);
+
+              foreach (string sourceFile in Directory.GetFiles(sourceResources))
+              {
+                string destFile = destResourcesPath + "\\" + Path.GetFileName(sourceFile);
+              if (File.Exists(destFile))
+              {
+                long sourceSize = new FileInfo(sourceFile).Length;
+                long   destSize = new FileInfo(destFile).Length;
+                if (sourceSize != destSize) // ie. it is probably a different file.
+                {
+                  Log.WriteLine($"WARNING: Overwriting {sourceFile}");
+                  Log.WriteLine($"Source: {sourceSize} bytes, Dest: {destSize} Bytes.");
+                }
+              }
+
+              File.Copy(sourceFile, Path.Combine(destResourcesPath, Path.GetFileName(sourceFile)), overwrite: true);
+              Log.WriteLine($"Copied {sourceFile}");
+            }
+
+            Log.WriteLine($"Copied all Files from {sourceResources} to {destResourcesPath}." + Environment.NewLine);
+          }
         }
         catch (Exception e)
         {
           App.Crash(e, "Recycling " + sourcePath + " to " + DestProjAbsolutePath);
         }
-      }
+      } // end foreach source project
 
 
       destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End of Linked Code" + Environment.NewLine + 
