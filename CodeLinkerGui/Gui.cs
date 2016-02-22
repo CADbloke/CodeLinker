@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -285,6 +286,11 @@ namespace CodeLinker
       {
         source.RemoveAt(source.Count - 1);
       }
+    }
+
+    private void OpenTheLogFileButton_Click(object sender, EventArgs e)
+    {
+      Process.Start(Log.logFile);
     }
   }
 }

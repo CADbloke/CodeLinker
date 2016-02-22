@@ -39,6 +39,8 @@ namespace CodeLinker
       this.projectListDataGridView = new System.Windows.Forms.DataGridView();
       this.linkButton = new System.Windows.Forms.Button();
       this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
+      this.StatusLabel = new System.Windows.Forms.Label();
+      this.OpenTheLogFileButton = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
       this.SuspendLayout();
@@ -128,11 +130,32 @@ namespace CodeLinker
       // 
       this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
       // 
+      // StatusLabel
+      // 
+      this.StatusLabel.Location = new System.Drawing.Point(13, 426);
+      this.StatusLabel.Name = "StatusLabel";
+      this.StatusLabel.Size = new System.Drawing.Size(671, 23);
+      this.StatusLabel.TabIndex = 7;
+      this.StatusLabel.Text = "hello";
+      // 
+      // OpenTheLogFileButton
+      // 
+      this.OpenTheLogFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.OpenTheLogFileButton.Location = new System.Drawing.Point(690, 426);
+      this.OpenTheLogFileButton.Name = "OpenTheLogFileButton";
+      this.OpenTheLogFileButton.Size = new System.Drawing.Size(88, 23);
+      this.OpenTheLogFileButton.TabIndex = 8;
+      this.OpenTheLogFileButton.Text = "Open Log File";
+      this.OpenTheLogFileButton.UseVisualStyleBackColor = true;
+      this.OpenTheLogFileButton.Click += new System.EventHandler(this.OpenTheLogFileButton_Click);
+      // 
       // Gui
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(884, 461);
+      this.Controls.Add(this.OpenTheLogFileButton);
+      this.Controls.Add(this.StatusLabel);
       this.Controls.Add(this.linkButton);
       this.Controls.Add(this.projectListDataGridView);
       this.Controls.Add(this.DestinationProjectFolderTextBox);
@@ -157,6 +180,8 @@ namespace CodeLinker
     private System.Windows.Forms.DataGridView projectListDataGridView;
     private System.Windows.Forms.Button linkButton;
     private System.Windows.Forms.BindingSource guiBindingSource;
+    private Label StatusLabel;
+    private Button OpenTheLogFileButton;
   }
 }
 
