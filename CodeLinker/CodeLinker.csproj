@@ -65,9 +65,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(TargetPath) ..\..\..\_Builds\CodeLinker-3.5\CodeLinker-3.5.csproj
-$(TargetPath)  ..\..\..\CodeLinkerGui\CodeLinkerGui.csproj
-$(TargetPath)  ..\..\..\_Builds\CodeLinker-3.5\CodeLinkerGui-3.5.csproj
+    <PostBuildEvent>$(TargetPath)  ..\..\..\CodeLinkerGui\CodeLinkerGui.csproj
+$(TargetPath)  ..\..\..\_Builds\ /s
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
