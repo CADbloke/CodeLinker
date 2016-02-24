@@ -9,6 +9,7 @@ namespace CodeLinker
   internal static class Log
   {
     internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeLinkerLog.txt";
+    internal static bool WriteToConsole = false;
 
     static Log()
     {
@@ -29,7 +30,7 @@ namespace CodeLinker
         foreach (string line in lines)
         {
           sw.WriteLine(line); 
-          Console.WriteLine(line);
+          if(WriteToConsole) Console.WriteLine(line);
         }
       }
     }
@@ -46,7 +47,8 @@ namespace CodeLinker
       WriteLine(e.ToString());
       WriteLine(e.InnerException?.ToString());
       Console.WriteLine(e.ToString());
-      Console.WriteLine(e.InnerException?.ToString());
+      if (WriteToConsole)
+        Console.WriteLine(e.InnerException?.ToString());
     }
 
 
