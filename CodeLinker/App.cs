@@ -36,6 +36,7 @@ namespace CodeLinker
             }
 
             bool doSubDirectories = argsList.Contains("/s", StringComparer.CurrentCultureIgnoreCase);
+            bool createSubDirectories = argsList.Contains("/f", StringComparer.CurrentCultureIgnoreCase);
             Log.WriteToConsole = !argsList.Contains("/stfu", StringComparer.CurrentCultureIgnoreCase);
             NoConfirm = argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase);
 
@@ -100,7 +101,7 @@ namespace CodeLinker
                             string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, args[1]);
                             try
                             {
-                                ProjectMaker.NewProject(sourcePath, args[2]);
+                                ProjectMaker.NewProject(sourcePath, args[2], createSubDirectories);
                             }
                             catch (Exception e)
                             {
@@ -123,7 +124,7 @@ namespace CodeLinker
                                         string sourcePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, sourceProjFile);
                                         try
                                         {
-                                            ProjectMaker.NewProject(sourcePath, args[2]);
+                                            ProjectMaker.NewProject(sourcePath, args[2], createSubDirectories);
                                         }
                                         catch (Exception e)
                                         {

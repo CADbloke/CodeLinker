@@ -11,13 +11,12 @@ namespace CodeLinker
     internal static class ProjectMaker
     {
         /// <summary> Copies and links a List of Projects into the <c> destinationFolder </c>.
-        ///    <para> File is Linked from the first <c> projectsToLink </c> for each if there is more than 1 source. </para>
-        /// </summary>
+        ///    <para> File is Linked from the first <c> projectsToLink </c> for each if there is more than 1 source. </para> </summary>
         /// <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null or empty. </exception>
-        /// <param name="projectsToLink"> The projects to Link. </param>
-        /// <param name="destinationFolder"> Pathname of the destination folder. Empty string throws <c> ArgumentNullException </c>
-        /// </param>
-        internal static void NewProject(List<ProjectToLink> projectsToLink, string destinationFolder)
+        /// <param name="projectsToLink"> a List of projects to Link. </param>
+        /// <param name="destinationFolder"> Pathname of the destination folder. Empty string throws <c>ArgumentNullException</c></param>
+        /// <param name="createSubFolders"> True (default) if you want each now project in its own subfolder. </param>
+        internal static void NewProject(List<ProjectToLink> projectsToLink, string destinationFolder, bool createSubFolders = true)
         {
             if (projectsToLink == null)
                 throw new ArgumentNullException(nameof(projectsToLink));
@@ -29,7 +28,9 @@ namespace CodeLinker
 
             foreach (string destinationProject in destinationProjects)
             {
-                string destinationProjPath = Path.Combine(destinationFolder, destinationProject);
+                string destinationProjPath = createSubFolders
+                    ? Path.Combine(destinationFolder + "\\" + Path.GetFileNameWithoutExtension(destinationProject), destinationProject)
+                    : Path.Combine(destinationFolder, destinationProject);
                 if (File.Exists(destinationProjPath))
                 {
                     bool overwriteExisting = YesOrNo.Ask(destinationProjPath + Environment.NewLine +
@@ -68,6 +69,7 @@ namespace CodeLinker
                 if (sources.Any())
                 {
                     Log.WriteLine("Recycling to :" + destinationProjPath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(destinationProjPath)); // safe. Doesn't care if it already exists.
                     File.Copy(sources[0], destinationProjPath, true);
                     var destinationProjXml = new DestinationProjXml(destinationProjPath);
                     destinationProjXml.ClearOldLinkedCode();
@@ -94,14 +96,14 @@ namespace CodeLinker
             }
         }
 
-        internal static void NewProject(ProjectToLink projectsToLink, string destinationFolder)
+        internal static void NewProject(ProjectToLink projectsToLink, string destinationFolder, bool createSubFolders = true)
         {
-            NewProject(new List<ProjectToLink> { projectsToLink }, destinationFolder);
+            NewProject(new List<ProjectToLink> { projectsToLink }, destinationFolder, createSubFolders);
         }
 
-        internal static void NewProject(string projectToLink, string destinationFolder)
+        internal static void NewProject(string projectToLink, string destinationFolder, bool createSubFolders = true)
         {
-            NewProject(new List<ProjectToLink> { new ProjectToLink { SourceProject = projectToLink } }, destinationFolder);
+            NewProject(new List<ProjectToLink> { new ProjectToLink { SourceProject = projectToLink } }, destinationFolder, createSubFolders);
         }
     }
 }

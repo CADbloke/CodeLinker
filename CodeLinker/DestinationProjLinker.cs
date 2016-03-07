@@ -227,7 +227,6 @@ namespace CodeLinker
                                                     }
                                                 }
                                             }
-                                            
                                             else
                                             {
                                                 try

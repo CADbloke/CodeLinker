@@ -36,6 +36,7 @@ namespace CodeLinker
             WriteLine("new      Copies the Source to the Destination path and strips the contents.");
             WriteLine("         Creates new project file(s) with a placeholder + Source.");
             WriteLine("         For Folders it copies all Projects to the same destination Folder.");
+            WriteLine("/f       Create SubFolders for all new Projects.");
             WriteLine();
             WriteLine("Source Solution Root  (optional)");
             WriteLine("         The root of the solution containing the projects to Link.");

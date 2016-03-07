@@ -252,7 +252,7 @@ namespace CodeLinker
                 }
             }
 
-            ProjectMaker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text);
+            ProjectMaker.NewProject(projectsList.ToList(), DestinationProjectFolderTextBox.Text, CreateSubFoldersChk.Checked);
             CheckProjectsList(null, null, true);
             StatusLabel.Text = $"Cloned {projectsList.Count} projects.";
         }
