@@ -36,7 +36,7 @@ namespace CodeLinker
             }
 
             bool doSubDirectories = argsList.Contains("/s", StringComparer.CurrentCultureIgnoreCase);
-            bool createSubDirectories = argsList.Contains("/f", StringComparer.CurrentCultureIgnoreCase);
+            bool createSubDirectories = !argsList.Contains("/nosub", StringComparer.CurrentCultureIgnoreCase);
             Log.WriteToConsole = !argsList.Contains("/stfu", StringComparer.CurrentCultureIgnoreCase);
             NoConfirm = argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase);
 
