@@ -195,7 +195,11 @@ namespace CodeLinker
                         row.Cells[1].ToolTipText = "";
                     }
 
-                    string pathToCheck = Path.Combine(DestinationProjectFolderTextBox.Text ?? "", row.Cells[1].Value.ToString());
+                    string pathToCheck = CreateSubFoldersChk.Checked
+                        ? Path.Combine(DestinationProjectFolderTextBox.Text + "\\"+ Path.GetFileNameWithoutExtension(row.Cells[1].Value.ToString())
+                            ?? "", row.Cells[1].Value.ToString())
+                        :Path.Combine(DestinationProjectFolderTextBox.Text ?? "", row.Cells[1].Value.ToString());
+
                     if (File.Exists(pathToCheck))
                     {
                         row.Cells[1].Style.ForeColor = justCloned

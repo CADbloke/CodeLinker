@@ -153,6 +153,7 @@ namespace CodeLinker
             // 
             // CreateSubFoldersChk
             // 
+            this.CreateSubFoldersChk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CreateSubFoldersChk.AutoSize = true;
             this.CreateSubFoldersChk.Checked = true;
             this.CreateSubFoldersChk.CheckState = System.Windows.Forms.CheckState.Checked;
