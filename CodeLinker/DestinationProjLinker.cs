@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
@@ -184,7 +185,7 @@ namespace CodeLinker
                                 {
                                     if (!PathMaker.IsAbsolutePath(originalSourcePath))
                                     {
-                                        var sourceAbsolutePath = "";
+                                        var sourcePathFromDestination = "";
                                         try
                                         {
                                             string sourceFileName = Path.GetFileName(originalSourcePath); // wildcards blow up Path.GetFullPath()
@@ -193,18 +194,63 @@ namespace CodeLinker
                                             if (!string.IsNullOrEmpty(sourceFileName))
                                                 originalFolder = originalSourcePath.Replace(sourceFileName, "");
 
-                                            sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
+                                            string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
+
+                                            sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
+                                        }
+
+                                        catch (ArgumentException badArg)
+                                        {
+                                            if (badArg.Message.Contains("Illegal characters in path")) 
+                                            {
+                                                if (Regex.IsMatch(originalSourcePath, @"^[a-zA-Z]:\\")) // is already an absolute path
+                                                    sourcePathFromDestination = originalSourcePath;
+
+                                                else if (Regex.IsMatch(originalSourcePath, @"\*\*")) // it is **\*.* or something  awkward like that.
+                                                {
+                                                    string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceProjDirectory);
+                                                    sourcePathFromDestination = relativeFolderPathFromDestination + "\\" + originalSourcePath;
+                                                    var linkElement = new XElement(Settings.MSBuild + "Link", @"%(RecursiveDir)%(Filename)%(Extension)");
+                                                    sourceItem.Add(linkElement);
+                                                }
+                                                else
+                                                {
+                                                    try
+                                                    {
+                                                        string originalFolder = originalSourcePath.Substring(0, originalSourcePath.LastIndexOf("\\"));
+                                                        string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", originalFolder);
+                                                        sourcePathFromDestination = relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\"));
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        App.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
+                                                    }
+                                                }
+                                            }
+                                            
+                                            else
+                                            {
+                                                try
+                                                {
+                                                    string originalFolder = originalSourcePath.Substring(0, originalSourcePath.LastIndexOf("\\"));
+                                                    string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", originalFolder);
+                                                    sourcePathFromDestination = relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\"));
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    App.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
+                                                }
+                                            }
                                         }
                                         catch (Exception e)
                                         {
                                             App.Crash(e, "Recycling. GetFullPath: " + sourceProjDirectory + "\\" + originalSourcePath);
                                         }
 
-                                        string relativePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\",
-                                                                                                        sourceAbsolutePath);
+                                        
 
                                         if (!Settings.ItemElementsDoNotMakeRelativePath.Contains(sourceElementName.ToLower()))
-                                            attrib.Value = relativePathFromDestination;
+                                            attrib.Value = sourcePathFromDestination;
                                     }
 
                                     IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");

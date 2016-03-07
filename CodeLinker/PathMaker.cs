@@ -12,7 +12,7 @@ namespace CodeLinker
         ///     Returns <c> toPath </c> if paths are not related. </summary>
         /// <exception cref="ArgumentNullException"> . </exception>
         /// <param name="fromPath"> Where you are now. Contains the directory that defines the start of the relative path. </param>
-        /// <param name="toPath"> Where you want o end up.  Contains the path that defines the endpoint of the relative path. </param>
+        /// <param name="toPath"> Where you want to end up.  Contains the path that defines the endpoint of the relative path. </param>
         /// <returns> The relative path from the start directory to the end path or <c> toPath </c> if the paths are not related. </returns>
         /// <exception cref="UriFormatException"> . </exception>
         /// <exception cref="InvalidOperationException"> . </exception>
