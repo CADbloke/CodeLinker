@@ -94,7 +94,7 @@ namespace CodeLinker
                 return true;
             if (File.Exists(possibleRelativePath))
                 return true;
-            if (Path.IsPathRooted(possibleRelativePath))
+            if (Path.IsPathRooted(possibleRelativePath.Replace("\"", "")))
                 return true;
 
             return false;

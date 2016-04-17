@@ -26,7 +26,7 @@ namespace CodeLinker
                 Finish();
             }
 
-            List<string> argsList = args.ToList();
+            List<string> argsList = args.Select(a => a.Replace(@"""", "")).ToList();
 
             if (argsList.Contains("/?"))
             {
