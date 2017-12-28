@@ -77,6 +77,13 @@ namespace CodeLinker
                 if (line.ToLower().Trim().StartsWith(Settings.IncludePlaceholderLowerCase))
                     InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim().ToLower());
             }
+
+            foreach (string exclusion in ExclusionsList)
+                Log.WriteLine("exclusion: "+ exclusion );
+
+            foreach (string inclusion in InclusionsList)
+                Log.WriteLine("inclusion: " + inclusion);
+
             if (InclusionsList == null || !InclusionsList.Any())
                 InclusionsList.Add("*"); // default wildcard match will include everything.
         }
@@ -175,17 +182,7 @@ namespace CodeLinker
                                 string originalSourcePath = attrib.Value;
                                 string trimmedOriginalSourcePath = originalSourcePath.Trim().ToLower();
 
-                                IEnumerable<string> exclude =
-                                    ExclusionsList.Where(x => Operators.LikeString(trimmedOriginalSourcePath, x, CompareMethod.Text)).ToList();
-                                // OW my eyes!
-
-                                if (exclude.Any())
-                                {
-                                    Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine +
-                                                  "    from: " + sourceProjAbsolutePath + Environment.NewLine +
-                                                  "because you said to Exclude: " + exclude.FirstOrDefault() + Environment.NewLine);
-                                    continue;
-                                }
+                                
 
                                 if (alreadyIncluded.IndexOf(trimmedOriginalSourcePath) > -1)
                                 {
@@ -208,6 +205,23 @@ namespace CodeLinker
                                         {
                                             string sourceFileName = Path.GetFileName(originalSourcePath); // wildcards blow up Path.GetFullPath()
                                             string originalFolder = originalSourcePath;
+                                            
+                                            List<string> excludedFiles =
+                                                ExclusionsList.Where(x => x.Contains(sourceFileName.ToLower())).ToList();
+                                            // ExclusionsList.Where(x => Operators.LikeString(trimmedOriginalSourcePath, x, CompareMethod.Text)).ToList();
+                                            //  OW my eyes!
+
+                                            var excludedPaths = ExclusionsList.Where(x => x.Contains(originalSourcePath.ToLower())).ToArray();
+                                            if (excludedPaths?.Any() ?? false)
+                                                excludedFiles.AddRange(excludedPaths);
+
+                                            if (excludedFiles.Any())
+                                            {
+                                                Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine +
+                                                              "    from: " + sourceProjAbsolutePath + Environment.NewLine +
+                                                              "because you said to Exclude: " + excludedFiles.FirstOrDefault());
+                                                continue;
+                                            }
 
                                             if (!string.IsNullOrEmpty(sourceFileName))
                                                 originalFolder = originalSourcePath.Replace(sourceFileName, "");
