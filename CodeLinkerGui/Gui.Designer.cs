@@ -42,6 +42,7 @@ namespace CodeLinker
             this.OpenTheLogFileButton = new System.Windows.Forms.Button();
             this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.CreateSubFoldersChk = new System.Windows.Forms.CheckBox();
+            this.RelativePathsCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -164,11 +165,26 @@ namespace CodeLinker
             this.CreateSubFoldersChk.Text = "Create Subfolder(s)?";
             this.CreateSubFoldersChk.UseVisualStyleBackColor = true;
             // 
+            // RelativePathsCheckBox
+            // 
+            this.RelativePathsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RelativePathsCheckBox.AutoSize = true;
+            this.RelativePathsCheckBox.Checked = true;
+            this.RelativePathsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.RelativePathsCheckBox.Location = new System.Drawing.Point(433, 430);
+            this.RelativePathsCheckBox.Name = "RelativePathsCheckBox";
+            this.RelativePathsCheckBox.Size = new System.Drawing.Size(123, 17);
+            this.RelativePathsCheckBox.TabIndex = 10;
+            this.RelativePathsCheckBox.Text = "Use Relative Paths?";
+            this.RelativePathsCheckBox.UseVisualStyleBackColor = true;
+            this.RelativePathsCheckBox.CheckedChanged += new System.EventHandler(this.RelativePathscheckBox_CheckedChanged);
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 461);
+            this.Controls.Add(this.RelativePathsCheckBox);
             this.Controls.Add(this.CreateSubFoldersChk);
             this.Controls.Add(this.OpenTheLogFileButton);
             this.Controls.Add(this.StatusLabel);
@@ -199,6 +215,7 @@ namespace CodeLinker
     private Label StatusLabel;
     private Button OpenTheLogFileButton;
         private CheckBox CreateSubFoldersChk;
+        private CheckBox RelativePathsCheckBox;
     }
 }
 

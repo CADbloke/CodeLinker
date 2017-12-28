@@ -59,6 +59,9 @@ namespace CodeLinker
             WriteLine("/stfu        Switch. Don't write log to the command line or Visual Studio.");
             WriteLine("             This will still write any exception summaries but not the gory details.");
             WriteLine();
+            WriteLine("/abs         Switch. Write absolute paths instead of relative paths in the Destination.");
+            WriteLine("             Default is to write realtive paths.");
+            WriteLine();
             WriteLine(" - Wrap paths with spaces in double quotes.");
             WriteLine(" - Paths can (should!) be relative.");
             WriteLine(" - Source.csproj is optional,");

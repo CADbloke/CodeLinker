@@ -39,6 +39,9 @@ namespace CodeLinker
             bool createSubDirectories = !argsList.Contains("/nosub", StringComparer.CurrentCultureIgnoreCase);
             Log.WriteToConsole = !argsList.Contains("/stfu", StringComparer.CurrentCultureIgnoreCase);
             NoConfirm = argsList.Contains("/noconfirm", StringComparer.CurrentCultureIgnoreCase);
+            
+            if (argsList.Contains("/abs", StringComparer.CurrentCultureIgnoreCase))
+                PathMaker.UseRelativePaths = false;
 
 
             if (!string.IsNullOrEmpty(argsList[0]))
