@@ -284,20 +284,7 @@ namespace CodeLinker
                                     {
                                         foreach (XElement dependent in dependentOn)
                                         {
-                                            string depentSourcePath  = dependent.Value;
-                                            string dependentFileName = Path.GetFileName(depentSourcePath); // wildcards blow up Path.GetFullPath()
-                                            string dependentFolder   = depentSourcePath;
-
-                                            if (!string.IsNullOrEmpty(dependentFileName))
-                                                dependentFolder = depentSourcePath.Replace(dependentFileName, "");
-
-                                            string dependentAbsoluteSourcePath = Path.GetFullPath(sourceProjDirectory + "\\" + dependentFolder) + dependentFileName;
-
-                                            string dependentPathDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", dependentAbsoluteSourcePath);
-                                            
-                                            var dependentElement = new XElement(Settings.MSBuild + "DependentUpon", dependentPathDestination);
-                                            dependent.Remove();
-                                            sourceItem.Add(dependentElement);
+                                            sourceItem.Add(dependent);
                                         }
                                     }
                                     
