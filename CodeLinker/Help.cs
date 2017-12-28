@@ -24,6 +24,7 @@ namespace CodeLinker
             WriteLine("CODELINKER strip [Destination Folder [/s]]");
             WriteLine("CODELINKER strip [Destination.csproj]");
             WriteLine("CODELINKER ... /noconfirm");
+            WriteLine("CODELINKER Source.csproj Destination.csproj /abs /prefix:\"In This Folder\"");
             WriteLine();
             WriteLine("Folder   Links the source(s) into all CSPROJ files in the folder");
             WriteLine("         This is the destination folder that has Linked projects.");
@@ -62,6 +63,9 @@ namespace CodeLinker
             WriteLine("/abs         Switch. Write absolute paths instead of relative paths in the Destination.");
             WriteLine("             Default is to write relative paths.");
             WriteLine();
+            WriteLine("/prefix:xxx  Add a folder prefix to all the link paths in the Destination.");
+            WriteLine("             Default is no prefix. NO space after the colon. Use quotes if the path has spaces");
+            WriteLine();
             WriteLine(" - Wrap paths with spaces in double quotes.");
             WriteLine(" - Paths can (should!) be relative.");
             WriteLine(" - Source.csproj is optional,");
@@ -70,10 +74,12 @@ namespace CodeLinker
             WriteLine();
             WriteLine();
             WriteLine("The Destination CSPROJ file needs this XML comment placeholder...");
+            WriteLine("If it doesn't have the placeholder then it soon will.");
             WriteLine();
             WriteLine("<!-- CodeLinker");
             WriteLine("Source: PathTo\\NameOfProject.csproj     <== this is optional");
             WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== this is optional");
+            WriteLine("Ummm, the exclude thing doesn't actually work yet. Sorry.");
             WriteLine("Include: PathTo\\FileToBeIncluded.cs     <== this is optional");
             WriteLine("-->");
             WriteLine();

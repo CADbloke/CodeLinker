@@ -15,6 +15,24 @@ namespace CodeLinker
     /// <summary> Destination <c> Proj </c> Parser and Linker. </summary>
     internal class DestinationProjLinker
     {
+        private static string _linkPrefix = "";
+        internal static string LinkPrefix
+        {
+            get
+            {
+                return _linkPrefix;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _linkPrefix = string.Empty;
+                else
+                    _linkPrefix = value.EndsWith("\\", StringComparison.Ordinal)
+                                                ? value
+                                                : value + "\\";
+            }
+        }
+        
         private readonly DestinationProjXml destProjXml;
 
         /// <summary> Source <c> Proj </c> is specified in the destination <c> Proj </c> XML comment placeholder. </summary>
@@ -257,7 +275,7 @@ namespace CodeLinker
                                     if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))
                                         // Folders, mostly
                                     {
-                                        var linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
+                                        var linkElement = new XElement(Settings.MSBuild + "Link", _linkPrefix +originalSourcePath);
                                         sourceItem.Add(linkElement);
                                     }
                                     

@@ -40,9 +40,11 @@ namespace CodeLinker
             this.linkButton = new System.Windows.Forms.Button();
             this.StatusLabel = new System.Windows.Forms.Label();
             this.OpenTheLogFileButton = new System.Windows.Forms.Button();
-            this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.CreateSubFoldersChk = new System.Windows.Forms.CheckBox();
             this.RelativePathsCheckBox = new System.Windows.Forms.CheckBox();
+            this.LinkPrefixTextBox = new System.Windows.Forms.TextBox();
+            this.LinkPrefixLabel = new System.Windows.Forms.Label();
+            this.guiBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.projectListDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.guiBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -105,11 +107,11 @@ namespace CodeLinker
             | System.Windows.Forms.AnchorStyles.Right)));
             this.projectListDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.projectListDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.projectListDataGridView.Location = new System.Drawing.Point(12, 71);
+            this.projectListDataGridView.Location = new System.Drawing.Point(12, 89);
             this.projectListDataGridView.Name = "projectListDataGridView";
             this.projectListDataGridView.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.projectListDataGridView.RowTemplate.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.projectListDataGridView.Size = new System.Drawing.Size(857, 349);
+            this.projectListDataGridView.Size = new System.Drawing.Size(857, 331);
             this.projectListDataGridView.TabIndex = 5;
             this.projectListDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckProjectsList);
             this.projectListDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CheckProjectsList);
@@ -148,10 +150,6 @@ namespace CodeLinker
             this.OpenTheLogFileButton.UseVisualStyleBackColor = true;
             this.OpenTheLogFileButton.Click += new System.EventHandler(this.OpenTheLogFileButton_Click);
             // 
-            // guiBindingSource
-            // 
-            this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
-            // 
             // CreateSubFoldersChk
             // 
             this.CreateSubFoldersChk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -171,7 +169,7 @@ namespace CodeLinker
             this.RelativePathsCheckBox.AutoSize = true;
             this.RelativePathsCheckBox.Checked = true;
             this.RelativePathsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.RelativePathsCheckBox.Location = new System.Drawing.Point(433, 430);
+            this.RelativePathsCheckBox.Location = new System.Drawing.Point(746, 65);
             this.RelativePathsCheckBox.Name = "RelativePathsCheckBox";
             this.RelativePathsCheckBox.Size = new System.Drawing.Size(123, 17);
             this.RelativePathsCheckBox.TabIndex = 10;
@@ -179,11 +177,37 @@ namespace CodeLinker
             this.RelativePathsCheckBox.UseVisualStyleBackColor = true;
             this.RelativePathsCheckBox.CheckedChanged += new System.EventHandler(this.RelativePathscheckBox_CheckedChanged);
             // 
+            // LinkPrefixTextBox
+            // 
+            this.LinkPrefixTextBox.Location = new System.Drawing.Point(132, 62);
+            this.LinkPrefixTextBox.Name = "LinkPrefixTextBox";
+            this.LinkPrefixTextBox.Size = new System.Drawing.Size(552, 20);
+            this.LinkPrefixTextBox.TabIndex = 11;
+            this.LinkPrefixTextBox.Leave += new System.EventHandler(this.LinkPrefixTextBox_TextChanged);
+            // 
+            // LinkPrefixLabel
+            // 
+            this.LinkPrefixLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LinkPrefixLabel.AutoSize = true;
+            this.LinkPrefixLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.LinkPrefixLabel.Location = new System.Drawing.Point(13, 65);
+            this.LinkPrefixLabel.Name = "LinkPrefixLabel";
+            this.LinkPrefixLabel.Size = new System.Drawing.Size(113, 13);
+            this.LinkPrefixLabel.TabIndex = 12;
+            this.LinkPrefixLabel.Text = "Dest Link Folder Prefix";
+            this.LinkPrefixLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // guiBindingSource
+            // 
+            this.guiBindingSource.DataSource = typeof(CodeLinker.Gui);
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 461);
+            this.Controls.Add(this.LinkPrefixLabel);
+            this.Controls.Add(this.LinkPrefixTextBox);
             this.Controls.Add(this.RelativePathsCheckBox);
             this.Controls.Add(this.CreateSubFoldersChk);
             this.Controls.Add(this.OpenTheLogFileButton);
@@ -216,6 +240,8 @@ namespace CodeLinker
     private Button OpenTheLogFileButton;
         private CheckBox CreateSubFoldersChk;
         private CheckBox RelativePathsCheckBox;
+        private TextBox LinkPrefixTextBox;
+        private Label LinkPrefixLabel;
     }
 }
 

@@ -43,6 +43,13 @@ namespace CodeLinker
             if (argsList.Contains("/abs", StringComparer.CurrentCultureIgnoreCase))
                 PathMaker.UseRelativePaths = false;
 
+            string prefixArg = args.FirstOrDefault(arg => arg.StartsWith("/prefix:", StringComparison.OrdinalIgnoreCase));
+            if (prefixArg?.Any() ?? false)
+            {
+                string prefix = prefixArg.Substring(8).Replace("\"", "");
+                DestinationProjLinker.LinkPrefix = prefix;
+            }
+
 
             if (!string.IsNullOrEmpty(argsList[0]))
             {

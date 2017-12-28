@@ -270,5 +270,11 @@ namespace CodeLinker
         private void OpenTheLogFileButton_Click(object sender, EventArgs e) { Process.Start(Log.logFile); }
 
         private void RelativePathscheckBox_CheckedChanged(object sender, EventArgs e) { PathMaker.UseRelativePaths = this.RelativePathsCheckBox.Checked; }
+
+
+        private void LinkPrefixTextBox_TextChanged(object sender, EventArgs e)
+        {
+            DestinationProjLinker.LinkPrefix = LinkPrefixTextBox.Text;
+        }
     }
 }
