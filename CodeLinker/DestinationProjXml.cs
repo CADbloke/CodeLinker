@@ -81,9 +81,12 @@ namespace CodeLinker
                             foreach (XElement descendant in keeperElements.DescendantsAndSelf().Where(e => e.Attribute("Include") != null))
                             {
                                 XAttribute xAttribute = descendant.Attribute("Include");
-                                if (xAttribute != null && !xAttribute.Value.StartsWith(".."))
+                                if (xAttribute != null /*&& !xAttribute.Value.StartsWith("..")*/)
                                     Keepers.Add(descendant); // keep stray code that is not a relative link. VS *may* have added it here.
                             }
+                            
+                            if (Keepers.Any())
+                                Log.WriteLine($"Found {Keepers.Count} potential Project Items in the Linked Zone to rescue.");
                         }
 
                         if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder))
@@ -197,14 +200,23 @@ namespace CodeLinker
         /// <summary> Saves the Project and also preserves any <c> Keepers </c> - code that needs rescuing from the Link Zone. </summary>
         internal void Save()
         {
+            string docString = DestProjXdoc.ToString().ToLower();
             if (Keepers.Any())
             {
                 var newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
                 foreach (XElement keeper in Keepers)
                 {
-                    newItemGroup.Add(keeper);
-                    Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""));
+                    string keeperString = keeper.FirstAttribute.Value.ToLower();
+                    if (!docString.Contains(keeperString))
+                    {
+                        newItemGroup.Add(keeper);
+                        Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""));
+                        //Log.WriteLine("keeperString: "+ keeperString);
+                    }
+                    else
+                        Log.WriteLine("Skipped duplicating: " + keeperString );
                 }
+                // Log.WriteLine("DocString" +docString);
                 EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Link zone.
             }
 
