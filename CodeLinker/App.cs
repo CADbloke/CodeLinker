@@ -57,7 +57,9 @@ namespace CodeLinker
                 {
                     if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
                     {
-                        Log.WriteLine("Queueing Code Link from: " + argsList[0] + " to " + argsList[1]);
+                        Log.WriteLine("Queueing Code Link from: " + argsList[0]);
+                        Log.WriteLine("                     to: " + argsList[1]);
+                        Log.WriteLine();
                         linkers.Add(new DestinationProjLinker(argsList[0], argsList[1]));
                     }
                     else
