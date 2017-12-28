@@ -60,7 +60,7 @@ namespace CodeLinker
             WriteLine("             This will still write any exception summaries but not the gory details.");
             WriteLine();
             WriteLine("/abs         Switch. Write absolute paths instead of relative paths in the Destination.");
-            WriteLine("             Default is to write realtive paths.");
+            WriteLine("             Default is to write relative paths.");
             WriteLine();
             WriteLine(" - Wrap paths with spaces in double quotes.");
             WriteLine(" - Paths can (should!) be relative.");
