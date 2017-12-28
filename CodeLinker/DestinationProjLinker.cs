@@ -260,6 +260,29 @@ namespace CodeLinker
                                         var linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
                                         sourceItem.Add(linkElement);
                                     }
+                                    
+                                    var dependentOn = sourceItem.Descendants(Settings.MSBuild + "DependentUpon").ToArray();
+                                    if (dependentOn.Any())
+                                    {
+                                        foreach (XElement dependent in dependentOn)
+                                        {
+                                            string depentSourcePath  = dependent.Value;
+                                            string dependentFileName = Path.GetFileName(depentSourcePath); // wildcards blow up Path.GetFullPath()
+                                            string dependentFolder   = depentSourcePath;
+
+                                            if (!string.IsNullOrEmpty(dependentFileName))
+                                                dependentFolder = depentSourcePath.Replace(dependentFileName, "");
+
+                                            string dependentAbsoluteSourcePath = Path.GetFullPath(sourceProjDirectory + "\\" + dependentFolder) + dependentFileName;
+
+                                            string dependentPathDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", dependentAbsoluteSourcePath);
+                                            
+                                            var dependentElement = new XElement(Settings.MSBuild + "DependentUpon", dependentPathDestination);
+                                            dependent.Remove();
+                                            sourceItem.Add(dependentElement);
+                                        }
+                                    }
+                                    
                                     newLinkedItemGroup.Add(sourceItem);
                                     codezLinked++;
                                     alreadyIncluded.Add(originalSourcePath);
