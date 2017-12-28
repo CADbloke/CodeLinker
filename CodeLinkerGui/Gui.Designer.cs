@@ -162,6 +162,7 @@ namespace CodeLinker
             this.CreateSubFoldersChk.TabIndex = 9;
             this.CreateSubFoldersChk.Text = "Create Subfolder(s)?";
             this.CreateSubFoldersChk.UseVisualStyleBackColor = true;
+            this.CreateSubFoldersChk.CheckedChanged += new System.EventHandler(this.CreateSubFoldersChk_CheckedChanged);
             // 
             // RelativePathsCheckBox
             // 

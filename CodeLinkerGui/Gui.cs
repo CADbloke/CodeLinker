@@ -276,5 +276,10 @@ namespace CodeLinker
         {
             DestinationProjLinker.LinkPrefix = LinkPrefixTextBox.Text;
         }
+
+        private void CreateSubFoldersChk_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckProjectsList(null, null, false);
+        }
     }
 }
