@@ -86,7 +86,7 @@ namespace CodeLinker
                             }
                             
                             if (Keepers.Any())
-                                Log.WriteLine($"Found {Keepers.Count} potential Project Items in the Linked Zone to rescue.");
+                                Log.WriteLine($"Found {Keepers.Count} potential Project Items in the Linked Zone to rescue.", ConsoleColor.Cyan);
                         }
 
                         if (StartPlaceHolder != null && EndPlaceHolder != null && StartPlaceHolder.IsBefore(EndPlaceHolder))
@@ -111,7 +111,7 @@ namespace CodeLinker
                         App.Crash(e, "Bad Proj No ItemGroups: " + DestProjAbsolutePath);
                     }
                 }
-                Log.WriteLine("ok.");
+                Log.WriteLine("finished parsing source project xml.", ConsoleColor.Gray);
             }
         }
 
@@ -153,7 +153,7 @@ namespace CodeLinker
                 ItemGroups = new List<XElement>();
                 ItemGroups.AddRange(RootXelement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
                 if (ItemGroups.Count == 0)
-                    Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?");
+                    Log.WriteLine("Curious: " + DestProjAbsolutePath + " contains no ItemGroups. No Codez?", ConsoleColor.Yellow);
 
                 if (ItemGroups != null)
                 {
@@ -168,7 +168,7 @@ namespace CodeLinker
                             itemGroup.Remove();
                     }
                     ItemGroups = RootXelement?.Elements(Settings.MSBuild + "ItemGroup").ToList();
-                    Log.WriteLine("Removed old Code from: " + DestProjAbsolutePath);
+                    Log.WriteLine("Removed old Code from: " + DestProjAbsolutePath, ConsoleColor.White, ConsoleColor.DarkRed);
                 }
             }
         }
@@ -182,19 +182,19 @@ namespace CodeLinker
         internal void AddExclusion(string exclusion)
         {
             StartPlaceHolder.Value += Environment.NewLine + Settings.ExcludePlaceholderLowerCase + " " + exclusion;
-            Log.WriteLine("Excluded: " + exclusion);
+            Log.WriteLine("Excluded: " + exclusion, ConsoleColor.White, ConsoleColor.DarkRed);
         }
 
         internal void AddInclusion(string inclusion)
         {
             StartPlaceHolder.Value += Environment.NewLine + Settings.IncludePlaceholderLowerCase + " " + inclusion;
-            Log.WriteLine("Included: " + inclusion);
+            Log.WriteLine("Included: " + inclusion, ConsoleColor.White, ConsoleColor.DarkGreen);
         }
 
         internal void AddSource(string source)
         {
             StartPlaceHolder.Value += Environment.NewLine + Settings.SourcePlaceholderLowerCase + " " + source;
-            Log.WriteLine("Added Source: " + source);
+            Log.WriteLine("Added Source: " + source, ConsoleColor.Green);
         }
 
         /// <summary> Saves the Project and also preserves any <c> Keepers </c> - code that needs rescuing from the Link Zone. </summary>
@@ -210,18 +210,18 @@ namespace CodeLinker
                     if (!docString.Contains(keeperString))
                     {
                         newItemGroup.Add(keeper);
-                        Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""));
+                        Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""), ConsoleColor.White, ConsoleColor.DarkBlue);
                         //Log.WriteLine("keeperString: "+ keeperString);
                     }
                     else
-                        Log.WriteLine("Skipped duplicating: " + keeperString );
+                        Log.WriteLine("Skipped duplicating: " + keeperString , ConsoleColor.White, ConsoleColor.DarkCyan);
                 }
                 // Log.WriteLine("DocString" +docString);
                 EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Link zone.
             }
 
             DestProjXdoc.Save(DestProjAbsolutePath);
-            Log.WriteLine("Saved: " + DestProjAbsolutePath);
+            Log.WriteLine("Saved: " + DestProjAbsolutePath, ConsoleColor.Green);
         }
     }
 }

@@ -26,8 +26,11 @@ namespace CodeLinker
             }
         }
 
-        internal static void WriteLine(List<string> lines)
+        internal static void WriteLine(List<string> lines, ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
         {
+            Console.ForegroundColor = foreground;
+            Console.BackgroundColor = background;
+
             using (StreamWriter sw = File.AppendText(logFile))
             {
                 foreach (string line in lines)
@@ -37,20 +40,27 @@ namespace CodeLinker
                         Console.WriteLine(line);
                 }
             }
+
+            Console.ResetColor();
         }
 
-        internal static void WriteLine(string line = "")
+        internal static void WriteLine(string line = "", ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
         {
-            WriteLine(lines: new List<string> { line });
+            WriteLine(lines: new List<string> { line }, foreground: foreground, background: background);
         }
 
         internal static void WriteException(Exception e)
         {
-            WriteLine(e.ToString());
-            WriteLine(e.InnerException?.ToString());
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            
+            WriteLine(e.ToString(), ConsoleColor.Yellow, ConsoleColor.DarkRed);
+            WriteLine(e.InnerException?.ToString(), ConsoleColor.Yellow);
             Console.WriteLine(e.ToString());
             if (WriteToConsole)
                 Console.WriteLine(e.InnerException?.ToString());
+            
+            Console.ResetColor();
         }
 
 

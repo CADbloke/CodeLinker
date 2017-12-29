@@ -79,10 +79,10 @@ namespace CodeLinker
             }
 
             foreach (string exclusion in ExclusionsList)
-                Log.WriteLine("exclusion: "+ exclusion );
+                Log.WriteLine("exclusion: "+ exclusion , ConsoleColor.Gray, ConsoleColor.DarkRed);
 
             foreach (string inclusion in InclusionsList)
-                Log.WriteLine("inclusion: " + inclusion);
+                Log.WriteLine("inclusion: " + inclusion, ConsoleColor.White, ConsoleColor.DarkGreen);
 
             if (InclusionsList == null || !InclusionsList.Any())
                 InclusionsList.Add("*"); // default wildcard match will include everything.
@@ -135,8 +135,8 @@ namespace CodeLinker
 
             if (alreadyIncluded.Count > 1)
             {
-                Log.WriteLine("These are already include so will not be linked...");
-                Log.WriteLine(alreadyIncluded);
+                Log.WriteLine("These are already include so will not be linked...", ConsoleColor.White, ConsoleColor.DarkGray);
+                Log.WriteLine(alreadyIncluded, ConsoleColor.Gray);
             }
 
             foreach (string sourcePath in SourceProjList)
@@ -161,7 +161,7 @@ namespace CodeLinker
 
                     destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("Linked from " + linkRelativeSource));
                     Log.WriteLine("Recycling from: " + sourceProjAbsolutePath + Environment.NewLine +
-                                  "            to: " + DestProjAbsolutePath + Environment.NewLine);
+                                  "            to: " + DestProjAbsolutePath + Environment.NewLine, ConsoleColor.Cyan);
 
 
                     foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
@@ -188,7 +188,7 @@ namespace CodeLinker
                                 {
                                     Log.WriteLine("Skipped: " + originalSourcePath + Environment.NewLine +
                                                   "    from: " + sourceProjAbsolutePath + Environment.NewLine +
-                                                  "because there is a file with the same path in the destination project." + Environment.NewLine);
+                                                  "because there is a file with the same path in the destination project." + Environment.NewLine, ConsoleColor.Gray);
                                     continue;
                                 }
 
@@ -219,7 +219,7 @@ namespace CodeLinker
                                             {
                                                 Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine +
                                                               "    from: " + sourceProjAbsolutePath + Environment.NewLine +
-                                                              "because you said to Exclude: " + excludedFiles.FirstOrDefault());
+                                                              "because you said to Exclude: " + excludedFiles.FirstOrDefault(), ConsoleColor.White, ConsoleColor.DarkRed);
                                                 continue;
                                             }
 
@@ -310,7 +310,7 @@ namespace CodeLinker
                                 {
                                     Log.WriteLine("Excluded: " + originalSourcePath + Environment.NewLine +
                                                   "    from: " + sourceProjAbsolutePath + Environment.NewLine +
-                                                  "because it did not match anything on the Include: list " + Environment.NewLine);
+                                                  "because it did not match anything on the Include: list " + Environment.NewLine, ConsoleColor.Gray, ConsoleColor.DarkRed);
                                 }
                             }
                         }
@@ -329,7 +329,7 @@ namespace CodeLinker
                     if (Directory.Exists(sourceResources))
                     {
                         string destResourcesPath = DestProjDirectory + "\\Resources";
-                        Log.WriteLine($"Copying all Files from {sourceResources} to {destResourcesPath}.");
+                        Log.WriteLine($"Copying all Files from {sourceResources} to {destResourcesPath}.", ConsoleColor.Green);
 
                         if (!Directory.Exists(destResourcesPath))
                             Directory.CreateDirectory(destResourcesPath);
@@ -343,16 +343,16 @@ namespace CodeLinker
                                 long destSize = new FileInfo(destFile).Length;
                                 if (sourceSize != destSize) // ie. it is probably a different file.
                                 {
-                                    Log.WriteLine($"WARNING: Overwriting {destFile}");
-                                    Log.WriteLine($"Source: {sourceSize} bytes, Dest: {destSize} Bytes.");
+                                    Log.WriteLine($"WARNING: Overwriting {destFile}", ConsoleColor.Red);
+                                    Log.WriteLine($"Source: {sourceSize} bytes, Dest: {destSize} Bytes.", ConsoleColor.Yellow);
                                 }
                             }
 
                             File.Copy(sourceFile, Path.Combine(destResourcesPath, Path.GetFileName(sourceFile)), true);
-                            Log.WriteLine($"Copied {sourceFile}");
+                            Log.WriteLine($"Copied {sourceFile}", ConsoleColor.Green);
                         }
 
-                        Log.WriteLine($"Copied all Files from {sourceResources} to {destResourcesPath}." + Environment.NewLine);
+                        Log.WriteLine($"Copied all Files from {sourceResources} to {destResourcesPath}." + Environment.NewLine, ConsoleColor.Green);
                     }
                 }
                 catch (Exception e)
@@ -369,12 +369,12 @@ namespace CodeLinker
             if (oldXml != destProjXml.ReadLinkedXml())
             {
                 destProjXml.Save();
-                Log.WriteLine("Linked " + totalCodezLinked + " codez from " + SourceProjList.Count + " source Project(s).");
+                Log.WriteLine("Linked " + totalCodezLinked + " codez from " + SourceProjList.Count + " source Project(s).", ConsoleColor.Green);
             }
             else
-                Log.WriteLine("No changes, didn't save.");
+                Log.WriteLine("No changes, didn't save.", ConsoleColor.Cyan, ConsoleColor.DarkBlue);
 
-            Log.WriteLine("----------------------------");
+            Log.WriteLine("-------------------------------------------------------", ConsoleColor.DarkGray);
             Log.WriteLine();
         }
     }

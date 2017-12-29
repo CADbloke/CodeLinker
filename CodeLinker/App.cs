@@ -20,7 +20,7 @@ namespace CodeLinker
             int argsCount = args.Length;
             if (argsCount == 0)
             {
-                Log.WriteLine("No Args given so Help Text Displayed.");
+                Log.WriteLine("No Args given so Help Text Displayed.", ConsoleColor.Red);
                 Log.WriteLine();
                 Help.Write();
                 Finish();
@@ -31,7 +31,7 @@ namespace CodeLinker
             if (argsList.Contains("/?"))
             {
                 Help.Write();
-                Log.WriteLine("User asked For Help. Hope I helped.");
+                Log.WriteLine("User asked For Help. Hope I helped.", ConsoleColor.Green);
                 Finish();
             }
 
@@ -57,14 +57,14 @@ namespace CodeLinker
                 {
                     if (argsCount > 1 && args[1].IsaCsOrVbProjFile())
                     {
-                        Log.WriteLine("Queueing Code Link from: " + argsList[0]);
-                        Log.WriteLine("                     to: " + argsList[1]);
+                        Log.WriteLine("Queueing Code Link from: " + argsList[0], ConsoleColor.Cyan);
+                        Log.WriteLine("                     to: " + argsList[1], ConsoleColor.Cyan);
                         Log.WriteLine();
                         linkers.Add(new DestinationProjLinker(argsList[0], argsList[1]));
                     }
                     else
                     {
-                        Log.WriteLine("Queueing Code Link to: " + argsList[0] + ". Source TBA.");
+                        Log.WriteLine("Queueing Code Link to: " + argsList[0] + ". Source TBA.", ConsoleColor.Cyan);
                         linkers.Add(new DestinationProjLinker(argsList[0]));
                     }
                 }
@@ -89,7 +89,7 @@ namespace CodeLinker
 
                                 foreach (string destProjFile in destProjFiles)
                                 {
-                                    Log.WriteLine("Stripping Code from: " + destProjFile + ". ");
+                                    Log.WriteLine("Stripping Code from: " + destProjFile + ". ", ConsoleColor.Yellow);
                                     var destinationProjXml = new DestinationProjXml(destProjFile);
                                     destinationProjXml.ClearOldLinkedCode();
                                     destinationProjXml.Save();
@@ -143,10 +143,10 @@ namespace CodeLinker
                                             Crash(e, "Linking " + sourceProjFile + " to " + args[2] + " didn't work. Bad name?");
                                         }
 
-                                        Log.WriteLine("Linked " + " from " + sourceProjFile + " to " + args[2]);
+                                        Log.WriteLine("Linked " + " from " + sourceProjFile + " to " + args[2], ConsoleColor.Green);
                                     }
                                     else
-                                        Log.WriteLine("ERROR: " + sourceProjFile + " is not a project file. Cannot Link it.");
+                                        Log.WriteLine("ERROR: " + sourceProjFile + " is not a project file. Cannot Link it.", ConsoleColor.Green);
                                 }
                             }
                             catch (Exception e)
@@ -167,7 +167,7 @@ namespace CodeLinker
 
                         foreach (string destProjFile in destProjFiles)
                         {
-                            Log.WriteLine("Queueing Code Link to: " + destProjFile + ". Source TBA.");
+                            Log.WriteLine("Queueing Code Link to: " + destProjFile + ". Source TBA.", ConsoleColor.Cyan);
                             linkers.Add(new DestinationProjLinker(destProjFile));
                         }
                     }
@@ -239,7 +239,7 @@ namespace CodeLinker
                 message += "from :" + string.Join(",", linker.SourceProjList.ToArray());
                 message += "  to :" + linker.DestProjAbsolutePath + Environment.NewLine;
             }
-            Console.WriteLine(message);
+            Log.WriteLine(message, ConsoleColor.White, ConsoleColor.DarkGray);
             Environment.Exit(0);
         }
 
@@ -248,14 +248,14 @@ namespace CodeLinker
             string message = "I crashed at " + crashedAt + ". Whups. See CodeLinkerLog.txt for details.";
             YesOrNo.Crashing(message);
             Log.WriteLine();
-            Log.WriteLine(message);
+            Log.WriteLine(message, ConsoleColor.Red);
             Log.WriteException(e);
             throw e;
         }
 
         internal static void Crash(string errorMessage)
         {
-            Log.WriteLine(errorMessage);
+            Log.WriteLine(errorMessage, ConsoleColor.Red);
             Console.WriteLine(errorMessage);
             throw new Exception("Crashed. See Log file for details");
         }
