@@ -284,24 +284,26 @@ namespace CodeLinker
                                             attrib.Value = sourcePathFromDestination;
                                     }
 
-                                    IEnumerable<XElement> links = sourceItem.Descendants(Settings.MSBuild + "Link");
+                                    XElement[] links = sourceItem.Descendants(Settings.MSBuild + "Link").ToArray();
 
+                                                                        // Folders, mostly
                                     if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))
-                                        // Folders, mostly
                                     {
                                         var linkElement = new XElement(Settings.MSBuild + "Link", _linkPrefix +originalSourcePath);
                                         sourceItem.Add(linkElement);
                                     }
-                                    
+
+                                    foreach (XElement link in links)
+                                        link.Value = _linkPrefix + link.Value;
+
                                     var dependentOn = sourceItem.Descendants(Settings.MSBuild + "DependentUpon").ToArray();
-                                    if (dependentOn.Any())
+
+                                    /*foreach (XElement dependent in dependentOn)
                                     {
-                                        foreach (XElement dependent in dependentOn)
-                                        {
-                                            sourceItem.Add(dependent);
-                                        }
-                                    }
-                                    
+                                        dependent.Value = _linkPrefix + dependent.Value;
+                                        sourceItem.Add(dependent);
+                                    }*/
+
                                     newLinkedItemGroup.Add(sourceItem);
                                     codezLinked++;
                                     alreadyIncluded.Add(originalSourcePath);
