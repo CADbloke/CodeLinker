@@ -3,6 +3,8 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
+
 
 namespace CodeLinker
 {
@@ -56,6 +58,7 @@ namespace CodeLinker
 
         /// <summary> Always returns an Absolute Path from a Path that is possibly Relative, possibly Absolute.
         ///    <para> Will crash and burn if it can't return a path. </para> </summary>
+        /// <remarks> there's a lot of stuffing around with <c>$(path)</c> in here so it's bound to cause pain</remarks>
         /// <param name="possibleRelativePath"> a Path that is possibly relative, possibly Absolute.
         ///     In any case this always returns an Absolute Path. </param>
         /// <param name="basePath"> Optional: Where you are now. Base Path if building an Absolute Path from a relative path.
@@ -63,44 +66,57 @@ namespace CodeLinker
         /// </param>
         internal static string MakeAbsolutePathFromPossibleRelativePathOrDieTrying(string basePath, string possibleRelativePath)
         {
-            if (IsAbsolutePath(possibleRelativePath))
-                return possibleRelativePath;
+            if (possibleRelativePath != null && possibleRelativePath.StartsWith("$(", StringComparison.Ordinal))
+                return possibleRelativePath?.Replace("$(Codez)\\", @"C:\Codez\"); // "$(Codez) is aCAD bloke thingo
 
-            if (string.IsNullOrEmpty(basePath))
-                basePath = AppDomain.CurrentDomain.BaseDirectory;
+            if (basePath?.StartsWith("$(", StringComparison.Ordinal) ?? false)
+                return basePath.TrimEnd('\\') + "\\" + possibleRelativePath?.TrimStart('\\');
 
-            if (!basePath.EndsWith("\\"))
-                basePath += "\\";
+            string properAbsolutePath = possibleRelativePath;
 
-            var properAbsolutePath = "";
-
-            try
+            if (basePath != null && !IsAbsolutePath(possibleRelativePath)) 
             {
-                properAbsolutePath = Path.GetFullPath(basePath + possibleRelativePath); // http://stackoverflow.com/a/1299356/492
-            }
-            catch (Exception e)
-            {
-                App.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
-            }
+                if (string.IsNullOrEmpty(basePath))
+                    basePath = AppDomain.CurrentDomain.BaseDirectory;
 
-            if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath))
-                App.Crash("ERROR: Bad Path: " + properAbsolutePath);
+                if (!basePath.EndsWith("\\"))
+                    basePath += "\\";
+
+                try
+                {
+                    properAbsolutePath = Path.GetFullPath(basePath + possibleRelativePath); // http://stackoverflow.com/a/1299356/492
+                }
+                catch (Exception e)
+                {
+                    App.Crash(e, "Crashed at PathMaker properAbsolutePath from " + basePath + " + " + possibleRelativePath);
+                }
+
+                if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath))
+                    App.Crash("ERROR: Bad Path: " + properAbsolutePath);
+            }
 
             return properAbsolutePath;
         }
 
         internal static bool IsAbsolutePath(string possibleRelativePath)
         {
-            if (possibleRelativePath.StartsWith("$(")) // starts with Environment Variable - don't break it.
-                return true;
-            if (possibleRelativePath.StartsWith(".."))
-                return false;
-            if (Directory.Exists(possibleRelativePath))
-                return true;
-            if (File.Exists(possibleRelativePath))
-                return true;
-            if (Path.IsPathRooted(possibleRelativePath.Replace("\"", "")))
-                return true;
+            try
+            {
+                if (possibleRelativePath.StartsWith("$(", StringComparison.Ordinal)) // starts with Environment Variable - don't break it.
+                    return true;
+                if (possibleRelativePath.StartsWith("..", StringComparison.Ordinal))
+                    return false;
+                if (Directory.Exists(possibleRelativePath))
+                    return true;
+                if (File.Exists(possibleRelativePath))
+                    return true;
+                if (Path.IsPathRooted(possibleRelativePath.TrimEnd('\\')))
+                    return true;
+            }
+            catch (Exception e)
+            {
+                App.Crash(e, $"FAIL checking if path IsAbsolute. Path: {possibleRelativePath}");
+            }
 
             return false;
         }

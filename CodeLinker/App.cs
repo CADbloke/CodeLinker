@@ -182,17 +182,14 @@ namespace CodeLinker
                 {
                     string errorMessage = "I got nuthin. Your Args made no sense to me." + Environment.NewLine;
                     foreach (string arg in args)
-                    {
                         errorMessage += arg + Environment.NewLine;
-                    }
+
                     Crash(errorMessage);
                 }
 
 
                 foreach (DestinationProjLinker destinationProjLinker in linkers)
-                {
                     destinationProjLinker.LinkCode();
-                }
             }
         }
 

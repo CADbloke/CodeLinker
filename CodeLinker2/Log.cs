@@ -10,19 +10,28 @@ namespace CodeLinker
     internal static class Log
     {
         internal static string logFile = AppDomain.CurrentDomain.BaseDirectory + "\\CodeLinkerLog.txt";
-        internal static bool WriteToConsole = false;
+        internal static bool WriteToConsole = true;
 
         // http://stackoverflow.com/a/18709110/492
         private static readonly Destructor Finalise = new Destructor();
 
         static Log()
         {
-            using (StreamWriter sw = File.AppendText(logFile))
+            try
             {
-                sw.WriteLine();
-                sw.WriteLine("==========================");
-                sw.WriteLine("Code Linker Log: " + DateTime.Now);
-                sw.WriteLine("--------------------------");
+                using (StreamWriter sw = File.AppendText(logFile))
+                {
+                    sw.WriteLine();
+                    sw.WriteLine("==========================");
+                    sw.WriteLine("Code Linker Log: " + DateTime.Now);
+                    sw.WriteLine("--------------------------");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.ReadKey();
+                throw;
             }
         }
 
@@ -31,14 +40,23 @@ namespace CodeLinker
             Console.ForegroundColor = foreground;
             Console.BackgroundColor = background;
 
-            using (StreamWriter sw = File.AppendText(logFile))
+            try
             {
-                foreach (string line in lines)
+                using (StreamWriter sw = File.AppendText(logFile))
                 {
-                    sw.WriteLine(line);
-                    if (WriteToConsole)
-                        Console.WriteLine(line);
+                    foreach (string line in lines)
+                    {
+                        sw.WriteLine(line);
+                        if (WriteToConsole)
+                            Console.WriteLine(line);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.ReadKey();
+                throw;
             }
 
             Console.ResetColor();
@@ -57,9 +75,7 @@ namespace CodeLinker
             WriteLine(e.ToString(), ConsoleColor.Yellow, ConsoleColor.DarkRed);
             WriteLine(e.InnerException?.ToString(), ConsoleColor.Yellow);
             Console.WriteLine(e.ToString());
-            if (WriteToConsole)
-                Console.WriteLine(e.InnerException?.ToString());
-            
+            Console.WriteLine(e.InnerException?.ToString());
             Console.ResetColor();
         }
 
@@ -68,14 +84,23 @@ namespace CodeLinker
         {
             ~Destructor() // One time only destructor.
             {
-                using (StreamWriter logger = File.AppendText(logFile))
+                try
                 {
-                    logger.WriteLine();
-                    logger.WriteLine("Finished at " + DateTime.Now);
-                    logger.WriteLine("More Info & Source at " + Settings.SourceCodeUrl);
-                    logger.WriteLine("Closing Log. kthxbai.");
-                    logger.WriteLine("==========================");
-                    logger.WriteLine();
+                    using (StreamWriter logger = File.AppendText(logFile))
+                    {
+                        logger.WriteLine();
+                        logger.WriteLine("Finished at "           + DateTime.Now);
+                        logger.WriteLine("More Info & Source at " + Settings.SourceCodeUrl);
+                        logger.WriteLine("Closing Log. kthxbai.");
+                        logger.WriteLine("==========================");
+                        logger.WriteLine();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Console.ReadKey();
+                    throw;
                 }
             }
         }

@@ -1,6 +1,9 @@
 ﻿// Code Linker originally by @CADbloke (Ewen Wallace) 2015
 // More info, repo and MIT License at https://github.com/CADbloke/CodeLinker
 
+using System;
+
+
 namespace CodeLinker
 {
     public static class IsaCsOrVbProjectFile
@@ -16,10 +19,10 @@ namespace CodeLinker
 
             string tidiedFileName = fileName.ToLower().Trim();
 
-            if (tidiedFileName.EndsWith(".csproj"))
+            if (tidiedFileName.EndsWith(".csproj", StringComparison.Ordinal))
                 return true;
 
-            if (tidiedFileName.EndsWith(".vbproj"))
+            if (tidiedFileName.EndsWith(".vbproj", StringComparison.Ordinal))
                 return true;
 
             return false;

@@ -10,9 +10,9 @@ using System.Xml.Linq;
 namespace CodeLinker
 {
     /// <summary> Parses the <c> &lt;ItemGroup&gt; </c>s from the Source Project. Read Only. Never writes. </summary>
-    internal class SourceProjParser
+    internal class SourceProjLoader
     {
-        internal SourceProjParser(string sourceProjAbsolutePath)
+        internal SourceProjLoader(string sourceProjAbsolutePath)
         {
             SourceProjPath = sourceProjAbsolutePath;
             if (!File.Exists(sourceProjAbsolutePath))
@@ -35,7 +35,7 @@ namespace CodeLinker
             }
             catch (Exception e)
             {
-                App.Crash(e, "source Proj: " + sourceProjAbsolutePath);
+                App.Crash(e, "failed to load source Proj: " + sourceProjAbsolutePath);
             }
         }
 
