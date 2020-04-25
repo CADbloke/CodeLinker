@@ -187,10 +187,10 @@ namespace CodeLinker
                             //                                                               OW my eyes!
 
                             string sourceFileName = Path.GetFileName(trimmedOriginalSourcePath); // wildcards blow up Path.GetFullPath()
-                            string originalFolder = originalSourcePath;
+                            string originalFolder = Path.GetDirectoryName(originalSourcePath);
                             List<string> exclusions = ExclusionsList.Where(x => x != null
                                                                              && (x.Contains(sourceFileName?.ToLower())
-                                                                              || x.Contains(trimmedOriginalSourcePath?.ToLower()))).ToList();
+                                                                              || x.Contains(originalSourcePath?.ToLower()))).ToList();
                             if (exclusions.Any())
                             {
                                 Log.WriteLine("Excluded: "                    + originalSourcePath     + Environment.NewLine +
@@ -198,23 +198,33 @@ namespace CodeLinker
                                               "because you said to Exclude: " + exclusions.FirstOrDefault(), ConsoleColor.DarkYellow);
                                 continue;
                             }
+
                             if (!InclusionsList.Any() || include.Any()) // empty inclusions list means include everything unless explicity excluded
                             {
                                 if (!PathMaker.IsAbsolutePath(originalSourcePath))
                                 {
-                                    var sourcePathFromDestination = "";
+                                    string sourcePathFromDestination = "";
+
                                     try
                                     {
-                                        if (!string.IsNullOrEmpty(sourceFileName))
-                                            originalFolder = originalSourcePath.Replace(sourceFileName, "");
-
                                         string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
 
-                                        sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceAbsolutePath);
+
+                                        sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath);
+
+                                        /*
+                                        Log.WriteLine($"dest proj directory ........{DestProjDirectory}");
+                                        Log.WriteLine($"original source path........{originalSourcePath}");
+                                        Log.WriteLine($"original folder ............{originalFolder}");
+                                        Log.WriteLine($"source  proj directory.....{sourceProjDirectory}");
+                                        Log.WriteLine($"sourceFileName ............{sourceFileName}");
+                                        Log.WriteLine($"sourceAbsolutePath ........{sourceAbsolutePath}");
+                                        Log.WriteLine($"source path ........{sourcePathFromDestination}");*/
                                     }
 
                                     catch (ArgumentException badArg)
                                     {
+                                        // Log.WriteException(badArg); 
                                         if (badArg.Message.Contains("Illegal characters in path"))
                                         {
                                             if (Regex.IsMatch(originalSourcePath, @"^[a-zA-Z]:\\")) // is already an absolute path
@@ -344,12 +354,14 @@ namespace CodeLinker
             } // end foreach source project
 
 
-            destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End of Linked Code   " + DateTime.Now.ToString("U") + Environment.NewLine +
+            destProjXml.EndPlaceHolder.AddBeforeSelf(new XComment("End of Linked Code" /*+ DateTime.Now.ToString("U") */+ Environment.NewLine +
                                                                   "See CodeLinkerLog.txt for details. CodeLinker by " + Settings.SourceCodeUrl ));
+
+            bool hasChanged = oldXml != destProjXml.ReadLinkedXml();
 
             destProjXml.PreserveKeepersAndReport(ExclusionsList);
 
-            if (oldXml != destProjXml.ReadLinkedXml())
+            if (hasChanged)
             {
                 destProjXml.Save();
                 Log.WriteLine("Linked " + totalCodezLinked + " codez from " + SourceProjList.Count + " source Project(s).", ConsoleColor.Green);
