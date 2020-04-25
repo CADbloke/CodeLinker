@@ -49,7 +49,97 @@
   <!--CodeLinker
 exclude: app.config
 source: ..\..\CodeLinkerGui\CodeLinkerGui.csproj-->
-
+  <!--Linked from ..\..\codelinkergui\codelinkergui.csproj-->
+  <ItemGroup>
+    <Compile Include="..\..\codelinker\DestinationProjLinker.cs">
+      <Link>DestinationProjLinker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\Help.cs">
+      <Link>Help.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\IsaCsOrVbProjectFile.cs">
+      <Link>IsaCsOrVbProjectFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\Log.cs">
+      <Link>Log.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\PathMaker.cs">
+      <Link>PathMaker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\ProjectMaker.cs">
+      <Link>ProjectMaker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\ProjectToLink.cs">
+      <Link>ProjectToLink.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\App.cs">
+      <Link>App.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\DestinationProjXml.cs">
+      <Link>DestinationProjXml.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\Properties\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\Settings.cs">
+      <Link>Settings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinker\SourceProjParser.cs">
+      <Link>SourceProjParser.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\codelinkergui\YesOrNo.cs">
+      <Link>YesOrNo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\codelinkergui\Gui.cs">
+      <SubType>Form</SubType>
+      <Link>Gui.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinkergui\Gui.Designer.cs">
+      <DependentUpon>Gui.cs</DependentUpon>
+      <Link>Gui.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinkergui\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
+    <Compile Include="..\..\codelinkergui\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <EmbeddedResource Include="..\..\codelinkergui\Gui.resx">
+      <DependentUpon>Gui.cs</DependentUpon>
+      <Link>Gui.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\codelinkergui\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <Link>Properties\Resources.resx</Link>
+    </EmbeddedResource>
+    <Compile Include="..\..\codelinkergui\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <Link>Properties\Resources.Designer.cs</Link>
+    </Compile>
+    <None Include="..\..\codelinkergui\Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <Link>Properties\Settings.settings</Link>
+    </None>
+    <Compile Include="..\..\codelinkergui\Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <Link>Properties\Settings.Designer.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!--End Link from ..\..\codelinkergui\codelinkergui.csproj
+Linked 22 codez.-->
+  <!--End of Linked Code
+See CodeLinkerLog.txt for details. CodeLinker by https://github.com/CADbloke/CodeLinker -->
   <!-- EndCodeLinker -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

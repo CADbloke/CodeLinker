@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinker", "CodeLinker\CodeLinker.csproj", "{1BC2D099-0296-474B-B8F3-7A5C77E30919}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinkerGui", "CodeLinkerGui\CodeLinkerGui.csproj", "{396125C3-F024-463E-B512-93F9401152C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinkerGui-3.5", "_Builds\CodeLinker-3.5\CodeLinkerGui-3.5.csproj", "{569B89AF-56A4-4AC0-86BA-B50A69A73275}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLinker2", "CodeLinker2\CodeLinker2.csproj", "{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{569B89AF-56A4-4AC0-86BA-B50A69A73275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,5 +48,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE} = {3BE7265E-6EF3-4676-B1E2-78F5C0B68B9D}
 		{569B89AF-56A4-4AC0-86BA-B50A69A73275} = {3BE7265E-6EF3-4676-B1E2-78F5C0B68B9D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB9CB60A-3109-450B-A99D-C894CCBC4993}
 	EndGlobalSection
 EndGlobal

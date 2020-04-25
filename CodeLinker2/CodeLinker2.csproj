@@ -4,13 +4,26 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DA3C62B2-3A8E-44F5-9EF5-EAEDEA3B7ECE}</ProjectGuid>
+    <ProjectGuid>{5FA7EDF7-D216-4DF7-B71C-900AB3871A4D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CodeLinker</RootNamespace>
-    <AssemblyName>CodeLinker-3.5</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AssemblyName>CodeLinker</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <ShouldCreateLogs>True</ShouldCreateLogs>
+    <AdvancedSettingsExpanded>False</AdvancedSettingsExpanded>
+    <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>True</UpdateAssemblyInfoVersion>
+    <AssemblyVersionSettings>None.None.Increment.DateStamp</AssemblyVersionSettings>
+    <UpdatePackageVersion>False</UpdatePackageVersion>
+    <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
+    <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
+    <AssemblyFileVersionSettings>None.None.Increment.DateStamp</AssemblyFileVersionSettings>
+    <AssemblyInfoVersionSettings>None.None.Increment.DateStamp</AssemblyInfoVersionSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,65 +50,37 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <!-- CodeLinker
-Source: ..\..\CodeLinker\CodeLinker.csproj
-Exclude: app.config
-Exclude: properties\assemblyinfo.cs
--->
-  <!--Linked from ..\..\codelinker\codelinker.csproj-->
   <ItemGroup>
-    <Compile Include="..\..\codelinker\DestinationProjLinker.cs">
-      <Link>DestinationProjLinker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Help.cs">
-      <Link>Help.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\IsaCsOrVbProjectFile.cs">
-      <Link>IsaCsOrVbProjectFile.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Log.cs">
-      <Link>Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\PathMaker.cs">
-      <Link>PathMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Program.cs">
-      <Link>Program.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\ProjectMaker.cs">
-      <Link>ProjectMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\ProjectToLink.cs">
-      <Link>ProjectToLink.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\App.cs">
-      <Link>App.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\DestinationProjXml.cs">
-      <Link>DestinationProjXml.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Properties\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\Settings.cs">
-      <Link>Settings.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\SourceProjParser.cs">
-      <Link>SourceProjParser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\codelinker\YesOrNo.cs">
-      <Link>YesOrNo.cs</Link>
-    </Compile>
+    <Compile Include="DestinationProjLinker.cs" />
+    <Compile Include="Help.cs" />
+    <Compile Include="IsaCsOrVbProjectFile.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="PathMaker.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProjectMaker.cs" />
+    <Compile Include="ProjectToLink.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="DestinationProjXml.cs" />
+    <Compile Include="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SourceProjParser.cs" />
+    <Compile Include="YesOrNo.cs" />
   </ItemGroup>
-  <!--End Link from ..\..\codelinker\codelinker.csproj
-Linked 14 codez.-->
-  <!--End of Linked Code
-See CodeLinkerLog.txt for details. CodeLinker by https://github.com/CADbloke/CodeLinker -->
-  <!-- EndCodeLinker -->
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>$(TargetPath)  ..\..\..\CodeLinkerGui\CodeLinkerGui.csproj
+$(TargetPath)  ..\..\..\_Builds\ /s
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
