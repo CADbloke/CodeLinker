@@ -105,18 +105,6 @@ namespace CodeLinker
 
             var totalCodezLinked = 0;
 
-            
-            
-
-            /*  redundant logging, these are explained in more detail later anyway
-            if (alreadyIncluded.Count > 1)
-            {
-                Log.WriteLine("These are already included so will not be added...", ConsoleColor.White, ConsoleColor.DarkGray);
-                Log.WriteLine(alreadyIncluded, ConsoleColor.Gray);
-            }
-            */
-
-
             if (!SourceProjList?.Any() ?? true)
             {
                 Log.WriteLine("No Surce Projects found. done.", ConsoleColor.Cyan);

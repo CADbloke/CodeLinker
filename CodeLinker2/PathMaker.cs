@@ -92,7 +92,7 @@ namespace CodeLinker
                 }
 
                 if (!Directory.Exists(properAbsolutePath) && !File.Exists(properAbsolutePath))
-                    App.Crash("ERROR: Bad Path: " + properAbsolutePath);
+                    App.Crash($"ERROR: Bad Path: {properAbsolutePath} from base: {basePath} tried to join with {possibleRelativePath}");
             }
 
             return properAbsolutePath;
