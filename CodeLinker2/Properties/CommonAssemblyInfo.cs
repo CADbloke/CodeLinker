@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("weird")]
 [assembly: AssemblyCompany("CADbloke")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright © 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.42.20116")]
-[assembly: AssemblyFileVersion("1.0.42.20116")]
+[assembly: AssemblyVersion("2.0.52.20117")]
+[assembly: AssemblyFileVersion("2.0.52.20117")]
