@@ -106,13 +106,7 @@ namespace CodeLinker
             var totalCodezLinked = 0;
 
             
-            List<string> alreadyIncluded = (from sourceItemGroup in destProjXml.ItemGroups
-                                            from sourceItem in sourceItemGroup.Elements()
-                                            where !Settings.ItemElementsToSkip.Contains(sourceItem.Name.LocalName.ToLower())
-                                            select sourceItem.Attribute("Include") ?? sourceItem.Attribute("Exclude")
-                                            into attrib
-                                            where attrib != null
-                                            select attrib.Value.ToLower()).ToList();
+            
 
             /*  redundant logging, these are explained in more detail later anyway
             if (alreadyIncluded.Count > 1)
@@ -129,7 +123,7 @@ namespace CodeLinker
                 return;
             }
 
-            foreach (string sourcePath in SourceProjList)
+            foreach (string sourcePath in SourceProjList) 
             {
                 var codezLinked = 0;
 
@@ -153,6 +147,14 @@ namespace CodeLinker
                     Log.WriteLine("Recycling from: " + sourceProjAbsolutePath + Environment.NewLine +
                                   "            to: " + DestProjAbsolutePath + Environment.NewLine, ConsoleColor.Cyan);
 
+                    List<string> alreadyIncluded = (from sourceItemsGroup in destProjXml.ItemGroups
+                                                    from sourceItems in sourceItemsGroup.Elements()
+                                                    where !Settings.ItemElementsToSkip?.Contains(sourceItems.Name.LocalName.ToLower()) ?? false
+                                                    select sourceItems.Attribute("Include") ?? sourceItems.Attribute("Exclude")
+                                                    into attribute
+                                                    where attribute != null
+                                                    select attribute.Value.ToLower()).ToList();
+
 
                     foreach (XElement sourceItemGroup in sourceProjParser.ItemGroups)
                     {
@@ -172,8 +174,6 @@ namespace CodeLinker
 
                             string originalSourcePath = attrib.Value;
                             string trimmedOriginalSourcePath = originalSourcePath.Trim().ToLower();
-
-
 
                             if (alreadyIncluded.Contains(trimmedOriginalSourcePath))
                             {
