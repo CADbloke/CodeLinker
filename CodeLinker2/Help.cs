@@ -73,7 +73,7 @@ namespace CodeLinker
             WriteLine();
             WriteLine("There is a log file called *CodeLinkerLog.txt* saved in the same folder as the executable. "
                     + "If you use this as a *pre/post-build process* The Visual Studio output window will have some summary information "
-                    + "but the details will be in the log file. Good luck finding anything in the output window anyway ");
+                    + "but the details will be in the log file. Good luck finding anything in the VS output window anyway ");
             WriteLine();
             WriteLine("More Info & Source at " + Settings.SourceCodeUrl, ConsoleColor.Green);
             WriteLine("Code Linker v2 by CADbloke", ConsoleColor.Cyan);
