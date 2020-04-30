@@ -195,19 +195,21 @@ namespace CodeLinker
 
                                     try
                                     {
-                                        string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + sourceFileName;
+                                        string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + "\\" + sourceFileName;
 
 
                                         sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath);
 
                                         /*
-                                        Log.WriteLine($"dest proj directory ........{DestProjDirectory}");
-                                        Log.WriteLine($"original source path........{originalSourcePath}");
-                                        Log.WriteLine($"original folder ............{originalFolder}");
-                                        Log.WriteLine($"source  proj directory.....{sourceProjDirectory}");
-                                        Log.WriteLine($"sourceFileName ............{sourceFileName}");
-                                        Log.WriteLine($"sourceAbsolutePath ........{sourceAbsolutePath}");
-                                        Log.WriteLine($"source path ........{sourcePathFromDestination}");*/
+                                        Log.WriteLine($"dest proj directory ....   {DestProjDirectory}");
+                                        Log.WriteLine($"original source path....   {originalSourcePath}");
+                                        Log.WriteLine($"original folder ........   {originalFolder}");
+                                        Log.WriteLine($"source  proj directory..   {sourceProjDirectory}");
+                                        Log.WriteLine($"sourceFileName .........   {sourceFileName}");
+                                        Log.WriteLine($"sourceAbsolutePath .....   {sourceAbsolutePath}");
+                                        Log.WriteLine($"source path ........       {sourcePathFromDestination}");
+                                        */
+
                                     }
 
                                     catch (ArgumentException badArg)

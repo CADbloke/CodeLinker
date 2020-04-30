@@ -30,7 +30,7 @@ namespace CodeLinker
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Console.ReadKey();
+                Console.Read();
                 throw;
             }
         }
@@ -55,7 +55,7 @@ namespace CodeLinker
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Console.ReadKey();
+                Console.Read();
                 throw;
             }
 
@@ -99,7 +99,7 @@ namespace CodeLinker
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Console.ReadKey();
+                    Console.Read();
                     throw;
                 }
             }

@@ -11,7 +11,15 @@ namespace CodeLinker
         private static void Main(string[] args)
         {
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
-            Console.WindowHeight = Console.LargestWindowHeight -4;
+
+            try
+            {
+                Console.WindowHeight = Console.LargestWindowHeight -4;
+            }
+            catch (Exception e)
+            {
+                // meh, no window inside Visual Studio so expect that to break
+            }
             App.ParseCommands(args);
             App.Finish();
         }

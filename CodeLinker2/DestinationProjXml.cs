@@ -174,14 +174,20 @@ namespace CodeLinker
             if (Keepers.Any())
             {
                 var newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
+                newItemGroup?.Add(new XComment("Code Linker moved these here from inside the link zone because they were not re-linked"));
+                newItemGroup?.Add(new XComment("You may wish to delete or un-comment these"));
+
                 foreach (XElement keeper in Keepers)
                 {
                     string keeperString = keeper.FirstAttribute.Value.ToLower();
 
+                    string keeperCommentString = keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", "");
+
                     if (!docString.Contains(keeperString) && (exclusionsList == null || !exclusionsList.Any(e => e?.Contains(keeperString) ?? false)))
                     {
-                        newItemGroup.Add(keeper);
-                        Log.WriteLine("Rescued: " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""), ConsoleColor.White, ConsoleColor.DarkBlue);
+                        newItemGroup.Add(new XComment(keeperCommentString));
+                        Log.WriteLine("Rescued this from inside the link zone. Review it, you may want to delete it ", ConsoleColor.Red, ConsoleColor.DarkBlue);
+                        Log.WriteLine(keeperCommentString, ConsoleColor.Red, ConsoleColor.DarkBlue);
                         //Log.WriteLine("keeperString: "+ keeperString);
                     }
                     else

@@ -86,7 +86,7 @@ namespace CodeLinker
             Log.WriteLine();
             Log.WriteLine(message, ConsoleColor.Red);
             Log.WriteException(e);
-            Console.ReadKey();
+            Console.Read();
             throw e;
         }
 
@@ -95,7 +95,7 @@ namespace CodeLinker
             Log.WriteToConsole = true;
             Log.WriteLine(errorMessage, ConsoleColor.Red);
             Console.WriteLine(errorMessage);
-            Console.ReadKey();
+            Console.Read();
             Environment.Exit(1);
         }
     }

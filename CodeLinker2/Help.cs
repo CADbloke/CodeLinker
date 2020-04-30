@@ -80,7 +80,7 @@ namespace CodeLinker
             WriteLine();
             WriteLine("any key to get on ith your Life");
             Log.WriteToConsole = true;
-            Console.ReadKey();
+            Console.Read();
         }
 
         private static void WriteLine(string line = "", ConsoleColor foreground = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
