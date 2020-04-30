@@ -171,7 +171,7 @@ namespace CodeLinker
         internal void PreserveKeepersAndReport(List<string> exclusionsList)
         {
             string docString = DestProjXdoc.ToString().ToLower();
-            if (Keepers.Any())
+            if (Keepers?.Any() ?? false)
             {
                 var newItemGroup = new XElement(Settings.MSBuild + "ItemGroup");
                 newItemGroup?.Add(new XComment("Code Linker moved these here from inside the link zone because they were not re-linked"));
@@ -181,14 +181,30 @@ namespace CodeLinker
                 {
                     string keeperString = keeper.FirstAttribute.Value.ToLower();
 
+                   
+
                     string keeperCommentString = keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", "");
 
                     if (!docString.Contains(keeperString) && (exclusionsList == null || !exclusionsList.Any(e => e?.Contains(keeperString) ?? false)))
                     {
-                        newItemGroup.Add(new XComment(keeperCommentString));
-                        Log.WriteLine("Rescued this from inside the link zone. Review it, you may want to delete it ", ConsoleColor.Red, ConsoleColor.DarkBlue);
-                        Log.WriteLine(keeperCommentString, ConsoleColor.Red, ConsoleColor.DarkBlue);
-                        //Log.WriteLine("keeperString: "+ keeperString);
+                        XAttribute attrib = keeper.Attribute("Include") ?? keeper.Attribute("Exclude");
+
+                        if (attrib == null)
+                            continue; // these are not the droids
+
+                        string originalSourcePath = attrib.Value;
+
+                        if (originalSourcePath.StartsWith("..", StringComparison.Ordinal)) // the file is outside the project tree, it is most likely an intruder
+                        {
+                            newItemGroup.Add(new XComment(keeperCommentString));
+                            Log.WriteLine("[Warning] Rescued this from inside the link zone. Review it, you may want to uncomment it or delete it.  ", ConsoleColor.Red, ConsoleColor.DarkBlue);
+                            Log.WriteLine(keeperCommentString,                                                                             ConsoleColor.Red, ConsoleColor.DarkBlue);
+                        }
+                        else // the file is inside the project tree, it is most likely an keeper
+                        {
+                            newItemGroup.Add(keeper);
+                            Log.WriteLine("[Warning] Rescued this from inside the link zone. Review it, you may want to delete it " + keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", ""), ConsoleColor.Red, ConsoleColor.DarkBlue);
+                        }
                     }
                     else
                         Log.WriteLine("Skipped duplicating: " + keeperString , ConsoleColor.DarkGray);
