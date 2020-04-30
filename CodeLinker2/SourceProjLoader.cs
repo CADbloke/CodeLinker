@@ -31,7 +31,7 @@ namespace CodeLinker
                     ItemGroups.AddRange(xElement.Elements(Settings.MSBuild + "ItemGroup").Select(elements => elements));
 
                 if (ItemGroups.Count == 0)
-                    Log.WriteLine("Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?");
+                    Log.WriteLine("[Warning] Curious: " + SourceProjPath + " contains no ItemGroups. No Codez?");
             }
             catch (Exception e)
             {

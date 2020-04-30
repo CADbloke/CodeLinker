@@ -107,7 +107,7 @@ namespace CodeLinker
 
             if (!SourceProjList?.Any() ?? true)
             {
-                Log.WriteLine("No Surce Projects found. done.", ConsoleColor.Cyan);
+                Log.WriteLine("[Warning] No Source Projects found. done.", ConsoleColor.Cyan);
                 return;
             }
 
@@ -325,7 +325,7 @@ namespace CodeLinker
                                 long destSize = new FileInfo(destFile).Length;
                                 if (sourceSize != destSize) // ie. it is probably a different file.
                                 {
-                                    Log.WriteLine($"WARNING: Overwriting {destFile}", ConsoleColor.Red);
+                                    Log.WriteLine($"[Warning] Overwriting {destFile}", ConsoleColor.Red);
                                     Log.WriteLine($"Source: {sourceSize} bytes, Dest: {destSize} Bytes.", ConsoleColor.Yellow);
                                 }
                             }

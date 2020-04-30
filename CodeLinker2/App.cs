@@ -21,7 +21,7 @@ namespace CodeLinker
 
             if (argsCount == 0)
             {
-                Log.WriteLine("No Args given so Help Text Displayed.", ConsoleColor.Red);
+                Log.WriteLine("[Error] No Args given so Help Text Displayed.", ConsoleColor.Red);
                 Log.WriteLine();
                 Help.Write();
                 Finish();
@@ -93,7 +93,7 @@ namespace CodeLinker
         internal static void Crash(string errorMessage)
         {
             Log.WriteToConsole = true;
-            Log.WriteLine(errorMessage, ConsoleColor.Red);
+            Log.WriteLine($"[Error] {errorMessage}", ConsoleColor.Red);
             Console.WriteLine(errorMessage);
             Console.Read();
             Environment.Exit(1);
