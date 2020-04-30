@@ -179,9 +179,10 @@ namespace CodeLinker
 
                 foreach (XElement keeper in Keepers)
                 {
-                    string keeperString = keeper.FirstAttribute.Value.ToLower();
+                    if (keeper?.FirstAttribute == null)
+                        continue;
 
-                   
+                    string keeperString = keeper.FirstAttribute.Value.ToLower();
 
                     string keeperCommentString = keeper.ToString().Replace("xmlns=\"" + Settings.MSBuild + "\"", "");
 
@@ -198,7 +199,7 @@ namespace CodeLinker
                         {
                             newItemGroup.Add(new XComment(keeperCommentString));
                             Log.WriteLine("[Warning] Rescued this from inside the link zone. Review it, you may want to uncomment it or delete it.  ", ConsoleColor.Red, ConsoleColor.DarkBlue);
-                            Log.WriteLine(keeperCommentString,                                                                             ConsoleColor.Red, ConsoleColor.DarkBlue);
+                            Log.WriteLine(keeperCommentString, ConsoleColor.Red, ConsoleColor.DarkBlue);
                         }
                         else // the file is inside the project tree, it is most likely an keeper
                         {
@@ -207,7 +208,7 @@ namespace CodeLinker
                         }
                     }
                     else
-                        Log.WriteLine("Skipped duplicating: " + keeperString , ConsoleColor.DarkGray);
+                        Log.WriteLine("Skipped duplicating: " + keeperString, ConsoleColor.DarkGray);
                 }
                 // Log.WriteLine("DocString" +docString);
                 EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Link zone.
