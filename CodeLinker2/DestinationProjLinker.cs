@@ -161,9 +161,9 @@ namespace CodeLinker
                                 continue; // these are not the droids
 
                             string originalSourcePath = attrib.Value;
-                            string trimmedOriginalSourcePath = originalSourcePath.Trim().ToLower();
+                            string trimmedOriginalSourcePath = originalSourcePath.Trim();
 
-                            if (alreadyIncluded.Contains(trimmedOriginalSourcePath))
+                            if (alreadyIncluded.Contains(trimmedOriginalSourcePath.ToLower()))
                             {
                                 Log.WriteLine("Skipped: " + originalSourcePath + Environment.NewLine +
                                               "    from: " + sourceProjAbsolutePath + Environment.NewLine +
@@ -200,7 +200,7 @@ namespace CodeLinker
 
                                         sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath);
 
-                                        /*
+
                                         Log.WriteLine($"dest proj directory ....   {DestProjDirectory}");
                                         Log.WriteLine($"original source path....   {originalSourcePath}");
                                         Log.WriteLine($"original folder ........   {originalFolder}");
@@ -208,7 +208,7 @@ namespace CodeLinker
                                         Log.WriteLine($"sourceFileName .........   {sourceFileName}");
                                         Log.WriteLine($"sourceAbsolutePath .....   {sourceAbsolutePath}");
                                         Log.WriteLine($"source path ........       {sourcePathFromDestination}");
-                                        */
+
 
                                     }
 
