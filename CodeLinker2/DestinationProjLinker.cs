@@ -200,7 +200,7 @@ namespace CodeLinker
 
                                         sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath);
 
-
+                                        /*
                                         Log.WriteLine($"dest proj directory ....   {DestProjDirectory}");
                                         Log.WriteLine($"original source path....   {originalSourcePath}");
                                         Log.WriteLine($"original folder ........   {originalFolder}");
@@ -208,7 +208,7 @@ namespace CodeLinker
                                         Log.WriteLine($"sourceFileName .........   {sourceFileName}");
                                         Log.WriteLine($"sourceAbsolutePath .....   {sourceAbsolutePath}");
                                         Log.WriteLine($"source path ........       {sourcePathFromDestination}");
-
+                                        */
 
                                     }
 
