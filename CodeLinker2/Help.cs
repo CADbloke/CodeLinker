@@ -55,7 +55,7 @@ namespace CodeLinker
             WriteLine(" - Exclusions override all Inclusions.");
             WriteLine(" - If you specify no Inclusions then everything is an Inclusion.");
             WriteLine(" - If you do specify any Inclusions then ONLY they are Included.");
-            WriteLine(" - Multiple Source: or Exclude: or Include: are ok - must be on separate lines.");
+            WriteLine(" - Multiple Source: or Exclude: or Include: are ok - they must be on separate lines.");
             WriteLine(" - Source: order matters, CodeLinker will not add a link to a file path that already exists in the Destination project.");
             WriteLine(" - In/Exclude: order doesn't matter.");
             WriteLine();
