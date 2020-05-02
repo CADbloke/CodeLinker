@@ -208,7 +208,7 @@ namespace CodeLinker
                         }
                     }
                     else
-                        Log.WriteLine("Skipped duplicating: " + keeperString, ConsoleColor.DarkGray);
+                        Log.WriteLine("Skipped duplicating: " + keeper.FirstAttribute.Value, ConsoleColor.DarkGray);
                 }
                 // Log.WriteLine("DocString" +docString);
                 EndPlaceHolder.AddAfterSelf(newItemGroup); // move the keepers out of the Link zone.

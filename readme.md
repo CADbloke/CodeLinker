@@ -12,7 +12,7 @@ Don't cross the streams.
 Anywhere this mentions CSPROJ you can also use VBPROJ.
 
 #### Usages...
-- `CodeLinker.exe /?``  this help file
+- `CodeLinker.exe /?`  this help file
 - `CodeLinker.exe` [Destination.csproj]
 - `Destination.csproj`   Path to the existing Destination project.
 
@@ -25,12 +25,9 @@ Anywhere this mentions CSPROJ you can also use VBPROJ.
 
 ```xml
 <!-- CodeLinker
-
-Source: PathTo\\NameOfProject.csproj     <== this is NOT optional. You can have multiples of these
-
-Exclude: PathTo\\FileToBeExcluded.cs     <== optional - a partial match will exclude it
-
-Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includes matches
+Source: PathTo\\NameOfProject.csproj     <== this is NOT optional
+Exclude: PathTo\\FileToBeExcluded.cs     <== optional - a partial match will exclude it. Works like wildcard in DOS
+Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includes matches. Works like wildcard in DOS
 -->
 ```
 ```xml
@@ -39,28 +36,30 @@ Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includ
 
 If your destination project doesn't have the placeholders then it soon will, I will add them for you on the first run.
 
+You can have multiple source projects filtered with multiple Exclusions &/or Inclusions. The filters are universal across all source projects so you may want to be really specific with those.
+
 You could also consider manually adding something like this to your target `csproj` file ...
 ```xml
 <PropertyGroup>
-    <PostBuildEvent>"Path to \\\\  CodeLinker.exe" $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>"Path \\ to \\\\  CodeLinker.exe" $(TargetDir)</PostBuildEvent>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
+</PropertyGroup>
 ```
-...so it runs on every build. Why? Well, it you change the source project and add / remove things then your target build will probably break until the code is re-linked. You can put CodeLinker in the same places as your target projects or in one place for all projects. Its location will affect the log file more than anything else, the log is always in the same folder as `CodeLinker.exe`
+...so it runs on every build. Why? Well, it you change the source project and add / remove things then your target build will probably break until the code is re-linked. You can put CodeLinker in the same places as your target projects or in one place for all projects. Its location will affect the log file more than anything else, the log is always in the same folder as `CodeLinker.exe`. If it runs and nothing changes it won't re-save your Target `csproj` file.
 
 #### To populate the information, edit your project file in a text editor. `Git` is your friend.
 
  - You may specify multiple Source: projects. No wildcards.
  - just the File name if it's in the same folder, or relative or absolute path.
- - You may specify multiple `Exclude:`` &/or `Include:`` items. They all apply to all Sour es
+ - You may specify multiple `Exclude:` &/or `Include:` items. They all apply to all Sources
  - In/Exclusions are a simple VB LIKE String wildcard match, same as file system wildcard matches so * and ? work
- - Protip -- `Folder\\OtherFolder\\*`` is a valid wildcard
+ - Protip -- `Folder\\OtherFolder\\*` is a valid wildcard
  - Exclusions override all Inclusions.
  - If you specify no Inclusions then everything is an Inclusion.
  - If you do specify any Inclusions then ONLY they are Included.
- - Multiple `Source:`` or `Exclude:`` or `Include:`` are ok - must be on separate lines.
+ - Multiple `Source:` or `Exclude:` or `Include:` are ok - must be on separate lines.
  - `Source:` order matters, CodeLinker will not add a link to a file path that already exists in the Destination project.
- - `In/Exclude:`` order doesn't matter.
+ - `In/Exclude:` order doesn't matter.
 
 #### The folder structures of the Source(s) are preserved. If the source file is nested, the link will be nested
 

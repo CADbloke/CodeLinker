@@ -38,6 +38,7 @@ namespace CodeLinker
         internal static string StartPlaceholderComment = "CodeLinker";
         internal static string EndPlaceholderComment = "EndCodeLinker";
         internal static string SourcePlaceholderLowerCase = "source:";
+        internal static string SourcePlaceholder = "Source:";
         internal static string ExcludePlaceholderLowerCase = "exclude:";
         internal static string IncludePlaceholderLowerCase = "include:";
         internal static string SourceCodeUrl = "https://github.com/CADbloke/CodeLinker";

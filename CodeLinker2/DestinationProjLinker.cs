@@ -67,7 +67,10 @@ namespace CodeLinker
                 {
                     if (line.ToLower().Trim().StartsWith(Settings.SourcePlaceholderLowerCase, StringComparison.Ordinal))
                     {
-                        string sourceInXml    = line.ToLower().Replace(Settings.SourcePlaceholderLowerCase, "").Replace("-->", "").Trim();
+                        string sourceInXml    = line.Replace(Settings.SourcePlaceholderLowerCase, "")
+                                                    .Replace(Settings.SourcePlaceholder, "")
+                                                    .Replace("-->", "").Replace("\"" ,"").Trim();
+
                         string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestProjDirectory, sourceInXml);
                         SourceProjList.Add(absoluteSource);
                     }
@@ -163,7 +166,7 @@ namespace CodeLinker
                             string originalSourcePath = attrib.Value;
                             string trimmedOriginalSourcePath = originalSourcePath.Trim();
 
-                            if (alreadyIncluded.Contains(trimmedOriginalSourcePath.ToLower()))
+                            if (alreadyIncluded.Contains(trimmedOriginalSourcePath, StringComparer.OrdinalIgnoreCase))
                             {
                                 Log.WriteLine("Skipped: " + originalSourcePath + Environment.NewLine +
                                               "    from: " + sourceProjAbsolutePath + Environment.NewLine +
@@ -178,7 +181,9 @@ namespace CodeLinker
                             string originalFolder = Path.GetDirectoryName(originalSourcePath);
                             List<string> exclusions = ExclusionsList.Where(x => x != null
                                                                              && (x.Contains(sourceFileName?.ToLower())
-                                                                              || x.Contains(originalSourcePath?.ToLower()))).ToList();
+                                                                              || x.Contains(originalSourcePath?.ToLower())
+                                                                                 || x.Contains(sourceFileName)
+                                                                              || x.Contains(originalSourcePath) )).ToList();
                             if (exclusions.Any())
                             {
                                 Log.WriteLine("Excluded: "                    + originalSourcePath     + Environment.NewLine +
@@ -309,7 +314,7 @@ namespace CodeLinker
 
                         foreach (string sourceFile in Directory.GetFiles(sourceResources))
                         {
-                            string excluded = ExclusionsList.FirstOrDefault(e => e == sourceFile.ToLower());
+                            string excluded = ExclusionsList.FirstOrDefault(e => e == sourceFile.ToLower() || e == sourceFile);
 
                             if (excluded != null)
                             {
