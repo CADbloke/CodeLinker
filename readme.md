@@ -39,6 +39,15 @@ Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includ
 
 If your destination project doesn't have the placeholders then it soon will, I will add them for you on the first run.
 
+You could also consider manually adding something like this to your target `csproj` file ...
+```xml
+<PropertyGroup>
+    <PostBuildEvent>"Path to \\\\  CodeLinker.exe" $(TargetDir)</PostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+```
+...so it runs on every build. Why? Well, it you change the source project and add / remove things then your target build will probably break until the code is re-linked. You can put CodeLinker in the same places as your target projects or in one place for all projects. Its location will affect the log file more than anything else, the log is always in the same folder as `CodeLinker.exe`
+
 #### To populate the information, edit your project file in a text editor. `Git` is your friend.
 
  - You may specify multiple Source: projects. No wildcards.
