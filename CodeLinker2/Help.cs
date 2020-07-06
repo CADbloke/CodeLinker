@@ -37,6 +37,8 @@ namespace CodeLinker
             WriteLine("Exclude: PathTo\\FileToBeExcluded.cs     <== optional - a partial match will exclude it", ConsoleColor.Yellow);
             WriteLine();
             WriteLine("Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includes matches", ConsoleColor.Yellow);
+            WriteLine();
+            WriteLine("DestinationProjectFolderPrefix: Folder\\For\\Linked\\Codez   <== optional folder to nest linked code in", ConsoleColor.Yellow);
             WriteLine("-->", ConsoleColor.Yellow);
             WriteLine();
             WriteLine("<!-- EndCodeLinker -->", ConsoleColor.Yellow);

@@ -66,7 +66,7 @@ namespace CodeLinker
                 }
                 catch (Exception e)
                 {
-                    App.Crash(e, $"Crash: DestProjXmladding placeholders to destination XML in {DestProjAbsolutePath}");
+                    App.Crash(e, $"Crash: DestProjXml adding placeholders to destination XML in {DestProjAbsolutePath}");
                 }
             }
 

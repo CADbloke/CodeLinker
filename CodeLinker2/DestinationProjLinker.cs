@@ -23,6 +23,8 @@ namespace CodeLinker
         /// <summary> Absolute Directory of the destination <c> Proj </c>. NO file name. </summary>
         internal string DestProjDirectory { get; }
 
+        internal string DestProjectFolderPrefix { get; } = "";
+
         /// <summary> Source <c> Proj </c>s defined in the Destination <c> Proj </c> placeholder.
         ///     Can be zero, can be lots. </summary>
         internal List<string> SourceProjList { get; }
@@ -80,12 +82,18 @@ namespace CodeLinker
 
                     else if (line.ToLower().Trim().StartsWith(Settings.IncludePlaceholderLowerCase, StringComparison.Ordinal))
                         InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim());
+
+                    else if (line.ToLower().Trim().StartsWith(Settings.DestProjectFolderPrefixLowerCase, StringComparison.Ordinal))
+                        DestProjectFolderPrefix = line.ToLower().Replace(Settings.DestProjectFolderPrefixLowerCase, "").Trim().Trim('\\') + '\\';
                 }
                 catch (Exception e)
                 {
                     App.Crash(e, $"broke parsing the Code Linker placeholder at: {line}");
                 }
             }
+
+            if (!string.IsNullOrWhiteSpace(DestProjectFolderPrefix))
+                Log.WriteLine($"Linked code will be in {DestProjectFolderPrefix}");
 
             foreach (string exclusion in ExclusionsList)
                 Log.WriteLine("exclusion: "+ exclusion , ConsoleColor.DarkYellow);
@@ -229,7 +237,7 @@ namespace CodeLinker
                                             {
                                                 string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceProjDirectory);
                                                 sourcePathFromDestination = relativeFolderPathFromDestination + "\\" + originalSourcePath;
-                                                var linkElement = new XElement(Settings.MSBuild + "Link", @"%(RecursiveDir)%(Filename)%(Extension)");
+                                                var linkElement = new XElement(Settings.MSBuild + "Link", DestProjectFolderPrefix + @"%(RecursiveDir)%(Filename)%(Extension)");
                                                 sourceItem.Add(linkElement);
                                             } // wtf: I bet that's a bug
                                             else
@@ -274,7 +282,7 @@ namespace CodeLinker
                                 // Folders, mostly
                                 if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))
                                 {
-                                    var linkElement = new XElement(Settings.MSBuild + "Link", originalSourcePath);
+                                    var linkElement = new XElement(Settings.MSBuild + "Link", DestProjectFolderPrefix + originalSourcePath);
                                     sourceItem.Add(linkElement);
                                     Log.WriteLine($"linking {originalSourcePath}", ConsoleColor.DarkGreen, ConsoleColor.Black);
                                 }

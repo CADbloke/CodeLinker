@@ -25,9 +25,10 @@ Anywhere this mentions CSPROJ you can also use VBPROJ.
 
 ```xml
 <!-- CodeLinker
-Source: PathTo\\NameOfProject.csproj     <== this is NOT optional
-Exclude: PathTo\\FileToBeExcluded.cs     <== optional - a partial match will exclude it. Works like wildcard in DOS
-Include: PathTo\\FileToBeIncluded.cs     <== optional but if used it ONLY includes matches. Works like wildcard in DOS
+Source: PathTo\NameOfProject.csproj     <== this is NOT optional
+Exclude: PathTo\FileToBeExcluded.cs     <== optional - a partial match will exclude it. Works like wildcard in DOS
+Include: PathTo\FileToBeIncluded.cs     <== optional but if used it ONLY includes matches. Works like wildcard in DOS
+DestinationProjectFolderPrefix: Folder\For\Linked\Codez   <== optional folder to nest linked code in
 -->
 ```
 ```xml
@@ -46,7 +47,7 @@ You could also consider manually adding something like this to your target `cspr
     <RunPostBuildEvent>Always</RunPostBuildEvent>
 </PropertyGroup>
 ```
-...so it runs on every build. Why? Well, it you change the source project and add / remove / move things in the source then your target build may break until the code is re-linked and the source changes propagated to the target. 
+...so it runs on every build. Why? Well, it you change the source project and add / remove / move things in the source then your target build may break until the code is re-linked and the source changes propagated to the target. If you already have a `<PostBuildEvent>` then add it to that.
 
 You can put CodeLinker in the same places as your target projects or in one place for all projects. Its location will affect the log file more than anything else, the log is always in the same folder as `CodeLinker.exe`. If it runs and nothing changes it won't re-save your Target `csproj` file.
 
