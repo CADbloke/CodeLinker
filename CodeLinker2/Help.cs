@@ -51,7 +51,11 @@ namespace CodeLinker
             WriteLine(" - You may specify multiple Source: projects. No wildcards.");
             WriteLine(" - just the File name if it's in the same folder, or relative or absolute path.");
             WriteLine();
-            WriteLine(" - You may specify multiple Exclude: &/or Include: items. They all apply to all Sources");
+            WriteLine(" - You may specify multiple Exclude: &/or Include: items. They all apply ONLY to the Source Project immediately preceding it.");
+            WriteLine(" - For multiple Source projects you need to re-specify any Exclude: or Include: or FolderPrefix:");
+            WriteLine(" - these are reset when you start a new source project group.");
+            WriteLine(" - The settings group must start with the Source: line. a new Source: line resets and adds another Source.");
+            WriteLine();
             WriteLine(" - In/Exclusions are a simple VB LIKE String wildcard match, same as file system wildcard matches so * and ? work");
             WriteLine(" - Protip -- Folder\\OtherFolder\\* is a valid wildcard");
             WriteLine(" - Exclusions override all Inclusions.");

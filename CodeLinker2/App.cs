@@ -72,8 +72,10 @@ namespace CodeLinker
 
             foreach (DestinationProjLinker linker in linkers)
             {
-                message += "from :" + string.Join(",", linker.SourceProjList.ToArray());
-                message += "  to :" + linker.DestProjAbsolutePath + Environment.NewLine;
+                foreach (ProjectLinkSettings projectLinkSettings in linker?.SourceProjList ?? new List<ProjectLinkSettings>())
+                    message += "from :" + projectLinkSettings?.SourceProjectAbsolutePath;
+
+                message += "  to :" + linker?.DestProjAbsolutePath + Environment.NewLine;
             }
             Log.WriteLine(message, ConsoleColor.White, ConsoleColor.DarkGray);
             Environment.Exit(0);

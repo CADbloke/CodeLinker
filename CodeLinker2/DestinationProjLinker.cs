@@ -23,25 +23,16 @@ namespace CodeLinker
         /// <summary> Absolute Directory of the destination <c> Proj </c>. NO file name. </summary>
         internal string DestProjDirectory { get; }
 
-        internal string DestProjectFolderPrefix { get; } = "";
-
         /// <summary> Source <c> Proj </c>s defined in the Destination <c> Proj </c> placeholder.
         ///     Can be zero, can be lots. </summary>
-        internal List<string> SourceProjList { get; }
-
-        /// <summary> Code Files to be excluded from the Link. </summary>
-        internal List<string> ExclusionsList { get; }
-
-        /// <summary> Code Files to be Included in the recycle. </summary>
-        internal List<string> InclusionsList { get; }
-
+        internal List<ProjectLinkSettings> SourceProjList { get; } = new List<ProjectLinkSettings>();
 
         /// <summary> Source <c> Proj </c> is specified in the destination <c> Proj </c> XML comment placeholder. </summary>
         /// <param name="destProj"> Absolute path of destination <c> Proj </c>. </param>
         internal DestinationProjLinker(string destProj)
         {
             DestProjAbsolutePath = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(null, destProj);
-            DestProjDirectory = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
+            DestProjDirectory    = Path.GetDirectoryName(DestProjAbsolutePath) ?? "";
 
             if (string.IsNullOrEmpty(DestProjAbsolutePath))
                 App.Crash("ERROR: No destProjFileAbsolutePath. That's a bug.");
@@ -51,7 +42,7 @@ namespace CodeLinker
                 destProjXml = new DestinationProjXml(DestProjAbsolutePath);
 
                 if (destProjXml.RootXelement == null || !destProjXml.RootXelement.Elements().Any())
-                    App.Crash($"ERROR: Bad Destination Proj file at {DestProjAbsolutePath}. Root elemental null?: {destProjXml?.RootXelement == null}" 
+                    App.Crash($"ERROR: Bad Destination Proj file at {DestProjAbsolutePath}. Root elemental null?: {destProjXml?.RootXelement == null}"
                             + $", Root elements count: {destProjXml.RootXelement?.Elements()?.Count()}");
             }
             catch (Exception e)
@@ -59,32 +50,31 @@ namespace CodeLinker
                 App.Crash(e, "DestinationProjLinker CTOR (1 param) loading destination XML from " + DestProjAbsolutePath);
             }
 
-            SourceProjList = new List<string>();
-            ExclusionsList = new List<string>();
-            InclusionsList = new List<string>();
+            ProjectLinkSettings projectLinkSettings = new ProjectLinkSettings();
 
-            foreach (string line in destProjXml.StartPlaceHolder.Value.Split(new[] {"\r\n", "\n", Environment.NewLine}, StringSplitOptions.None).ToList())
+
+            foreach (string line in destProjXml.StartPlaceHolder.Value.Split(new[] { "\r\n", "\n", Environment.NewLine }, StringSplitOptions.None).ToList())
             {
                 try
                 {
                     if (line.ToLower().Trim().StartsWith(Settings.SourcePlaceholderLowerCase, StringComparison.Ordinal))
                     {
-                        string sourceInXml    = line.Replace(Settings.SourcePlaceholderLowerCase, "")
-                                                    .Replace(Settings.SourcePlaceholder, "")
-                                                    .Replace("-->", "").Replace("\"" ,"").Trim();
+                        string sourceInXml = line.Replace(Settings.SourcePlaceholderLowerCase, "").Replace(Settings.SourcePlaceholder, "").Replace("-->", "").Replace("\"", "").Trim();
 
                         string absoluteSource = PathMaker.MakeAbsolutePathFromPossibleRelativePathOrDieTrying(DestProjDirectory, sourceInXml);
-                        SourceProjList.Add(absoluteSource);
+                        projectLinkSettings                           = new ProjectLinkSettings();
+                        projectLinkSettings.SourceProjectAbsolutePath = absoluteSource;
+                        SourceProjList.Add(projectLinkSettings);
                     }
 
                     else if (line.ToLower().Trim().StartsWith(Settings.ExcludePlaceholderLowerCase, StringComparison.Ordinal))
-                        ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim());
+                        projectLinkSettings.ExclusionsList.Add(line.ToLower().Replace(Settings.ExcludePlaceholderLowerCase, "").Trim());
 
                     else if (line.ToLower().Trim().StartsWith(Settings.IncludePlaceholderLowerCase, StringComparison.Ordinal))
-                        InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim());
+                        projectLinkSettings.InclusionsList.Add(line.ToLower().Replace(Settings.IncludePlaceholderLowerCase, "").Trim());
 
                     else if (line.ToLower().Trim().StartsWith(Settings.DestProjectFolderPrefixLowerCase, StringComparison.Ordinal))
-                        DestProjectFolderPrefix = line.ToLower().Replace(Settings.DestProjectFolderPrefixLowerCase, "").Trim().Trim('\\') + '\\';
+                        projectLinkSettings.DestProjectFolderPrefix = line.Substring(line.IndexOf(':')+1).Trim().Trim('\\') + '\\';
                 }
                 catch (Exception e)
                 {
@@ -92,19 +82,24 @@ namespace CodeLinker
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(DestProjectFolderPrefix))
-                Log.WriteLine($"Linked code will be in {DestProjectFolderPrefix}");
 
-            foreach (string exclusion in ExclusionsList)
-                Log.WriteLine("exclusion: "+ exclusion , ConsoleColor.DarkYellow);
+            foreach (ProjectLinkSettings linker in SourceProjList)
+            {
+                if (!string.IsNullOrWhiteSpace(linker.DestProjectFolderPrefix))
+                    Log.WriteLine($"Linked code will be in project folder: {linker.DestProjectFolderPrefix}");
 
-            foreach (string inclusion in InclusionsList)
-                Log.WriteLine("inclusion: " + inclusion, ConsoleColor.White, ConsoleColor.DarkGreen);
+                foreach (string exclusion in linker.ExclusionsList)
+                    Log.WriteLine("exclusion: " + exclusion, ConsoleColor.DarkYellow);
 
-            if (!InclusionsList.Any())
-                InclusionsList.Add("*"); // default wildcard match will include everything.
+                foreach (string inclusion in linker.InclusionsList)
+                    Log.WriteLine("inclusion: " + inclusion, ConsoleColor.White, ConsoleColor.DarkGreen);
+
+                Log.WriteLine();
+
+                if (!linker.InclusionsList.Any())
+                    linker.InclusionsList.Add("*"); // default wildcard match will include everything.}
+            }
         }
-
 
         /// <summary> Links the source code from the source <c> sourceProj </c> file to the destination <c> destProj </c> file.
         ///     <para> Tweaks relative file paths so the project can find them. </para>
@@ -122,8 +117,14 @@ namespace CodeLinker
                 return;
             }
 
-            foreach (string sourcePath in SourceProjList) 
+            foreach (ProjectLinkSettings sourceProject in SourceProjList)
             {
+
+                string sourcePath              = sourceProject.SourceProjectAbsolutePath;
+                HashSet<string> exclusionsListLowerCase = sourceProject.ExclusionsList;
+                HashSet<string> inclusionsListLowerCase = sourceProject.InclusionsList;
+                string destProjectFolderPrefix = sourceProject.DestProjectFolderPrefix;
+
                 var codezLinked = 0;
 
                 try
@@ -182,16 +183,16 @@ namespace CodeLinker
                                 continue;
                             }
 
-                            List<string> include = InclusionsList.Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList();
+                            List<string> include = inclusionsListLowerCase.Where(i => Operators.LikeString(trimmedOriginalSourcePath, i, CompareMethod.Text)).ToList();
                             //                                                               OW my eyes!
 
                             string sourceFileName = Path.GetFileName(trimmedOriginalSourcePath); // wildcards blow up Path.GetFullPath()
                             string originalFolder = Path.GetDirectoryName(originalSourcePath);
-                            List<string> exclusions = ExclusionsList.Where(x => x != null
-                                                                             && (x.Contains(sourceFileName?.ToLower())
-                                                                              || x.Contains(originalSourcePath?.ToLower())
-                                                                                 || x.Contains(sourceFileName)
-                                                                              || x.Contains(originalSourcePath) )).ToList();
+                            List<string> exclusions = exclusionsListLowerCase.Where(x => x != null
+                                                                             && (
+                                                                                    Operators.LikeString(sourceFileName    .ToLower(), "*" + x, CompareMethod.Text)
+                                                                               ||   Operators.LikeString(originalSourcePath.ToLower(), "*" + x, CompareMethod.Text)
+                                                                                 ) ).ToList();
                             if (exclusions.Any())
                             {
                                 Log.WriteLine("Excluded: "                    + originalSourcePath     + Environment.NewLine +
@@ -200,7 +201,7 @@ namespace CodeLinker
                                 continue;
                             }
 
-                            if (!InclusionsList.Any() || include.Any()) // empty inclusions list means include everything unless explicity excluded
+                            if (!inclusionsListLowerCase.Any() || include.Any()) // empty inclusions list means include everything unless explicity excluded
                             {
                                 if (!PathMaker.IsAbsolutePath(originalSourcePath))
                                 {
@@ -237,7 +238,7 @@ namespace CodeLinker
                                             {
                                                 string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceProjDirectory);
                                                 sourcePathFromDestination = relativeFolderPathFromDestination + "\\" + originalSourcePath;
-                                                var linkElement = new XElement(Settings.MSBuild + "Link", DestProjectFolderPrefix + @"%(RecursiveDir)%(Filename)%(Extension)");
+                                                var linkElement = new XElement(Settings.MSBuild + "Link", destProjectFolderPrefix + @"%(RecursiveDir)%(Filename)%(Extension)");
                                                 sourceItem.Add(linkElement);
                                             } // wtf: I bet that's a bug
                                             else
@@ -274,7 +275,10 @@ namespace CodeLinker
                                     }
 
                                     if (!Settings.ItemElementsDoNotMakeRelativePath.Contains(sourceElementName.ToLower()))
+                                    {
                                         attrib.Value = sourcePathFromDestination;
+                                        destProjXml.Keepers.RemoveAll(k => k.Attribute("Include").Value.Contains(sourcePathFromDestination));
+                                    }
                                 }
 
                                 XElement[] links = sourceItem.Descendants(Settings.MSBuild + "Link").ToArray();
@@ -282,7 +286,7 @@ namespace CodeLinker
                                 // Folders, mostly
                                 if (!(links.Any() || Settings.ItemElementsDoNotBreakLink.Contains(sourceElementName.ToLower())))
                                 {
-                                    var linkElement = new XElement(Settings.MSBuild + "Link", DestProjectFolderPrefix + originalSourcePath);
+                                    var linkElement = new XElement(Settings.MSBuild + "Link", destProjectFolderPrefix + originalSourcePath);
                                     sourceItem.Add(linkElement);
                                     Log.WriteLine($"linking {originalSourcePath}", ConsoleColor.DarkGreen, ConsoleColor.Black);
                                 }
@@ -308,6 +312,7 @@ namespace CodeLinker
                     totalCodezLinked += codezLinked;
                     // so we don't link things twice...
                     destProjXml.Keepers.RemoveAll(k => k.Attribute("Include").Value.Contains(sourceProjDirectory));
+                    
 
                     // copy Source project Resources so *.resx files don't break. Warning: Last one wins so weird race condition lives here
                     string sourceResources = sourceProjDirectory + "\\Resources";
@@ -322,7 +327,7 @@ namespace CodeLinker
 
                         foreach (string sourceFile in Directory.GetFiles(sourceResources))
                         {
-                            string excluded = ExclusionsList.FirstOrDefault(e => e == sourceFile.ToLower() || e == sourceFile);
+                            string excluded = exclusionsListLowerCase.FirstOrDefault(e => e == sourceFile.ToLower() || e == sourceFile);
 
                             if (excluded != null)
                             {
@@ -362,7 +367,12 @@ namespace CodeLinker
 
             bool hasChanged = oldXml != destProjXml.ReadLinkedXml();
 
-            destProjXml.PreserveKeepersAndReport(ExclusionsList);
+            List<string> keeperExclusions = new List<string>();
+
+            foreach (ProjectLinkSettings projectLinkSettingse in SourceProjList)
+                keeperExclusions.AddRange(projectLinkSettingse.ExclusionsList);
+
+            destProjXml.PreserveKeepersAndReport(keeperExclusions);
 
             if (hasChanged)
             {
