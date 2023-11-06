@@ -209,10 +209,10 @@ namespace CodeLinker
 
                                     try
                                     {
-                                        string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory + "\\" + originalFolder) + "\\" + sourceFileName;
+                                        string sourceAbsolutePath = Path.GetFullPath(sourceProjDirectory?.TrimEnd('\\') + "\\" + originalFolder?.TrimEnd('\\')) + "\\" + sourceFileName;
 
 
-                                        sourcePathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath);
+                                        sourcePathFromDestination = (PathMaker.MakeRelativePath(DestProjDirectory.Trim('\\') + "\\", sourceAbsolutePath))?.Replace(@"\\", @"\");
 
                                         /*
                                         Log.WriteLine($"dest proj directory ....   {DestProjDirectory}");
@@ -236,8 +236,8 @@ namespace CodeLinker
 
                                             else if (Regex.IsMatch(originalSourcePath, @"\*\*")) // it is **\*.* or something  awkward like that.
                                             {
-                                                string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", sourceProjDirectory);
-                                                sourcePathFromDestination = relativeFolderPathFromDestination + "\\" + originalSourcePath;
+                                                string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory?.TrimEnd('\\') + "\\", sourceProjDirectory);
+                                                sourcePathFromDestination = (relativeFolderPathFromDestination?.TrimEnd('\\') + "\\" + originalSourcePath)?.Replace(@"\\", @"\");
                                                 var linkElement = new XElement(Settings.MSBuild + "Link", destProjectFolderPrefix + @"%(RecursiveDir)%(Filename)%(Extension)");
                                                 sourceItem.Add(linkElement);
                                             } // wtf: I bet that's a bug
@@ -246,8 +246,9 @@ namespace CodeLinker
                                                 try
                                                 {
                                                     string originalFolderrr = originalSourcePath.Substring(0, originalSourcePath.LastIndexOf("\\", StringComparison.Ordinal));
-                                                    string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", originalFolderrr);
-                                                    sourcePathFromDestination = relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\", StringComparison.Ordinal));
+                                                    string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory?.TrimEnd('\\') + "\\", originalFolderrr);
+                                                    sourcePathFromDestination = (relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\", StringComparison.Ordinal)))
+                                                    ?.Replace(@"\\", @"\");
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -261,7 +262,8 @@ namespace CodeLinker
                                             {
                                                 string originalFolderr = originalSourcePath.Substring(0, originalSourcePath.LastIndexOf("\\"));
                                                 string relativeFolderPathFromDestination = PathMaker.MakeRelativePath(DestProjDirectory + "\\", originalFolderr);
-                                                sourcePathFromDestination = relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\"));
+                                                sourcePathFromDestination = (relativeFolderPathFromDestination + originalSourcePath.Substring(originalSourcePath.LastIndexOf("\\")))
+                                                ?.Replace(@"\\", @"\");
                                             }
                                             catch (Exception e)
                                             {

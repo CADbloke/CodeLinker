@@ -43,7 +43,7 @@ namespace CodeLinker
 
                 Uri relativeUri = fromUri.MakeRelativeUri(toUri);
 
-                relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+                relativePath = Uri.UnescapeDataString(relativeUri.ToString()).Replace(@"\\", @"\");
 
                 if (toUri.Scheme.ToUpperInvariant() == "FILE")
                     relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);

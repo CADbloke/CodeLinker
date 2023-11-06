@@ -100,7 +100,7 @@ namespace CodeLinker
                 {
                     Console.WriteLine(e);
                     Console.Read();
-                    throw;
+                    // throw;
                 }
             }
         }
